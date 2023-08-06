@@ -1,0 +1,54 @@
+{
+  "name": "vue-hook-optimizer",
+  "version": "0.0.1",
+  "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsup"
+  },
+  "keywords": [
+    "vue",
+    "hooks"
+  ],
+  "author": "zcf0508 <zcf0508@live.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.22.5",
+    "@babel/traverse": "^7.22.8",
+    "@types/babel__traverse": "^7.20.1",
+    "@types/node": "^20.4.8",
+    "@types/uuid": "^9.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "@vue/compiler-sfc": "^3.3.4",
+    "eslint": "^8.46.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "tsup": "^7.2.0",
+    "typescript": "^5.1.6",
+    "uuid": "^9.0.0",
+    "vis-network": "^9.1.6"
+  }
+}
