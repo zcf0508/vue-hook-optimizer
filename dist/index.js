@@ -86287,14 +86287,22 @@ function analyze2(content) {
   (0, import_traverse2.default)(ast, {
     Identifier(path2) {
       const name = path2.node.name;
+      const scopeParent = path2.scope.parent;
       const binding2 = path2.scope.getBinding(name);
       if (binding2) {
-        if (["const", "let", "var"].includes(binding2.kind)) {
+        if (!scopeParent && ["const", "let", "var"].includes(binding2.kind)) {
           graph.nodes.add(name);
           if (!graph.edges.get(name)) {
             graph.edges.set(name, /* @__PURE__ */ new Set());
           }
-        } else if (binding2.kind === "hoisted") {
+        }
+      }
+    },
+    FunctionDeclaration(path2) {
+      const name = path2.node.id?.name;
+      if (name) {
+        const binding2 = path2.scope.getBinding(name);
+        if (binding2 && path2.parent.type === "Program") {
           graph.nodes.add(name);
           if (!graph.edges.get(name)) {
             graph.edges.set(name, /* @__PURE__ */ new Set());
@@ -86305,15 +86313,12 @@ function analyze2(content) {
   });
   (0, import_traverse2.default)(ast, {
     FunctionDeclaration(path2) {
-      var _a, _b;
-      if (((_a = path2.node.id) == null ? void 0 : _a.name) && graph.nodes.has((_b = path2.node.id) == null ? void 0 : _b.name)) {
-        const name = path2.node.id.name;
-        console.log(name);
+      const name = path2.node.id?.name;
+      if (name && graph.nodes.has(name)) {
         path2.traverse({
           Identifier(path3) {
-            var _a2;
             if (graph.nodes.has(path3.node.name) && path3.node.name !== name) {
-              (_a2 = graph.edges.get(name)) == null ? void 0 : _a2.add(path3.node.name);
+              graph.edges.get(name)?.add(path3.node.name);
             }
           }
         });
@@ -86322,27 +86327,17 @@ function analyze2(content) {
     // get the relation between the variable and the function
     VariableDeclarator(path2) {
       if (path2.node.init) {
-        if (path2.node.init.type === "ArrowFunctionExpression") {
-          const name = path2.node.id.name;
-          path2.traverse({
-            Identifier(path3) {
-              var _a;
-              if (graph.nodes.has(path3.node.name) && path3.node.name !== name) {
-                (_a = graph.edges.get(name)) == null ? void 0 : _a.add(path3.node.name);
+        if (["CallExpression", "ArrowFunctionExpression", "FunctionDeclaration"].includes(path2.node.init.type)) {
+          const name = path2.node.id?.name;
+          if (name && graph.nodes.has(name)) {
+            path2.traverse({
+              Identifier(path3) {
+                if (graph.nodes.has(path3.node.name) && path3.node.name !== name) {
+                  graph.edges.get(name)?.add(path3.node.name);
+                }
               }
-            }
-          });
-        }
-        if (path2.node.init.type === "CallExpression") {
-          const name = path2.node.id.name;
-          path2.traverse({
-            Identifier(path3) {
-              var _a;
-              if (graph.nodes.has(path3.node.name) && path3.node.name !== name) {
-                (_a = graph.edges.get(name)) == null ? void 0 : _a.add(path3.node.name);
-              }
-            }
-          });
+            });
+          }
         }
       }
     }
