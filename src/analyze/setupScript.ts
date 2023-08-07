@@ -34,7 +34,7 @@ export function analyze(
       }
     },
     FunctionDeclaration(path) {
-      const name = path.node.id?.name
+      const name = path.node.id?.name;
       if(name) {
         const binding = path.scope.getBinding(name);
         if(binding && path.parent.type === 'Program') {
