@@ -1,7 +1,12 @@
 {
   "name": "vue-hook-optimizer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
+  "homepage": "https://github.com/zcf0508/vue-hook-optimizer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zcf0508/vue-hook-optimizer.git"
+  },
   "sideEffects": false,
   "exports": {
     ".": {
@@ -26,7 +31,8 @@
   ],
   "scripts": {
     "dev": "nodemon",
-    "build": "tsup"
+    "build": "tsup",
+    "release": "bumpp"
   },
   "keywords": [
     "vue",
@@ -43,6 +49,7 @@
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
     "@vue/compiler-sfc": "^3.3.4",
+    "bumpp": "^9.1.1",
     "eslint": "^8.46.0",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
