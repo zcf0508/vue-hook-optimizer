@@ -1,6 +1,12 @@
 {
+  "ts-node": {
+    "compilerOptions": {
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+    }
+  },
   "compilerOptions": {
-    "target": "es2018",
+    "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -15,5 +21,7 @@
         "src/*"
       ]
     }
-  }
+  },
+  "include": ["/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
