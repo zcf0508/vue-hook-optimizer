@@ -32,6 +32,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsup",
+    "play": "npm -C playground run dev",
     "test": "vitest",
     "release": "bumpp"
   },
@@ -52,12 +53,14 @@
     "@vue/compiler-sfc": "^3.3.4",
     "bumpp": "^9.1.1",
     "eslint": "^8.46.0",
+    "eslint-plugin-vue": "^9.16.1",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "tsup": "^7.2.0",
     "typescript": "^5.1.6",
     "uuid": "^9.0.0",
     "vis-network": "^9.1.6",
-    "vitest": "^0.34.1"
+    "vitest": "^0.34.1",
+    "vue-eslint-parser": "^9.3.1"
   }
 }
