@@ -1,5 +1,8 @@
 import { babelParse } from '@vue/compiler-sfc';
-import traverse from '@babel/traverse';
+import _traverse from '@babel/traverse';
+const traverse: typeof _traverse =
+  //@ts-ignore
+  _traverse.default?.default || _traverse.default || _traverse;
 
 export function analyze(
   content: string
