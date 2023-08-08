@@ -14647,7 +14647,7 @@ var require_lib3 = __commonJS({
     Object.defineProperty(exports, "traverse", {
       enumerable: true,
       get: function() {
-        return _traverse.default;
+        return _traverse3.default;
       }
     });
     Object.defineProperty(exports, "traverseFast", {
@@ -14795,18 +14795,18 @@ var require_lib3 = __commonJS({
     var _removeTypeDuplicates = require_removeTypeDuplicates();
     var _getBindingIdentifiers = require_getBindingIdentifiers();
     var _getOuterBindingIdentifiers = require_getOuterBindingIdentifiers();
-    var _traverse = require_traverse();
-    Object.keys(_traverse).forEach(function(key) {
+    var _traverse3 = require_traverse();
+    Object.keys(_traverse3).forEach(function(key) {
       if (key === "default" || key === "__esModule")
         return;
       if (Object.prototype.hasOwnProperty.call(_exportNames, key))
         return;
-      if (key in exports && exports[key] === _traverse[key])
+      if (key in exports && exports[key] === _traverse3[key])
         return;
       Object.defineProperty(exports, key, {
         enumerable: true,
         get: function() {
-          return _traverse[key];
+          return _traverse3[key];
         }
       });
     });
@@ -86221,6 +86221,10 @@ var v4_default = v4;
 
 // src/analyze/template.ts
 var import_traverse = __toESM(require_lib13());
+var traverse = (
+  //@ts-ignore
+  import_traverse.default.default?.default || import_traverse.default.default || import_traverse.default
+);
 function analyze(content) {
   const id3 = v4_default();
   const { code } = compileTemplate({
@@ -86235,7 +86239,7 @@ function analyze(content) {
     ]
   });
   const nodes = /* @__PURE__ */ new Set();
-  (0, import_traverse.default)(ast, {
+  traverse(ast, {
     MemberExpression(path2) {
       if (path2.type === "MemberExpression") {
         if (path2.node.object && path2.node.object.type === "Identifier" && path2.node.object.name === "_ctx") {
@@ -86264,6 +86268,10 @@ function analyze(content) {
 
 // src/analyze/setupScript.ts
 var import_traverse2 = __toESM(require_lib13());
+var traverse2 = (
+  //@ts-ignore
+  import_traverse2.default.default?.default || import_traverse2.default.default || import_traverse2.default
+);
 function analyze2(content) {
   const ast = parse_1$1(content, {
     sourceType: "module",
@@ -86275,7 +86283,7 @@ function analyze2(content) {
     nodes: /* @__PURE__ */ new Set(),
     edges: /* @__PURE__ */ new Map()
   };
-  (0, import_traverse2.default)(ast, {
+  traverse2(ast, {
     Identifier(path2) {
       const name = path2.node.name;
       const scopeParent = path2.scope.parent;
@@ -86302,7 +86310,7 @@ function analyze2(content) {
       }
     }
   });
-  (0, import_traverse2.default)(ast, {
+  traverse2(ast, {
     FunctionDeclaration(path2) {
       const name = path2.node.id?.name;
       if (name && graph.nodes.has(name)) {
