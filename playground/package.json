@@ -9,11 +9,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "vue-hook-optimizer": "workspace:*"
+    "codemirror": "^5.65.14",
+    "vis-network": "^9.1.6"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@types/codemirror": "^5.60.8",
     "@types/node": "^18.17.1",
-    "nuxt": "^3.6.5"
+    "@unocss/nuxt": "^0.54.2",
+    "nuxt": "^3.6.5",
+    "unocss": "^0.54.2"
   }
 }
