@@ -35,9 +35,9 @@ So I want to build a tool to help us analyze the code, and find the relations be
 
 ## Development Plan
 
-[ ] add node type and more info
-[ ] provide some suggestions for optimization
-[ ] maybe support `options api`
+- [ ] add node type and more info
+- [ ] provide some suggestions for optimization
+- [ ] maybe support `options api`
 
 ## Contribution
 
