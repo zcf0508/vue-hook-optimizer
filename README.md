@@ -33,8 +33,22 @@ Sometime we have to refactor the code, maybe there are thousands of lines of cod
 
 So I want to build a tool to help us analyze the code, and find the relations between the variables and the methods. We can find out some variables are isolated, and some methods are over-association, and then we can refactor them.
 
+## Development Plan
+
+[ ] add node type and more info
+[ ] provide some suggestions for optimization
+[ ] maybe support `options api`
+
+## Contribution
+
+Any contributions are welcome. 
+
 ## Sponsor Me
 
 If you like this tool, please consider to sponsor me. I will keep working on this tool and add more features.
 
 ![sponsor](./images/sponsor.png)
+
+## License
+
+MIT
