@@ -29,10 +29,6 @@ pnpm run play
 
 ## 动机
 
-Sometime we have to refactor the code, maybe there are thousands of lines of code in one file. And it is too complex and hard to understand.
-
-So I want to build a tool to help us analyze the code, and find the relations between the variables and the methods. We can find out some variables are isolated, and some methods are over-association, and then we can refactor them.
-
 有时我们不得不重构代码，可能一个文件里有成千上万行代码。太复杂难以理解。
 
 所以我想开发一个工具来帮助我们分析代码，并找出变量和方法之间的关联关系。我们可以发现一些变量是孤立的，一些方法是过度关联的，然后我们可以重构它们。
