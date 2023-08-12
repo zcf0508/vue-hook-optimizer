@@ -34,7 +34,8 @@
     "build": "tsup",
     "play": "npm -C playground run dev",
     "test": "vitest",
-    "release": "bumpp"
+    "release": "bumpp",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "vue",
