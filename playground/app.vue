@@ -27,7 +27,43 @@
           analyze
         </button>
       </div>
-      <div ref="networkRef" class="h-full"></div>
+      <div class="h-full w-full relative">
+        <div ref="networkRef" class="h-full"></div>
+        <div 
+          v-if="visData.nodes!.length > 0" 
+          class="
+            absolute right-[10px] top-[10px] p-2
+            border border-solid border-[#eee]
+            shadow-light-500 
+            flex flex-col gap-2
+          "
+        >
+          <div class="flex items-center align-baseline">
+            <div
+              class="
+                inline-block mr-1
+                bg-[#fffe47] 
+                border border-solid border-[#f6a72b]
+                rounded-full 
+                w-[10px] h-[10px]
+              "
+            ></div>
+            <span>USED IN TEMPLATE</span>
+          </div>
+          <div class="flex items-center align-baseline">
+            <div
+              class="
+                inline-block mr-1
+                bg-[#9dc2f9] 
+                border border-solid border-[#3d7de4]
+                rounded-full 
+                w-[10px] h-[10px]
+              "
+            ></div>
+            <span>NOT USED IN TEMPLATE</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
