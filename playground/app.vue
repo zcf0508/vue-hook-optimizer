@@ -1,6 +1,6 @@
 <template>
   <div
-    ref="container"
+    ref="containerRef"
     class="w-full h-full flex"
     @mousemove="dragMove"
     @mouseup="dragEnd"
@@ -83,9 +83,26 @@ function codeChange(value: string) {
 
 const networkRef = ref<HTMLElement>();
 
-const visOption = {
+const visOption: vis.Options = {
   physics: {
-    enabled: false,
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -100,
+    },
+  },
+  groups: {
+    nomal: {
+      color: {
+        border: '#3d7de4',
+        background: '#9dc2f9',
+      },
+    },
+    used: {
+      color: {
+        border: '#f6a72b',
+        background: '#fffe47',
+      },
+    },
   },
 };
 
@@ -118,41 +135,15 @@ onMounted(() => {
   });
 });
 
-// --resize
 
-const container = ref();
+const containerRef = ref<HTMLElement | null>(null);
 
-const state = reactive({
-  dragging: false,
-  split: 50,
-});
-
-const boundSplit = computed(() => {
-  const { split } = state;
-  return split < 10 ? 10 : split > 50 ? 50 : split;
-});
-
-let startPosition = 0;
-let startSplit = 0;
-
-function dragStart(e: MouseEvent) {
-  state.dragging = true;
-  startPosition = e.pageX;
-  startSplit = boundSplit.value;
-}
-
-function dragMove(e: MouseEvent) {
-  if (state.dragging) {
-    const position = e.pageX;
-    const totalSize = container.value.offsetWidth;
-    const dp = position - startPosition;
-    state.split = startSplit + ~~((dp / totalSize) * 100);
-  }
-}
-
-function dragEnd() {
-  state.dragging = false;
-}
+const {
+  boundSplit,
+  dragStart,
+  dragMove,
+  dragEnd,
+}  = useResize(containerRef);
 
 </script>
 
