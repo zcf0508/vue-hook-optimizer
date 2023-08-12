@@ -91,16 +91,24 @@ const visOption: vis.Options = {
     },
   },
   groups: {
-    nomal: {
+    normal: {
       color: {
         border: '#3d7de4',
         background: '#9dc2f9',
+        highlight: {
+          border: '#3d7de4',
+          background: '#9dc2f9',
+        },
       },
     },
     used: {
       color: {
         border: '#f6a72b',
         background: '#fffe47',
+        highlight: {
+          border: '#f6a72b',
+          background: '#fffe47',
+        },
       },
     },
   },
