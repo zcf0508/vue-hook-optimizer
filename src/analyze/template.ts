@@ -36,17 +36,11 @@ export function analyze(
         }
       }
     },
-    VariableDeclarator(path) {
-      if(path.node.init) {
-        if(path.node.init.type === 'ObjectExpression') {
-          path.node.init.properties.forEach((property) => {
-            if(property.type === 'ObjectProperty') {
-              if(property.key.type === 'Identifier' && property.key.name === 'ref') {
-                // @ts-ignore
-                nodes.add(property.value.value);
-              }
-            }
-          });
+    ObjectProperty(path) {
+      if(path.node.key.type === 'Identifier' && path.node.key.name === 'ref') {
+        if(path.node.value.type === 'StringLiteral') {
+          const name = path.node.value.value; 
+          name && nodes.add(name);
         }
       }
     },

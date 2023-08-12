@@ -86249,16 +86249,11 @@ function analyze(content) {
         }
       }
     },
-    VariableDeclarator(path2) {
-      if (path2.node.init) {
-        if (path2.node.init.type === "ObjectExpression") {
-          path2.node.init.properties.forEach((property) => {
-            if (property.type === "ObjectProperty") {
-              if (property.key.type === "Identifier" && property.key.name === "ref") {
-                nodes.add(property.value.value);
-              }
-            }
-          });
+    ObjectProperty(path2) {
+      if (path2.node.key.type === "Identifier" && path2.node.key.name === "ref") {
+        if (path2.node.value.type === "StringLiteral") {
+          const name = path2.node.value.value;
+          name && nodes.add(name);
         }
       }
     }
