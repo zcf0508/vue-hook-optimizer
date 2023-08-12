@@ -117,14 +117,16 @@ async function start() {
     return;
   }
 
-  const res = await $fetch<vis.Data>('/api/analyze', {
+  const { msg, data } = await $fetch<{msg: string, data: vis.Data}>('/api/analyze', {
     method: 'post',
     body: JSON.stringify({
       code: code.value,
     }),
   });
-  if(res) {
-    visData.value = res;
+  if(data) {
+    visData.value = data;
+  } else {
+    alert(msg);
   }
 }
 
