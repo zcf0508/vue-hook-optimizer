@@ -6,7 +6,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "start": "cross-env PORT=3003 node .output/server/index.mjs"
   },
   "dependencies": {
     "codemirror": "^5.65.14",
