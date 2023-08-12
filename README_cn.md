@@ -1,4 +1,4 @@
-[中文文档](./README_cn.md)
+[![NPM version](https://img.shields.io/npm/v/vue-hook-optimizer?color=a1b858&label=)](https://www.npmjs.com/package/vue-hook-optimizer)
 
 这是一个用来分析 `vue` 代码的工具。
 

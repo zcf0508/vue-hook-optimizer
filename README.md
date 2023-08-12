@@ -1,3 +1,5 @@
+[![NPM version](https://img.shields.io/npm/v/vue-hook-optimizer?color=a1b858&label=)](https://www.npmjs.com/package/vue-hook-optimizer)
+
 [中文文档](./README_cn.md)
 
 This is a tool to analyze your `vue` code.
