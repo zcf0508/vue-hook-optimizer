@@ -7,15 +7,9 @@ export default defineEventHandler(async (ctx) => {
     const graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
     const nodes = analyzeTemplate(sfc.descriptor.template!.content);
 
-    return {
-      code: 0,
-      data: getVisData(graph, nodes),
-    };
+    return getVisData(graph, nodes);
   } catch (e) {
     console.log(e);
-    return {
-      code: -1,
-      data: null,
-    };
+    return null;
   }
 });

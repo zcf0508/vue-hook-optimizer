@@ -21,7 +21,7 @@
     >
       |
     </div>
-    <div class="flex-1">
+    <div class="flex-1 flex flex-col">
       <div>
         <button @click="start">
           analyze
@@ -53,9 +53,9 @@ const visOption = {
   },
 };
 
-const visData = ref({
-  nodes: [] as any[],
-  edges: [] as any[],
+const visData = ref<vis.Data>({
+  nodes: [],
+  edges: [],
 });
 
 
@@ -64,15 +64,14 @@ async function start() {
     return;
   }
 
-  const res = await $fetch('/api/analyze', {
+  const res = await $fetch<vis.Data>('/api/analyze', {
     method: 'post',
     body: JSON.stringify({
       code: code.value,
     }),
   });
-
-  if(res.code === 0) {
-    visData.value = res.data!;
+  if(res) {
+    visData.value = res;
   }
 }
 
