@@ -62,4 +62,17 @@ module.exports = {
     'comma-dangle': ['error', 'always-multiline'],
     quotes: ['error', 'single'],
   },
+  ignorePatterns: [
+    'test/TestComponent.vue',
+    '*.d.ts',
+    'dist',
+    'output',
+    'out',
+    'coverage',
+    'public',
+    'package-lock.json',
+    'pnpm-lock.yaml',
+    'yarn.lock',
+    '__snapshots__',
+  ],
 };
