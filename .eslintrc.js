@@ -2,7 +2,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: process.cwd(),
-    project: ['tsconfig.json', './playground/tsconfig.json'],
+    project: ['tsconfig.json', './playground/tsconfig.json', './vscode/tsconfig.json'],
     extraFileExtensions: ['.vue'],
   },
   plugins: [
@@ -62,4 +62,4 @@ module.exports = {
     'comma-dangle': ['error', 'always-multiline'],
     quotes: ['error', 'single'],
   },
-}
+};

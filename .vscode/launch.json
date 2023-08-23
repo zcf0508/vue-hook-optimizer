@@ -5,6 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/vscode/dist/**/*.js"
+      ],
+      "preLaunchTask": "npm: dev:ext"
+    },
+    {
       "command": "npm run dev",
       "name": "dev",
       "request": "launch",

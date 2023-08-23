@@ -25,6 +25,6 @@
       "vitest/globals"
     ]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist", "playground"]
+  "include": ["src", "test", ".eslintrc.js"],
+  "exclude": ["node_modules", "dist", "playground", "vscode"]
 }

@@ -31,10 +31,12 @@
   ],
   "scripts": {
     "dev": "nodemon",
+    "dev:ext": "npm -C vscode run dev",
     "build": "tsup",
     "play": "npm -C playground run dev",
     "test": "vitest",
-    "release": "bumpp",
+    "typecheck": "tsc --noEmit",
+    "release": "bumpp & npm publish & npm -C vscode run publish",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
