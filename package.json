@@ -36,7 +36,7 @@
     "play": "npm -C playground run dev",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "release": "bumpp & npm publish & npm -C vscode run publish",
+    "release": "bumpp -r",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
