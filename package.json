@@ -34,6 +34,7 @@
     "dev:ext": "npm -C vscode run dev",
     "build": "tsup",
     "play": "npm -C playground run dev",
+    "lint": "eslint .",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "release": "bumpp -r",
