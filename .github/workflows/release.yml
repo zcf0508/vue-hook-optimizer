@@ -44,6 +44,6 @@ jobs:
 
       - name: Publish to VSCE
         run: npm run publish
-        working-directory: ./vscode
+        working-directory: ./packages/vscode
         env:
           VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}

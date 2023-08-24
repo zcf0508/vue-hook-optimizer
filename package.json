@@ -34,7 +34,7 @@
     "dev": "nodemon",
     "dev:ext": "npm -C vscode run dev",
     "build": "tsup",
-    "play": "npm -C playground run dev",
+    "play": "npm -C packages/playground run dev",
     "lint": "eslint .",
     "test": "vitest",
     "typecheck": "tsc --noEmit",

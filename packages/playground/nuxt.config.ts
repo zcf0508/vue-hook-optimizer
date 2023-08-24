@@ -8,6 +8,6 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
   ],
   alias:{
-    'vue-hook-optimizer': path.resolve(__dirname, '../src'),
+    'vue-hook-optimizer': path.resolve(__dirname, '../../src'),
   },
 });
