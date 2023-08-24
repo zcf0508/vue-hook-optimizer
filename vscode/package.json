@@ -25,7 +25,7 @@
     "Other"
   ],
   "main": "./dist/index.js",
-  "icon": "res/icon.png",
+  "icon": "images/analyze.png",
   "files": [
     "dist",
     "script"
