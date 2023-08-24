@@ -63,6 +63,7 @@ module.exports = {
     quotes: ['error', 'single'],
   },
   ignorePatterns: [
+    '**.min.*',
     'test/TestComponent.vue',
     '*.d.ts',
     'dist',
