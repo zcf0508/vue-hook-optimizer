@@ -41,7 +41,10 @@
       {
         "command": "vho.action.analyze",
         "title": "Analyze your `vue` file",
-        "icon": "images/analyze.png"
+        "icon": {
+          "dark": "images/analyze-light.png",
+          "light": "images/analyze.png"
+        }
       }
     ],
     "menus": {
