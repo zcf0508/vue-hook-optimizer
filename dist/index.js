@@ -13887,9 +13887,9 @@ var require_traverse = __commonJS({
     Object.defineProperty(exports, "__esModule", {
       value: true
     });
-    exports.default = traverse3;
+    exports.default = traverse4;
     var _definitions = require_definitions();
-    function traverse3(node2, handlers, state) {
+    function traverse4(node2, handlers, state) {
       if (typeof handlers === "function") {
         handlers = {
           enter: handlers
@@ -14646,7 +14646,7 @@ var require_lib3 = __commonJS({
     Object.defineProperty(exports, "traverse", {
       enumerable: true,
       get: function() {
-        return _traverse3.default;
+        return _traverse4.default;
       }
     });
     Object.defineProperty(exports, "traverseFast", {
@@ -14794,18 +14794,18 @@ var require_lib3 = __commonJS({
     var _removeTypeDuplicates = require_removeTypeDuplicates();
     var _getBindingIdentifiers = require_getBindingIdentifiers();
     var _getOuterBindingIdentifiers = require_getOuterBindingIdentifiers();
-    var _traverse3 = require_traverse();
-    Object.keys(_traverse3).forEach(function(key) {
+    var _traverse4 = require_traverse();
+    Object.keys(_traverse4).forEach(function(key) {
       if (key === "default" || key === "__esModule")
         return;
       if (Object.prototype.hasOwnProperty.call(_exportNames, key))
         return;
-      if (key in exports && exports[key] === _traverse3[key])
+      if (key in exports && exports[key] === _traverse4[key])
         return;
       Object.defineProperty(exports, key, {
         enumerable: true,
         get: function() {
-          return _traverse3[key];
+          return _traverse4[key];
         }
       });
     });
@@ -42952,7 +42952,7 @@ var require_parse = __commonJS({
       isStatement,
       isStringLiteral,
       removePropertiesDeep,
-      traverse: traverse3
+      traverse: traverse4
     } = _t;
     var PATTERN = /^[_$A-Z0-9]+$/;
     function parseAndBuildMetadata(formatter2, code, opts) {
@@ -42980,7 +42980,7 @@ var require_parse = __commonJS({
         placeholderPattern,
         syntacticPlaceholders
       };
-      traverse3(ast, placeholderVisitorHandler, state);
+      traverse4(ast, placeholderVisitorHandler, state);
       return Object.assign({
         ast
       }, state.syntactic.placeholders.length ? state.syntactic : state.legacy);
@@ -45871,7 +45871,7 @@ var require_path = __commonJS({
     exports.SHOULD_STOP = SHOULD_STOP;
     var SHOULD_SKIP = 1 << 2;
     exports.SHOULD_SKIP = SHOULD_SKIP;
-    var NodePath = class _NodePath {
+    var NodePath2 = class _NodePath {
       constructor(hub, parent) {
         this.contexts = [];
         this.state = null;
@@ -46011,30 +46011,30 @@ var require_path = __commonJS({
         }
       }
     };
-    Object.assign(NodePath.prototype, NodePath_ancestry, NodePath_inference, NodePath_replacement, NodePath_evaluation, NodePath_conversion, NodePath_introspection, NodePath_context, NodePath_removal, NodePath_modification, NodePath_family, NodePath_comments);
+    Object.assign(NodePath2.prototype, NodePath_ancestry, NodePath_inference, NodePath_replacement, NodePath_evaluation, NodePath_conversion, NodePath_introspection, NodePath_context, NodePath_removal, NodePath_modification, NodePath_family, NodePath_comments);
     {
-      NodePath.prototype._guessExecutionStatusRelativeToDifferentFunctions = NodePath_introspection._guessExecutionStatusRelativeTo;
+      NodePath2.prototype._guessExecutionStatusRelativeToDifferentFunctions = NodePath_introspection._guessExecutionStatusRelativeTo;
     }
     for (const type of t.TYPES) {
       const typeKey = `is${type}`;
       const fn = t[typeKey];
-      NodePath.prototype[typeKey] = function(opts) {
+      NodePath2.prototype[typeKey] = function(opts) {
         return fn(this.node, opts);
       };
-      NodePath.prototype[`assert${type}`] = function(opts) {
+      NodePath2.prototype[`assert${type}`] = function(opts) {
         if (!fn(this.node, opts)) {
           throw new TypeError(`Expected node path of type ${type}`);
         }
       };
     }
-    Object.assign(NodePath.prototype, NodePath_virtual_types_validator);
+    Object.assign(NodePath2.prototype, NodePath_virtual_types_validator);
     for (const type of Object.keys(virtualTypes)) {
       if (type[0] === "_")
         continue;
       if (!t.TYPES.includes(type))
         t.TYPES.push(type);
     }
-    var _default = NodePath;
+    var _default = NodePath2;
     exports.default = _default;
   }
 });
@@ -46259,7 +46259,7 @@ var require_lib13 = __commonJS({
       removeProperties,
       traverseFast
     } = _t;
-    function traverse3(parent, opts = {}, scope, state, parentPath) {
+    function traverse4(parent, opts = {}, scope, state, parentPath) {
       if (!parent)
         return;
       if (!opts.noScope && !scope) {
@@ -46273,24 +46273,24 @@ var require_lib13 = __commonJS({
       visitors.explode(opts);
       (0, _traverseNode.traverseNode)(parent, opts, scope, state, parentPath);
     }
-    var _default = traverse3;
+    var _default = traverse4;
     exports.default = _default;
-    traverse3.visitors = visitors;
-    traverse3.verify = visitors.verify;
-    traverse3.explode = visitors.explode;
-    traverse3.cheap = function(node2, enter) {
+    traverse4.visitors = visitors;
+    traverse4.verify = visitors.verify;
+    traverse4.explode = visitors.explode;
+    traverse4.cheap = function(node2, enter) {
       traverseFast(node2, enter);
       return;
     };
-    traverse3.node = function(node2, opts, scope, state, path2, skipKeys) {
+    traverse4.node = function(node2, opts, scope, state, path2, skipKeys) {
       (0, _traverseNode.traverseNode)(node2, opts, scope, state, path2, skipKeys);
     };
-    traverse3.clearNode = function(node2, opts) {
+    traverse4.clearNode = function(node2, opts) {
       removeProperties(node2, opts);
       cache.path.delete(node2);
     };
-    traverse3.removeProperties = function(tree, opts) {
-      traverseFast(tree, traverse3.clearNode, opts);
+    traverse4.removeProperties = function(tree, opts) {
+      traverseFast(tree, traverse4.clearNode, opts);
       return tree;
     };
     function hasDenylistedType(path2, state) {
@@ -46299,7 +46299,7 @@ var require_lib13 = __commonJS({
         path2.stop();
       }
     }
-    traverse3.hasType = function(tree, type, denylistTypes) {
+    traverse4.hasType = function(tree, type, denylistTypes) {
       if (denylistTypes != null && denylistTypes.includes(tree.type))
         return false;
       if (tree.type === type)
@@ -46308,20 +46308,21 @@ var require_lib13 = __commonJS({
         has: false,
         type
       };
-      traverse3(tree, {
+      traverse4(tree, {
         noScope: true,
         denylist: denylistTypes,
         enter: hasDenylistedType
       }, null, state);
       return state.has;
     };
-    traverse3.cache = cache;
+    traverse4.cache = cache;
   }
 });
 
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
+  analyzeOptions: () => analyze3,
   analyzeSetupScript: () => analyze2,
   analyzeTemplate: () => analyze,
   getVisData: () => getVisData,
@@ -86288,18 +86289,19 @@ function analyze2(content) {
     edges: /* @__PURE__ */ new Map()
   };
   traverse2(ast, {
-    Identifier(path2) {
-      const name = path2.node.name;
-      const scopeParent = path2.scope.parent;
-      const binding2 = path2.scope.getBinding(name);
-      if (binding2) {
-        if (!scopeParent && ["const", "let", "var"].includes(binding2.kind)) {
-          graph.nodes.add(name);
-          if (!graph.edges.get(name)) {
-            graph.edges.set(name, /* @__PURE__ */ new Set());
+    VariableDeclaration(path2) {
+      path2.node.declarations.forEach((declaration2) => {
+        if (declaration2.id?.type === "Identifier") {
+          const name = declaration2.id.name;
+          const binding2 = path2.scope.getBinding(name);
+          if (binding2 && path2.parent.type === "Program" && !(declaration2.init?.type === "CallExpression" && declaration2.init?.callee.type === "Identifier" && ["defineProps", "defineEmits"].includes(declaration2.init?.callee.name))) {
+            graph.nodes.add(name);
+            if (!graph.edges.get(name)) {
+              graph.edges.set(name, /* @__PURE__ */ new Set());
+            }
           }
         }
-      }
+      });
     },
     FunctionDeclaration(path2) {
       const name = path2.node.id?.name;
@@ -86327,10 +86329,13 @@ function analyze2(content) {
         });
       }
     },
-    // get the relation between the variable and the function
     VariableDeclarator(path2) {
       if (path2.node.init) {
-        if (["CallExpression", "ArrowFunctionExpression", "FunctionDeclaration"].includes(path2.node.init.type)) {
+        if ([
+          "CallExpression",
+          "ArrowFunctionExpression",
+          "FunctionDeclaration"
+        ].includes(path2.node.init.type) && path2.node.id.type === "Identifier") {
           const name = path2.node.id?.name;
           if (name && graph.nodes.has(name)) {
             path2.traverse({
@@ -86342,6 +86347,249 @@ function analyze2(content) {
             });
           }
         }
+      }
+    }
+  });
+  return graph;
+}
+
+// src/analyze/options.ts
+var import_traverse3 = __toESM(require_lib13());
+var traverse3 = (
+  //@ts-ignore
+  import_traverse3.default.default?.default || import_traverse3.default.default || import_traverse3.default
+);
+function analyze3(content) {
+  const ast = parse_1$1(content, {
+    sourceType: "module",
+    plugins: [
+      "typescript"
+    ]
+  });
+  const graph = {
+    nodes: /* @__PURE__ */ new Set(),
+    edges: /* @__PURE__ */ new Map()
+  };
+  function process2(node2, path2) {
+    traverse3(node2, {
+      ObjectProperty(path1) {
+        if (path2.node.declaration.type === "ObjectExpression" && path1.parent === path2.node.declaration || path2.node.declaration.type === "CallExpression" && path1.parent === path2.node.declaration.arguments[0]) {
+          if (path1.node.key.type === "Identifier" && path1.node.key.name === "computed") {
+            const computedNode = path1.node;
+            if (computedNode.value.type === "ObjectExpression") {
+              computedNode.value.properties.forEach((prop) => {
+                if (prop.type === "ObjectProperty" || prop.type === "ObjectMethod") {
+                  if (prop.key.type === "Identifier") {
+                    const name = prop.key.name;
+                    graph.nodes.add(name);
+                    if (!graph.edges.get(name)) {
+                      graph.edges.set(name, /* @__PURE__ */ new Set());
+                    }
+                  }
+                }
+              });
+            }
+          }
+          if (path1.node.key.type === "Identifier" && path1.node.key.name === "methods") {
+            const methodsNode = path1.node;
+            if (methodsNode.value.type === "ObjectExpression") {
+              methodsNode.value.properties.forEach((prop) => {
+                if (prop.type === "ObjectMethod") {
+                  if (prop.key.type === "Identifier") {
+                    const name = prop.key.name;
+                    graph.nodes.add(name);
+                    if (!graph.edges.get(name)) {
+                      graph.edges.set(name, /* @__PURE__ */ new Set());
+                    }
+                  }
+                }
+              });
+            }
+          }
+        }
+      },
+      ObjectMethod(path1) {
+        if (path2.node.declaration.type === "ObjectExpression" && path1.parent === path2.node.declaration || path2.node.declaration.type === "CallExpression" && path1.parent === path2.node.declaration.arguments[0]) {
+          if (path1.node.key.type === "Identifier" && path1.node.key.name === "setup") {
+            const setupNode = path1.node;
+            const tempNodes = /* @__PURE__ */ new Set();
+            const tempEdges = /* @__PURE__ */ new Map();
+            traverse3(setupNode, {
+              VariableDeclaration(path22) {
+                path22.node.declarations.forEach((declaration2) => {
+                  if (declaration2.id?.type === "Identifier") {
+                    const name = declaration2.id.name;
+                    if (path22.parent == setupNode.body) {
+                      tempNodes.add(name);
+                      if (!tempEdges.get(name)) {
+                        tempEdges.set(name, /* @__PURE__ */ new Set());
+                      }
+                    }
+                  }
+                });
+              },
+              FunctionDeclaration(path22) {
+                const name = path22.node.id?.name;
+                if (name) {
+                  if (path22.parent == setupNode.body) {
+                    tempNodes.add(name);
+                    if (!tempEdges.get(name)) {
+                      tempEdges.set(name, /* @__PURE__ */ new Set());
+                    }
+                  }
+                }
+              }
+            }, path1.scope, path1);
+            traverse3(setupNode, {
+              FunctionDeclaration(path3) {
+                const name = path3.node.id?.name;
+                if (name && tempNodes.has(name)) {
+                  path3.traverse({
+                    Identifier(path4) {
+                      if (tempNodes.has(path4.node.name) && path4.node.name !== name) {
+                        tempEdges.get(name)?.add(path4.node.name);
+                      }
+                    }
+                  });
+                }
+              },
+              VariableDeclarator(path3) {
+                if (path3.node.init) {
+                  if ([
+                    "CallExpression",
+                    "ArrowFunctionExpression",
+                    "FunctionDeclaration"
+                  ].includes(path3.node.init.type) && path3.node.id.type === "Identifier") {
+                    const name = path3.node.id?.name;
+                    if (name && tempNodes.has(name)) {
+                      path3.traverse({
+                        Identifier(path4) {
+                          if (tempNodes.has(path4.node.name) && path4.node.name !== name) {
+                            tempEdges.get(name)?.add(path4.node.name);
+                          }
+                        }
+                      });
+                    }
+                  }
+                }
+              }
+            }, path1.scope, path1);
+            traverse3(setupNode, {
+              ReturnStatement(path22) {
+                if (path22.node.argument?.type === "ObjectExpression") {
+                  const returnNode = path22.node.argument;
+                  traverse3(returnNode, {
+                    ObjectProperty(path3) {
+                      if (path3.parent === returnNode) {
+                        if (path3.node.key.type === "Identifier") {
+                          const name = path3.node.key.name;
+                          const valName = path3.node.value.type === "Identifier" ? path3.node.value.name : "";
+                          if (valName && tempNodes.has(valName)) {
+                            graph.nodes.add(name);
+                            if (!graph.edges.get(name)) {
+                              graph.edges.set(name, /* @__PURE__ */ new Set());
+                              tempEdges.get(valName)?.forEach((edge) => {
+                                graph.edges.get(name)?.add(edge);
+                              });
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }, path22.scope, path22);
+                } else {
+                  console.warn("setup return type is not ObjectExpression");
+                }
+              }
+            }, path1.scope, path1);
+          }
+          if (path1.node.key.type === "Identifier" && path1.node.key.name === "data") {
+            const dataNode = path1.node;
+            traverse3(dataNode, {
+              ReturnStatement(path22) {
+                if (path22.parent == dataNode.body) {
+                  if (path22.node.argument?.type === "ObjectExpression") {
+                    path22.node.argument.properties.forEach((prop) => {
+                      if (prop.type === "ObjectProperty") {
+                        if (prop.key.type === "Identifier") {
+                          const name = prop.key.name;
+                          graph.nodes.add(name);
+                          if (!graph.edges.get(name)) {
+                            graph.edges.set(name, /* @__PURE__ */ new Set());
+                          }
+                        }
+                      }
+                    });
+                  }
+                }
+              }
+            }, path1.scope, path1);
+          }
+        }
+      }
+    }, path2.scope, path2);
+    traverse3(node2, {
+      ObjectProperty(path1) {
+        if (path2.node.declaration.type === "ObjectExpression" && path1.parent === path2.node.declaration || path2.node.declaration.type === "CallExpression" && path1.parent === path2.node.declaration.arguments[0]) {
+          if (path1.node.key.type === "Identifier" && path1.node.key.name === "computed") {
+            const computedNode = path1.node;
+            if (computedNode.value.type === "ObjectExpression") {
+              computedNode.value.properties.forEach((prop) => {
+                if (prop.type === "ObjectMethod" && prop.key.type === "Identifier") {
+                  const name = prop.key.name;
+                  traverse3(prop, {
+                    MemberExpression(path22) {
+                      if (path22.node.object.type === "ThisExpression" && path22.node.property.type === "Identifier") {
+                        graph.edges.get(name)?.add(path22.node.property.name);
+                      }
+                    }
+                  }, path1.scope, path1);
+                }
+                if (prop.type === "ObjectProperty" && prop.key.type === "Identifier" && prop.value.type === "ObjectExpression") {
+                  const name = prop.key.name;
+                  prop.value.properties.forEach((prop1) => {
+                    if (prop1.type === "ObjectProperty" && prop1.key.type === "Identifier" && prop1.key.name === "get") {
+                      traverse3(prop1, {
+                        MemberExpression(path22) {
+                          if (path22.node.object.type === "ThisExpression" && path22.node.property.type === "Identifier") {
+                            graph.edges.get(name)?.add(path22.node.property.name);
+                          }
+                        }
+                      }, path1.scope, path1);
+                    }
+                  });
+                }
+              });
+            }
+          }
+          if (path1.node.key.type === "Identifier" && path1.node.key.name === "methods") {
+            const methodsNode = path1.node;
+            if (methodsNode.value.type === "ObjectExpression") {
+              methodsNode.value.properties.forEach((prop) => {
+                if (prop.type === "ObjectMethod" && prop.key.type === "Identifier") {
+                  const name = prop.key.name;
+                  traverse3(prop, {
+                    MemberExpression(path22) {
+                      if (path22.node.object.type === "ThisExpression" && path22.node.property.type === "Identifier") {
+                        graph.edges.get(name)?.add(path22.node.property.name);
+                      }
+                    }
+                  }, path1.scope, path1);
+                }
+              });
+            }
+          }
+        }
+      }
+    }, path2.scope, path2);
+  }
+  traverse3(ast, {
+    ExportDefaultDeclaration(path2) {
+      if (path2.node.declaration.type === "ObjectExpression") {
+        process2(path2.node.declaration, path2);
+      } else if (path2.node.declaration.type === "CallExpression" && path2.node.declaration.callee.type === "Identifier" && path2.node.declaration.callee.name === "defineComponent" && path2.node.declaration.arguments[0].type === "ObjectExpression") {
+        process2(path2.node.declaration.arguments[0], path2);
+        console.log(graph);
       }
     }
   });
@@ -86380,6 +86628,7 @@ function getVisData(graph, usedNodes) {
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  analyzeOptions,
   analyzeSetupScript,
   analyzeTemplate,
   getVisData,

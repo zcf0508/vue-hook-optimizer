@@ -75,8 +75,14 @@ export function analyze(
 
     VariableDeclarator(path) {
       if(path.node.init) {
-        if(['CallExpression', 'ArrowFunctionExpression', 'FunctionDeclaration'].includes(path.node.init.type)) {
-          //  @ts-ignore
+        if([
+          'CallExpression', 
+          'ArrowFunctionExpression', 
+          'FunctionDeclaration',
+        ].includes(path.node.init.type) 
+          && path.node.id.type === 'Identifier'
+        ) {
+
           const name = path.node.id?.name;
           if(name && graph.nodes.has(name)) {
             path.traverse({

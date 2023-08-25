@@ -1,13 +1,18 @@
-import { parse, analyzeSetupScript, analyzeTemplate, getVisData } from 'vue-hook-optimizer';
+import { parse, analyzeSetupScript, analyzeOptions, analyzeTemplate, getVisData } from 'vue-hook-optimizer';
 
 export async function analyze(code: string) {
   const sfc = parse(code);
 
-  if(!sfc.descriptor.scriptSetup?.content) {
-    return {code: -1, data: null, msg: 'No <script setup> found'};
+  let graph = {
+    nodes: new Set<string>(),
+    edges: new Map<string, Set<string>>(),
+  };
+  if(sfc.descriptor.scriptSetup?.content) {
+    graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
   }
-
-  const graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
+  else if(sfc.descriptor.script?.content) {
+    graph = analyzeOptions(sfc.descriptor.script?.content!);
+  }
 
   let nodes = new Set<string>();
   try {

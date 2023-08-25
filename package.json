@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "dev": "nodemon",
-    "dev:ext": "npm -C vscode run dev",
+    "dev:ext": "npm -C packages/vscode run dev",
     "build": "tsup",
     "play": "npm -C packages/playground run dev",
     "lint": "eslint .",

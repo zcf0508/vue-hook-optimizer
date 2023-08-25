@@ -1,17 +1,21 @@
-import { parse, analyzeSetupScript, analyzeTemplate, getVisData } from 'vue-hook-optimizer';
+import { parse, analyzeSetupScript, analyzeOptions, analyzeTemplate, getVisData } from 'vue-hook-optimizer';
 
 export default defineEventHandler(async (ctx) => {
   const { code } = await readBody(ctx);
   try {
     const sfc = parse(code);
 
-    if(!sfc.descriptor.scriptSetup?.content) {
-      return {
-        msg: 'No <script setup> found',
-        data: null,
-      };
+    let graph = {
+      nodes: new Set<string>(),
+      edges: new Map<string, Set<string>>(),
+    };
+    if(sfc.descriptor.scriptSetup?.content) {
+      graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
     }
-    const graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
+    else if(sfc.descriptor.script?.content) {
+      graph = analyzeOptions(sfc.descriptor.script?.content!);
+    }
+    
 
     let nodes = new Set<string>();
     try {

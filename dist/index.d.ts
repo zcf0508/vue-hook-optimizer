@@ -1,7 +1,12 @@
 export { parse } from '@vue/compiler-sfc';
 import * as vis_network from 'vis-network';
 
-declare function analyze$1(content: string): Set<string>;
+declare function analyze$2(content: string): Set<string>;
+
+declare function analyze$1(content: string): {
+    nodes: Set<string>;
+    edges: Map<string, Set<string>>;
+};
 
 declare function analyze(content: string): {
     nodes: Set<string>;
@@ -16,4 +21,4 @@ declare function getVisData(graph: {
     edges: vis_network.Edge[];
 };
 
-export { analyze as analyzeSetupScript, analyze$1 as analyzeTemplate, getVisData };
+export { analyze as analyzeOptions, analyze$1 as analyzeSetupScript, analyze$2 as analyzeTemplate, getVisData };
