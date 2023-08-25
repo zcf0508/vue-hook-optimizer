@@ -39,8 +39,8 @@ So I want to build a tool to help us analyze the code, and find the relations be
 
 - [ ] add node type and more info
 - [ ] provide some suggestions for optimization
-- [ ] maybe support `options api`
-- [x] vscode extension
+- [x] support `options api`
+- [x] [vscode extension](./packages/vscode)
 
 ## Contribution
 

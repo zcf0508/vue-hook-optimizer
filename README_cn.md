@@ -37,8 +37,8 @@ pnpm run play
 
 - [ ] 增加节点类型，展示更多细信息
 - [ ] 提供优化建议
-- [ ] 或许可以支持 `options api`
-- [x] vscode 扩展
+- [x] 支持 `options api`
+- [x] [vscode 扩展](./packages/vscode)
 
 ## 贡献
 
