@@ -1,1 +1,1 @@
-export const nodes = new Set(['msg', 'plus', 'count', 'number', 'add']);
+export const nodes = new Set(['lmsg', 'path', 'data', 'age', 'updateName', 'addAge']);

@@ -22,19 +22,26 @@ export function analyze(
   };
 
   traverse(ast, {
-    Identifier(path) {
-      const name = path.node.name;
-      const scopeParent = path.scope.parent;
-      const binding = path.scope.getBinding(name);
-
-      if (binding) {
-        if (!scopeParent && ['const', 'let', 'var'].includes(binding.kind)) {
-          graph.nodes.add(name);
-          if(!graph.edges.get(name)) {
-            graph.edges.set(name, new Set());
+    VariableDeclaration(path){
+      path.node.declarations.forEach((declaration) => {
+        if(declaration.id?.type === 'Identifier') {
+          const name = declaration.id.name;
+          const binding = path.scope.getBinding(name);
+          if(
+            binding 
+            && path.parent.type === 'Program'
+            && !(declaration.init?.type === 'CallExpression'
+              && declaration.init?.callee.type === 'Identifier'
+              && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+            )
+          ) {
+            graph.nodes.add(name);
+            if(!graph.edges.get(name)) {
+              graph.edges.set(name, new Set());
+            }
           }
         }
-      }
+      });
     },
     FunctionDeclaration(path) {
       const name = path.node.id?.name;
@@ -50,6 +57,8 @@ export function analyze(
     },
   });
 
+  // get the relation between the variable and the function
+
   traverse(ast, {
     FunctionDeclaration(path) {
       const name = path.node.id?.name;
@@ -64,7 +73,6 @@ export function analyze(
       }
     },
 
-    // get the relation between the variable and the function
     VariableDeclarator(path) {
       if(path.node.init) {
         if(['CallExpression', 'ArrowFunctionExpression', 'FunctionDeclaration'].includes(path.node.init.type)) {
@@ -82,7 +90,6 @@ export function analyze(
         }
       }
     },
-
   });
 
   return graph;
