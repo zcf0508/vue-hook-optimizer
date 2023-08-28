@@ -9,8 +9,11 @@ edges.set('addAge', new Set(['age']));
 edges.set('updateName', new Set(['data']));
 edges.set('funA', new Set([]));
 edges.set('varB', new Set(['funA']));
+edges.set('funC', new Set([]));
+edges.set('varD', new Set(['funC', 'varB']));
+edges.set('varE', new Set(['funC', 'varB']));
 
 export const graph = {
-  nodes: new Set(['route', 'path', 'lmsg', 'data', 'age', 'addAge', 'updateName', 'funA', 'varB']),
+  nodes: new Set(['route', 'path', 'lmsg', 'data', 'age', 'addAge', 'updateName', 'funA', 'varB', 'funC', 'varD', 'varE']),
   edges,
 };
