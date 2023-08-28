@@ -21,11 +21,11 @@ Open the browser and visit `http://localhost:3000/`.
 
 1. paste your `vue` code into the editor
 
-Up to now, it only supports the code with `<script setup>` syntax block.If your code use `options api`, it's not working at the moment.
+~~Up to now, it only supports the code with `<script setup>` syntax block.If your code use `options api`, it's not working at the moment.~~
 
 2. click `Analyze` button
 
-The tool will analyze the `setup block` and `template block`, and show the relations between the variables and the methods. This is a simple demo.
+The tool will analyze the code, and show the relations between the variables and the methods. This is a simple demo.
 
 ![demo](./images/demo1.png)
 

@@ -19,11 +19,11 @@ pnpm run play
 
 1. 把你的 `vue` 代码粘贴到编辑器中
 
-目前只支持使用 `<script setup>` 编写的代码。如果你还在使用 `options api` ，那这个工具暂时还无法正常工作。
+~~目前只支持使用 `<script setup>` 编写的代码。如果你还在使用 `options api` ，那这个工具暂时还无法正常工作。~~
 
 2. 点击 `Analyze` 按钮
 
-这个工具会分析 `setup block` 和 `template block`，并展示变量和方法之间的关联关系。这是一个简单的示例。
+这个工具会分析代码，并展示变量和方法之间的关联关系。这是一个简单的示例。
 
 ![demo](./images/demo1.png)
 
