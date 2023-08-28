@@ -64,9 +64,14 @@ export function analyze(
       const name = path.node.id?.name;
       if(name && graph.nodes.has(name)) {
         path.traverse({
-          Identifier(path) {
-            if(graph.nodes.has(path.node.name) && path.node.name !== name) {
-              graph.edges.get(name)?.add(path.node.name);
+          Identifier(path1) {
+            const binding = path1.scope.getBinding(path1.node.name);
+            if(
+              graph.nodes.has(path1.node.name) 
+              && path1.node.name !== name 
+              && binding?.scope.block.type === 'Program'
+            ) {
+              graph.edges.get(name)?.add(path1.node.name);
             }
           },
         });
@@ -86,9 +91,14 @@ export function analyze(
           const name = path.node.id?.name;
           if(name && graph.nodes.has(name)) {
             path.traverse({
-              Identifier(path) {
-                if(graph.nodes.has(path.node.name) && path.node.name !== name) {
-                  graph.edges.get(name)?.add(path.node.name);
+              Identifier(path1) {
+                const binding = path1.scope.getBinding(path1.node.name);
+                if(
+                  graph.nodes.has(path1.node.name) 
+                  && path1.node.name !== name 
+                  && binding?.scope.block.type === 'Program'
+                ) {
+                  graph.edges.get(name)?.add(path1.node.name);
                 }
               },
             });

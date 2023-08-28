@@ -298,7 +298,6 @@ export function analyze(
         && path.node.declaration.arguments[0].type === 'ObjectExpression'
       ) {
         process(path.node.declaration.arguments[0], path);
-        console.log(graph);
       }
     },
   });

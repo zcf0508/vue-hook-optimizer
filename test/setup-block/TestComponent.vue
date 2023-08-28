@@ -31,6 +31,13 @@ const updateName = (e: Event) => {
   data.name = e.target.value
 }
 
+function funA() {
+  const varB = ''
+  return varB
+}
+
+const varB = funA()
+
 </script>
 
 <template>
