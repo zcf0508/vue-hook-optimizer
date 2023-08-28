@@ -43,7 +43,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 
       - name: Publish to VSCE
-        run: npm run publish -p ${{secrets.VSCE_TOKEN}}
+        run: pnpm vsce publish --no-dependencies -p ${{secrets.VSCE_TOKEN}}
         working-directory: ./packages/vscode
         env:
           VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
