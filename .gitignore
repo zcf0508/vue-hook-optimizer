@@ -22,7 +22,7 @@ logs
 .env.*
 !.env.example
 
-
+dist
 node_modules
 **/node_modules/*
 .nuxt
