@@ -48,8 +48,8 @@ var require_virtual_types = __commonJS({
     exports.Statement = Statement;
     var Expression = ["Expression"];
     exports.Expression = Expression;
-    var Scope2 = ["Scopable", "Pattern"];
-    exports.Scope = Scope2;
+    var Scope3 = ["Scopable", "Pattern"];
+    exports.Scope = Scope3;
     var Referenced = null;
     exports.Referenced = Referenced;
     var BlockScoped = null;
@@ -18062,7 +18062,7 @@ var require_scope = __commonJS({
       }
     };
     var uid = 0;
-    var Scope2 = class _Scope {
+    var Scope3 = class _Scope {
       constructor(path2) {
         this.uid = void 0;
         this.path = void 0;
@@ -18697,9 +18697,9 @@ var require_scope = __commonJS({
         } while (scope = scope.parent);
       }
     };
-    exports.default = Scope2;
-    Scope2.globals = Object.keys(_globals.builtin);
-    Scope2.contextVariables = ["arguments", "undefined", "Infinity", "NaN"];
+    exports.default = Scope3;
+    Scope3.globals = Object.keys(_globals.builtin);
+    Scope3.contextVariables = ["arguments", "undefined", "Infinity", "NaN"];
   }
 });
 
@@ -29011,7 +29011,7 @@ var require_lib9 = __commonJS({
     var CLASS_ELEMENT_INSTANCE_GETTER2 = CLASS_ELEMENT_KIND_GETTER2;
     var CLASS_ELEMENT_INSTANCE_SETTER2 = CLASS_ELEMENT_KIND_SETTER2;
     var CLASS_ELEMENT_OTHER2 = 0;
-    var Scope2 = class {
+    var Scope3 = class {
       constructor(flags) {
         this.var = /* @__PURE__ */ new Set();
         this.lexical = /* @__PURE__ */ new Set();
@@ -29067,7 +29067,7 @@ var require_lib9 = __commonJS({
         return this.treatFunctionsAsVarInScope(this.currentScope());
       }
       createScope(flags) {
-        return new Scope2(flags);
+        return new Scope3(flags);
       }
       enter(flags) {
         this.scopeStack.push(this.createScope(flags));
@@ -29162,7 +29162,7 @@ var require_lib9 = __commonJS({
         }
       }
     };
-    var FlowScope2 = class extends Scope2 {
+    var FlowScope2 = class extends Scope3 {
       constructor(...args) {
         super(...args);
         this.declareFunctions = /* @__PURE__ */ new Set();
@@ -34668,7 +34668,7 @@ var require_lib9 = __commonJS({
         }
       }
     };
-    var TypeScriptScope2 = class extends Scope2 {
+    var TypeScriptScope2 = class extends Scope3 {
       constructor(...args) {
         super(...args);
         this.types = /* @__PURE__ */ new Set();
@@ -86277,13 +86277,7 @@ var traverse2 = (
   //@ts-ignore
   import_traverse2.default.default?.default || import_traverse2.default.default || import_traverse2.default
 );
-function analyze2(content) {
-  const ast = parse_1$1(content, {
-    sourceType: "module",
-    plugins: [
-      "typescript"
-    ]
-  });
+function processSetup(ast, parentScope, parentPath) {
   const graph = {
     nodes: /* @__PURE__ */ new Set(),
     edges: /* @__PURE__ */ new Map()
@@ -86291,10 +86285,38 @@ function analyze2(content) {
   traverse2(ast, {
     VariableDeclaration(path2) {
       path2.node.declarations.forEach((declaration2) => {
+        if (declaration2.id.type === "ArrayPattern") {
+          declaration2.id.elements.forEach((element) => {
+            if (element?.type === "Identifier") {
+              const name = element.name;
+              const binding2 = path2.scope.getBinding(name);
+              if (binding2 && (path2.parent.type === "Program" || parentPath?.type === "ObjectMethod" && parentPath.body === path2.parent) && !(declaration2.init?.type === "CallExpression" && declaration2.init?.callee.type === "Identifier" && ["defineProps", "defineEmits"].includes(declaration2.init?.callee.name))) {
+                graph.nodes.add(name);
+                if (!graph.edges.get(name)) {
+                  graph.edges.set(name, /* @__PURE__ */ new Set());
+                }
+              }
+            }
+          });
+        }
+        if (declaration2.id.type === "ObjectPattern") {
+          declaration2.id.properties.forEach((property) => {
+            if (property.type === "ObjectProperty" && property.value.type === "Identifier") {
+              const name = property.value.name;
+              const binding2 = path2.scope.getBinding(name);
+              if (binding2 && (path2.parent.type === "Program" || parentPath?.type === "ObjectMethod" && parentPath.body === path2.parent) && !(declaration2.init?.type === "CallExpression" && declaration2.init?.callee.type === "Identifier" && ["defineProps", "defineEmits"].includes(declaration2.init?.callee.name))) {
+                graph.nodes.add(name);
+                if (!graph.edges.get(name)) {
+                  graph.edges.set(name, /* @__PURE__ */ new Set());
+                }
+              }
+            }
+          });
+        }
         if (declaration2.id?.type === "Identifier") {
           const name = declaration2.id.name;
           const binding2 = path2.scope.getBinding(name);
-          if (binding2 && path2.parent.type === "Program" && !(declaration2.init?.type === "CallExpression" && declaration2.init?.callee.type === "Identifier" && ["defineProps", "defineEmits"].includes(declaration2.init?.callee.name))) {
+          if (binding2 && (path2.parent.type === "Program" || parentPath?.type === "ObjectMethod" && parentPath.body === path2.parent) && !(declaration2.init?.type === "CallExpression" && declaration2.init?.callee.type === "Identifier" && ["defineProps", "defineEmits"].includes(declaration2.init?.callee.name))) {
             graph.nodes.add(name);
             if (!graph.edges.get(name)) {
               graph.edges.set(name, /* @__PURE__ */ new Set());
@@ -86307,7 +86329,7 @@ function analyze2(content) {
       const name = path2.node.id?.name;
       if (name) {
         const binding2 = path2.scope.getBinding(name);
-        if (binding2 && path2.parent.type === "Program") {
+        if (binding2 && (path2.parent.type === "Program" || parentPath?.type === "ObjectMethod" && parentPath.body === path2.parent)) {
           graph.nodes.add(name);
           if (!graph.edges.get(name)) {
             graph.edges.set(name, /* @__PURE__ */ new Set());
@@ -86315,15 +86337,16 @@ function analyze2(content) {
         }
       }
     }
-  });
+  }, parentScope, parentPath);
   traverse2(ast, {
     FunctionDeclaration(path2) {
       const name = path2.node.id?.name;
       if (name && graph.nodes.has(name)) {
         path2.traverse({
-          Identifier(path3) {
-            if (graph.nodes.has(path3.node.name) && path3.node.name !== name) {
-              graph.edges.get(name)?.add(path3.node.name);
+          Identifier(path1) {
+            const binding2 = path1.scope.getBinding(path1.node.name);
+            if (graph.nodes.has(path1.node.name) && path1.node.name !== name && (binding2?.scope.block.type === "Program" || parentScope === binding2?.scope)) {
+              graph.edges.get(name)?.add(path1.node.name);
             }
           }
         });
@@ -86331,6 +86354,40 @@ function analyze2(content) {
     },
     VariableDeclarator(path2) {
       if (path2.node.init) {
+        if (path2.node.id.type === "ArrayPattern") {
+          path2.node.id.elements.forEach((element) => {
+            if (element?.type === "Identifier") {
+              const name = element.name;
+              if (name && graph.nodes.has(name) && path2.node.init?.type === "CallExpression") {
+                traverse2(path2.node.init, {
+                  Identifier(path1) {
+                    const binding2 = path1.scope.getBinding(path1.node.name);
+                    if (graph.nodes.has(path1.node.name) && path1.node.name !== name && (binding2?.scope.block.type === "Program" || parentScope === binding2?.scope)) {
+                      graph.edges.get(name)?.add(path1.node.name);
+                    }
+                  }
+                }, path2.scope, path2);
+              }
+            }
+          });
+        }
+        if (path2.node.id.type === "ObjectPattern") {
+          path2.node.id.properties.forEach((property) => {
+            if (property.type === "ObjectProperty" && property.value.type === "Identifier") {
+              const name = property.value.name;
+              if (name && graph.nodes.has(name) && path2.node.init) {
+                traverse2(path2.node.init, {
+                  Identifier(path1) {
+                    const binding2 = path1.scope.getBinding(path1.node.name);
+                    if (graph.nodes.has(path1.node.name) && path1.node.name !== name && (binding2?.scope.block.type === "Program" || parentScope === binding2?.scope)) {
+                      graph.edges.get(name)?.add(path1.node.name);
+                    }
+                  }
+                }, path2.scope, path2);
+              }
+            }
+          });
+        }
         if ([
           "CallExpression",
           "ArrowFunctionExpression",
@@ -86338,19 +86395,29 @@ function analyze2(content) {
         ].includes(path2.node.init.type) && path2.node.id.type === "Identifier") {
           const name = path2.node.id?.name;
           if (name && graph.nodes.has(name)) {
-            path2.traverse({
-              Identifier(path3) {
-                if (graph.nodes.has(path3.node.name) && path3.node.name !== name) {
-                  graph.edges.get(name)?.add(path3.node.name);
+            traverse2(path2.node.init, {
+              Identifier(path1) {
+                const binding2 = path1.scope.getBinding(path1.node.name);
+                if (graph.nodes.has(path1.node.name) && path1.node.name !== name && (binding2?.scope.block.type === "Program" || parentScope === binding2?.scope)) {
+                  graph.edges.get(name)?.add(path1.node.name);
                 }
               }
-            });
+            }, path2.scope, path2);
           }
         }
       }
     }
-  });
+  }, parentScope, parentPath);
   return graph;
+}
+function analyze2(content) {
+  const ast = parse_1$1(content, {
+    sourceType: "module",
+    plugins: [
+      "typescript"
+    ]
+  });
+  return processSetup(ast);
 }
 
 // src/analyze/options.ts
@@ -86412,68 +86479,10 @@ function analyze3(content) {
         if (path2.node.declaration.type === "ObjectExpression" && path1.parent === path2.node.declaration || path2.node.declaration.type === "CallExpression" && path1.parent === path2.node.declaration.arguments[0]) {
           if (path1.node.key.type === "Identifier" && path1.node.key.name === "setup") {
             const setupNode = path1.node;
-            const tempNodes = /* @__PURE__ */ new Set();
-            const tempEdges = /* @__PURE__ */ new Map();
-            traverse3(setupNode, {
-              VariableDeclaration(path22) {
-                path22.node.declarations.forEach((declaration2) => {
-                  if (declaration2.id?.type === "Identifier") {
-                    const name = declaration2.id.name;
-                    if (path22.parent == setupNode.body) {
-                      tempNodes.add(name);
-                      if (!tempEdges.get(name)) {
-                        tempEdges.set(name, /* @__PURE__ */ new Set());
-                      }
-                    }
-                  }
-                });
-              },
-              FunctionDeclaration(path22) {
-                const name = path22.node.id?.name;
-                if (name) {
-                  if (path22.parent == setupNode.body) {
-                    tempNodes.add(name);
-                    if (!tempEdges.get(name)) {
-                      tempEdges.set(name, /* @__PURE__ */ new Set());
-                    }
-                  }
-                }
-              }
-            }, path1.scope, path1);
-            traverse3(setupNode, {
-              FunctionDeclaration(path3) {
-                const name = path3.node.id?.name;
-                if (name && tempNodes.has(name)) {
-                  path3.traverse({
-                    Identifier(path4) {
-                      if (tempNodes.has(path4.node.name) && path4.node.name !== name) {
-                        tempEdges.get(name)?.add(path4.node.name);
-                      }
-                    }
-                  });
-                }
-              },
-              VariableDeclarator(path3) {
-                if (path3.node.init) {
-                  if ([
-                    "CallExpression",
-                    "ArrowFunctionExpression",
-                    "FunctionDeclaration"
-                  ].includes(path3.node.init.type) && path3.node.id.type === "Identifier") {
-                    const name = path3.node.id?.name;
-                    if (name && tempNodes.has(name)) {
-                      path3.traverse({
-                        Identifier(path4) {
-                          if (tempNodes.has(path4.node.name) && path4.node.name !== name) {
-                            tempEdges.get(name)?.add(path4.node.name);
-                          }
-                        }
-                      });
-                    }
-                  }
-                }
-              }
-            }, path1.scope, path1);
+            const {
+              nodes: tempNodes,
+              edges: tempEdges
+            } = processSetup(setupNode, path1.scope, setupNode);
             traverse3(setupNode, {
               ReturnStatement(path22) {
                 if (path22.node.argument?.type === "ObjectExpression") {
@@ -86589,7 +86598,6 @@ function analyze3(content) {
         process2(path2.node.declaration, path2);
       } else if (path2.node.declaration.type === "CallExpression" && path2.node.declaration.callee.type === "Identifier" && path2.node.declaration.callee.name === "defineComponent" && path2.node.declaration.arguments[0].type === "ObjectExpression") {
         process2(path2.node.declaration.arguments[0], path2);
-        console.log(graph);
       }
     }
   });

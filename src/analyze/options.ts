@@ -1,6 +1,7 @@
 import { babelParse } from '@vue/compiler-sfc';
 import _traverse, { NodePath } from '@babel/traverse';
 import * as t from '@babel/types';
+import { processSetup } from './setupScript';
 const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
@@ -85,74 +86,15 @@ export function analyze(
           if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
             const setupNode = path1.node;
 
-            const tempNodes = new Set<string>();
-            const tempEdges = new Map<string, Set<string>>();
+            // const tempNodes = new Set<string>();
+            // const tempEdges = new Map<string, Set<string>>();
 
-            // 1 get all the variables and functions in setup
-            traverse(setupNode, {
-              VariableDeclaration(path2){
-                path2.node.declarations.forEach((declaration) => {
-                  if(declaration.id?.type === 'Identifier') {
-                    const name = declaration.id.name;
-                    if(path2.parent == setupNode.body) {
-                      tempNodes.add(name);
-                      if(!tempEdges.get(name)) {
-                        tempEdges.set(name, new Set());
-                      }
-                    }
-                  }
-                });
-              },
-              FunctionDeclaration(path2) {
-                const name = path2.node.id?.name;
-                if(name) {
-                  if(path2.parent == setupNode.body) {
-                    tempNodes.add(name);
-                    if(!tempEdges.get(name)) {
-                      tempEdges.set(name, new Set());
-                    }
-                  }
-                }
-              },
-            }, path1.scope, path1);
-
-            // 2 get the relation between the variable and the function
-            traverse(setupNode, {
-              FunctionDeclaration(path) {
-                const name = path.node.id?.name;
-                if(name && tempNodes.has(name)) {
-                  path.traverse({
-                    Identifier(path) {
-                      if(tempNodes.has(path.node.name) && path.node.name !== name) {
-                        tempEdges.get(name)?.add(path.node.name);
-                      }
-                    },
-                  });
-                }
-              },
-              VariableDeclarator(path) {
-                if(path.node.init) {
-                  if([
-                    'CallExpression', 
-                    'ArrowFunctionExpression', 
-                    'FunctionDeclaration',
-                  ].includes(path.node.init.type)
-                    && path.node.id.type === 'Identifier'
-                  ) {
-                    const name = path.node.id?.name;
-                    if(name && tempNodes.has(name)) {
-                      path.traverse({
-                        Identifier(path) {
-                          if(tempNodes.has(path.node.name) && path.node.name !== name) {
-                            tempEdges.get(name)?.add(path.node.name);
-                          }
-                        },
-                      });
-                    }
-                  }
-                }
-              },
-            }, path1.scope, path1);
+            // console.log(setupNode);
+            
+            const {
+              nodes: tempNodes,
+              edges: tempEdges,
+            } = processSetup(setupNode, path1.scope, setupNode);
 
             // 3 filter data by return
             traverse(setupNode, {

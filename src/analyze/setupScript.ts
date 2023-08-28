@@ -1,21 +1,11 @@
 import { babelParse } from '@vue/compiler-sfc';
-import _traverse from '@babel/traverse';
+import _traverse, { Scope } from '@babel/traverse';
+import * as t from '@babel/types';
 const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
 
-export function analyze(
-  content: string
-) {
-  // console.log(content);
-  const ast = babelParse(content, { sourceType: 'module',
-    plugins: [
-      'typescript',
-    ],
-  });
-
-  // ---
-
+export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node) {
   const graph = { 
     nodes: new Set<string>(), 
     edges: new Map<string, Set<string>>(), 
@@ -29,9 +19,12 @@ export function analyze(
             if(element?.type === 'Identifier') {
               const name = element.name;
               const binding = path.scope.getBinding(name);
+              
               if(
                 binding 
-                && path.parent.type === 'Program'
+                && (path.parent.type === 'Program'
+                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                )
                 && !(declaration.init?.type === 'CallExpression'
                   && declaration.init?.callee.type === 'Identifier'
                   && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
@@ -52,7 +45,9 @@ export function analyze(
               const binding = path.scope.getBinding(name);
               if(
                 binding 
-                && path.parent.type === 'Program'
+                && (path.parent.type === 'Program'
+                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                )
                 && !(declaration.init?.type === 'CallExpression'
                   && declaration.init?.callee.type === 'Identifier'
                   && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
@@ -71,7 +66,9 @@ export function analyze(
           const binding = path.scope.getBinding(name);
           if(
             binding 
-            && path.parent.type === 'Program'
+            && (path.parent.type === 'Program'
+              || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+            )
             && !(declaration.init?.type === 'CallExpression'
               && declaration.init?.callee.type === 'Identifier'
               && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
@@ -89,7 +86,9 @@ export function analyze(
       const name = path.node.id?.name;
       if(name) {
         const binding = path.scope.getBinding(name);
-        if(binding && path.parent.type === 'Program') {
+        if(binding && (path.parent.type === 'Program'
+        || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+        )) {
           graph.nodes.add(name);
           if(!graph.edges.get(name)) {
             graph.edges.set(name, new Set());
@@ -97,7 +96,7 @@ export function analyze(
         }
       }
     },
-  });
+  }, parentScope, parentPath);
 
   // get the relation between the variable and the function
 
@@ -111,7 +110,9 @@ export function analyze(
             if(
               graph.nodes.has(path1.node.name) 
               && path1.node.name !== name 
-              && binding?.scope.block.type === 'Program'
+              && (binding?.scope.block.type === 'Program'
+                || (parentScope === binding?.scope)
+              )
             ) {
               graph.edges.get(name)?.add(path1.node.name);
             }
@@ -133,7 +134,9 @@ export function analyze(
                     if(
                       graph.nodes.has(path1.node.name) 
                       && path1.node.name !== name 
-                      && binding?.scope.block.type === 'Program'
+                      && (binding?.scope.block.type === 'Program'
+                        || (parentScope === binding?.scope)
+                      )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
                     }
@@ -154,7 +157,9 @@ export function analyze(
                     if(
                       graph.nodes.has(path1.node.name) 
                       && path1.node.name !== name 
-                      && binding?.scope.block.type === 'Program'
+                      && (binding?.scope.block.type === 'Program'
+                        || (parentScope === binding?.scope)
+                      )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
                     }
@@ -180,7 +185,9 @@ export function analyze(
                 if(
                   graph.nodes.has(path1.node.name) 
                   && path1.node.name !== name 
-                  && binding?.scope.block.type === 'Program'
+                  && (binding?.scope.block.type === 'Program'
+                    || (parentScope === binding?.scope)
+                  )
                 ) {
                   graph.edges.get(name)?.add(path1.node.name);
                 }
@@ -190,7 +197,22 @@ export function analyze(
         }
       }
     },
-  });
+  }, parentScope, parentPath);
 
   return graph;
+}
+
+export function analyze(
+  content: string
+) {
+  // console.log(content);
+  const ast = babelParse(content, { sourceType: 'module',
+    plugins: [
+      'typescript',
+    ],
+  });
+
+  // ---
+
+  return processSetup(ast);
 }
