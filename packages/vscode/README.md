@@ -4,6 +4,6 @@ This is a extension for [vue-hooks-optimizer](https://github.com/zcf0508/vue-hoo
 
 ## Demo
 
-![demo1](./images/demo1.png)
+![demo1](https://github.com/zcf0508/vue-hook-optimizer/raw/master/packages/vscode/images/demo1.png)
 
-![demo2](./images/demo2.png)
+![demo2](https://github.com/zcf0508/vue-hook-optimizer/raw/master/packages/vscode/images/demo2.png)
