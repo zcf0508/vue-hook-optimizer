@@ -4,8 +4,17 @@ export async function analyze(code: string) {
   const sfc = parse(code);
 
   let graph = {
-    nodes: new Set<string>(),
-    edges: new Map<string, Set<string>>(),
+    nodes: new Set<{
+      label: string;
+      type: string;
+    }>(),
+    edges: new Map<{
+        label: string;
+        type: string;
+    }, Set<{
+      label: string;
+      type: string;
+    }>>(),
   };
   if(sfc.descriptor.scriptSetup?.content) {
     graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);

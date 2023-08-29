@@ -2,8 +2,17 @@ import type { Data } from 'vis-network';
 
 export function getVisData(
   graph: {
-    nodes: Set<string>;
-    edges: Map<string, Set<string>>;
+    nodes: Set<{
+      label: string;
+      type: string;
+  }>;
+    edges: Map<{
+      label: string;
+      type: string;
+  }, Set<{
+      label: string;
+      type: string;
+  }>>;
   },
   usedNodes: Set<string>
 ) {
@@ -12,17 +21,19 @@ export function getVisData(
 
   graph.nodes.forEach((node) => {
     nodes.push({
-      id: node,
-      label: node,
-      group: usedNodes.has(node) ? 'used' : 'normal',
+      id: node.label,
+      label: node.label,
+      shape: node.type === 'var' ? 'dot' : 'diamond',
+      group: usedNodes.has(node.label) ? 'used' : 'normal',
     });
   });
 
   graph.edges.forEach((edge, key) => {
     edge.forEach((to) => {
+      if(!to) return;
       edges.push({
-        from: key,
-        to: to,
+        from: key.label,
+        to: to.label,
         arrows: {
           to: {
             enabled: true,

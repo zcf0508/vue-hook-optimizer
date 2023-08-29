@@ -1,11 +1,15 @@
 import { babelParse } from '@vue/compiler-sfc';
 import _traverse, { Scope } from '@babel/traverse';
 import * as t from '@babel/types';
+import { NodeCollection, NodeType } from './utils';
 const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
 
 export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node) {
+
+  const nodeCollection = new NodeCollection();
+
   const graph = { 
     nodes: new Set<string>(), 
     edges: new Map<string, Set<string>>(), 
@@ -31,6 +35,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
+                nodeCollection.addNode(name, declaration);
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -54,6 +59,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
+                nodeCollection.addNode(name, declaration);
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -75,6 +81,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             )
           ) {
             graph.nodes.add(name);
+            nodeCollection.addNode(name, declaration);
             if(!graph.edges.get(name)) {
               graph.edges.set(name, new Set());
             }
@@ -90,6 +97,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
         || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
         )) {
           graph.nodes.add(name);
+          nodeCollection.addNode(name, path.node);
           if(!graph.edges.get(name)) {
             graph.edges.set(name, new Set());
           }
@@ -199,7 +207,10 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
     },
   }, parentScope, parentPath);
 
-  return graph;
+  return {
+    graph,
+    nodeCollection,
+  };
 }
 
 export function analyze(
@@ -213,6 +224,6 @@ export function analyze(
   });
 
   // ---
-
-  return processSetup(ast);
+  const { graph, nodeCollection } = processSetup(ast);
+  return nodeCollection.map(graph);
 }

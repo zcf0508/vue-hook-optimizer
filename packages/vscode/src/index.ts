@@ -11,6 +11,17 @@ const visTemplate = template(`<html>
 
     <script type="text/javascript" src="<%= libVis %>"></script>
     <script src="<%= libTailwind %>"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            scale: {
+              '80': '0.8',
+            }
+          }
+        }
+      }
+    </script>
 
     <style type="text/css">
         html,body {
@@ -34,32 +45,53 @@ const visTemplate = template(`<html>
       border border-solid border-[#eee]
       shadow-light-500 
       flex flex-col gap-2
+      backdrop-blur
     "
   >
-    <div class="flex items-center align-baseline">
-      <div
-        class="
-          inline-block mr-1
-          bg-[#fffe47] 
-          border border-solid border-[#f6a72b]
-          rounded-full 
-          w-[10px] h-[10px]
-        "
-      ></div>
-      <span>USED IN TEMPLATE</span>
-    </div>
-    <div class="flex items-center align-baseline">
-      <div
-        class="
-          inline-block mr-1
-          bg-[#9dc2f9] 
-          border border-solid border-[#3d7de4]
-          rounded-full 
-          w-[10px] h-[10px]
-        "
-      ></div>
-      <span>NOT USED IN TEMPLATE</span>
-    </div>
+  <div class="flex items-center align-baseline">
+    <div
+      class="
+        inline-block mr-1
+        bg-[#9dc2f9] 
+        border border-solid border-[#3d7de4]
+        w-[10px] h-[10px]
+      "
+    ></div>
+    <span>USED IN TEMPLATE</span>
+  </div>
+  <div class="flex items-center align-baseline">
+    <div
+      class="
+        inline-block mr-1
+        bg-[#eee] 
+        border border-solid border-[#ddd]
+        w-[10px] h-[10px]
+      "
+    ></div>
+    <span>NOT USED IN TEMPLATE</span>
+  </div>
+  <div class="flex items-center align-baseline">
+    <div
+      class="
+        inline-block mr-1
+        border border-solid border-[#333]
+        rounded-full 
+        w-[10px] h-[10px]
+      "
+    ></div>
+    <span>Variant</span>
+  </div>
+  <div class="flex items-center align-baseline">
+    <div
+      class="
+        inline-block mr-1
+        border border-solid border-[#333]
+        rotate-45 transform scale-80
+        w-[10px] h-[10px]
+      "
+    ></div>
+    <span>Function</span>
+  </div>
   </div>
 </div>
 
@@ -78,7 +110,7 @@ const visTemplate = template(`<html>
         },
       },
       groups: {
-        normal: {
+        used: {
           color: {
             border: '#3d7de4',
             background: '#9dc2f9',
@@ -88,13 +120,13 @@ const visTemplate = template(`<html>
             },
           },
         },
-        used: {
+        normal: {
           color: {
-            border: '#f6a72b',
-            background: '#fffe47',
+            border: '#ccc',
+            background: '#ddd',
             highlight: {
-              border: '#f6a72b',
-              background: '#fffe47',
+              border: '#ccc',
+              background: '#ddd',
             },
           },
         },

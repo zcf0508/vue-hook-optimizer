@@ -2,6 +2,7 @@ import { babelParse } from '@vue/compiler-sfc';
 import _traverse, { NodePath } from '@babel/traverse';
 import * as t from '@babel/types';
 import { processSetup } from './setupScript';
+import { NodeCollection } from './utils';
 const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
@@ -17,6 +18,8 @@ export function analyze(
   });
 
   // ---
+
+  const nodeCollection = new NodeCollection();
 
   const graph = { 
     nodes: new Set<string>(), 
@@ -44,6 +47,7 @@ export function analyze(
                   if(prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
+                    nodeCollection.addNode(name, prop, true);
                     if(!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
@@ -62,6 +66,7 @@ export function analyze(
                   if(prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
+                    nodeCollection.addNode(name, prop);
                     if(!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
@@ -92,8 +97,11 @@ export function analyze(
             // console.log(setupNode);
             
             const {
-              nodes: tempNodes,
-              edges: tempEdges,
+              graph : {
+                nodes: tempNodes,
+                edges: tempEdges,
+              },
+              nodeCollection: tempNodeCollection,
             } = processSetup(setupNode, path1.scope, setupNode);
 
             // 3 filter data by return
@@ -109,6 +117,7 @@ export function analyze(
                           const valName = path3.node.value.type === 'Identifier' ? path3.node.value.name : '';
                           if(valName && tempNodes.has(valName)) {
                             graph.nodes.add(name);
+                            nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(valName)!.type);
                             if(!graph.edges.get(name)) {
                               graph.edges.set(name, new Set());
                               tempEdges.get(valName)?.forEach((edge) => {
@@ -140,6 +149,7 @@ export function analyze(
                         if(prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
+                          nodeCollection.addNode(name, prop);
                           if(!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                           }
@@ -245,5 +255,5 @@ export function analyze(
   });
 
 
-  return graph;
+  return nodeCollection.map(graph);
 }
