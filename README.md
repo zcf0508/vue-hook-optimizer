@@ -37,7 +37,7 @@ So I want to build a tool to help us analyze the code, and find the relations be
 
 ## Development Plan
 
-- [ ] add node type and more info
+- [ ] add ~~node type~~ (has added `var` and `fun` types) and more info
 - [ ] provide some suggestions for optimization
 - [x] support `options api`
 - [x] [vscode extension](./packages/vscode)
