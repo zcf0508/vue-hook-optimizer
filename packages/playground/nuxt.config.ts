@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   // ssr: false,
   devtools: { enabled: true },
   modules: [
+    '@vueuse/nuxt',
     '@unocss/nuxt',
   ],
   alias:{

@@ -1,7 +1,7 @@
 <template>
   <div
     ref="containerRef"
-    class="w-full h-full flex"
+    class="w-full h-full flex relative"
     @mousemove="dragMove"
     @mouseup="dragEnd"
     @mouseleave="dragEnd"
@@ -28,6 +28,31 @@
         </button>
       </div>
       <div class="h-full w-full relative">
+        <div v-if="showSearchInput" class="absolute right-[10px] top-0 z-50">
+          <div class="relative flex items-center">
+            <input 
+              ref="searchInputRef"
+              v-model="searchkey"
+              placeholder="search by node name"
+              class="
+                w-[200px]
+                pl-4 pr-6 py-2
+                border-[#ddd] border-[1px] border-solid rounded-md
+                shadow
+              "
+            >
+            <span
+              class="
+                i-material-symbols:close-rounded 
+                w-[20px] h-[20px] 
+                absolute right-[10px] 
+                color-[#626365]
+                cursor-pointer
+              "
+              @click="closeSearch"
+            ></span>
+          </div>
+        </div>
         <div ref="networkRef" class="h-full"></div>
         <div 
           v-if="visData.nodes!.length > 0" 
@@ -38,6 +63,7 @@
             flex flex-col gap-2
             backdrop-blur
           "
+          :class="showSearchInput ? 'top-[40px]' : 'top-[10px]'"
         >
           <div class="flex items-center align-baseline">
             <div
@@ -159,10 +185,36 @@ async function start() {
   }
 }
 
+const showSearchInput = ref(false);
+const searchInputRef = ref<HTMLInputElement>();
+onKeyStroke(['F', 'f', 'Command', 'Ctrl'], (e) => {
+  e.preventDefault();
+  showSearchInput.value = true;
+  nextTick(() => {
+    if(searchInputRef.value) {
+      searchInputRef.value.focus();
+    }
+  });
+});
+
+const searchkey = ref('');
+
+function closeSearch() {
+  searchkey.value = '';
+  showSearchInput.value = false;
+}
+
 onMounted(() => {
   const network = new vis.Network(networkRef.value!, visData.value, visOption);
   watch(visData, (val) => {
     network.setData(val);
+  });
+
+  watch(searchkey, (val) => {
+    if(val) {
+      // TODO: support fuzzy matching
+      network.selectNodes(network.findNode(val), true);
+    }
   });
 });
 

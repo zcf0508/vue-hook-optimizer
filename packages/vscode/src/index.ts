@@ -11,6 +11,7 @@ const visTemplate = template(`<html>
 
     <script type="text/javascript" src="<%= libVis %>"></script>
     <script src="<%= libTailwind %>"></script>
+    <script src="<%= libIndex %>"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -38,10 +39,22 @@ const visTemplate = template(`<html>
 </head>
 <body>
 <div class="h-full w-full relative">
+  <div id="SearchInputContainer" class="absolute right-[10px] top-[5px] z-50">
+    <input  
+      id="searchInput"
+      placeholder="search by node name"
+      class="
+        w-[200px]
+        px-4 py-2
+        border-[#ddd] border-[1px] border-solid rounded-md
+        shadow
+      "
+    >
+    </div>
   <div id="mynetwork"></div>
   <div 
     class="
-      absolute right-[10px] top-[10px] p-2
+      absolute right-[10px] top-[50px] p-2
       border border-solid border-[#eee]
       shadow-light-500 
       flex flex-col gap-2
@@ -95,46 +108,18 @@ const visTemplate = template(`<html>
   </div>
 </div>
 
-
 <script type="text/javascript">
-    // 获取容器
-    var container = document.getElementById('mynetwork');
-
-    // 将数据赋值给vis 数据格式化器
-    var data = JSON.parse('<%= data %>');
-    var options = {
-      physics: {
-        solver: 'forceAtlas2Based',
-        forceAtlas2Based: {
-          gravitationalConstant: -100,
-        },
-      },
-      groups: {
-        used: {
-          color: {
-            border: '#3d7de4',
-            background: '#9dc2f9',
-            highlight: {
-              border: '#3d7de4',
-              background: '#9dc2f9',
-            },
-          },
-        },
-        normal: {
-          color: {
-            border: '#ccc',
-            background: '#ddd',
-            highlight: {
-              border: '#ccc',
-              background: '#ddd',
-            },
-          },
-        },
-      },
-    };
-
-    // 初始化关系图
-    var network = new vis.Network(container, data, options);
+init('<%= data %>')
+const inputEle = findSearchInput();
+if(inputEle) {
+  inputEle.addEventListener('input', (e) => {
+    const searchKey = e.target.value;
+    if(searchKey && network) {
+      // TODO: support fuzzy matching
+      network.selectNodes(network.findNode(searchKey), true);
+    }
+  });
+}
 </script>
 </body>
 </html>`);
@@ -181,6 +166,7 @@ export function activate(context: vscode.ExtensionContext) {
     panel.webview.html = visTemplate({
       libVis: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.js'),
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
+      libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
       data: JSON.stringify(res.data),
     });
   }));

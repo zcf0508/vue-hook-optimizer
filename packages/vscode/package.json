@@ -64,7 +64,7 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsc ./script/index.ts && tsup",
     "dev": "pnpm build --watch",
     "lint": "eslint .",
     "vscode:prepublish": "pnpm build",
