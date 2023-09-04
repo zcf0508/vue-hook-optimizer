@@ -47,7 +47,9 @@ export function analyze(
                   if(prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
-                    nodeCollection.addNode(name, prop, true);
+                    nodeCollection.addNode(name, prop, {
+                      isComputed: true,
+                    });
                     if(!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
@@ -91,19 +93,44 @@ export function analyze(
           if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
             const setupNode = path1.node;
 
-            // const tempNodes = new Set<string>();
-            // const tempEdges = new Map<string, Set<string>>();
+            const spread: string[] = [];
 
-            // console.log(setupNode);
+            traverse(setupNode, {
+              ReturnStatement(path2) {
+                if(path2.node.argument?.type === 'ObjectExpression') {
+                  const returnNode = path2.node.argument;
+                  traverse(returnNode, {
+                    SpreadElement(path3) {
+                      // ...toRefs(xxx)
+                      if(
+                        path3.node.argument.type === 'CallExpression' 
+                        && path3.node.argument.callee.type === 'Identifier' 
+                        && path3.node.argument.callee.name === 'toRefs'
+                        && path3.node.argument.arguments[0].type === 'Identifier'
+                      ) {
+                        spread.push(path3.node.argument.arguments[0].name);
+                      }
+                      // ...xxx
+                      else if(
+                        path3.node.argument.type === 'Identifier' 
+                      ) {
+                        spread.push(path3.node.argument.name);
+                      }
+                    },
+                  }, path2.scope, path2);
+                }
+              },
+            }, path1.scope, path1);
             
             const {
               graph : {
                 nodes: tempNodes,
                 edges: tempEdges,
+                spread: tempSpread,
               },
               nodeCollection: tempNodeCollection,
-            } = processSetup(setupNode, path1.scope, setupNode);
-
+            } = processSetup(setupNode, path1.scope, setupNode, spread);
+            
             // 3 filter data by return
             traverse(setupNode, {
               ReturnStatement(path2) {
@@ -117,7 +144,7 @@ export function analyze(
                           const valName = path3.node.value.type === 'Identifier' ? path3.node.value.name : '';
                           if(valName && tempNodes.has(valName)) {
                             graph.nodes.add(name);
-                            nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(valName)!.type);
+                            nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(valName)!);
                             if(!graph.edges.get(name)) {
                               graph.edges.set(name, new Set());
                               tempEdges.get(valName)?.forEach((edge) => {
@@ -126,6 +153,43 @@ export function analyze(
                             }
                           }
                         }
+                      }
+                    },
+                    SpreadElement(path3) {
+                      // ...toRefs(xxx)
+                      if(
+                        path3.node.argument.type === 'CallExpression' 
+                        && path3.node.argument.callee.type === 'Identifier' 
+                        && path3.node.argument.callee.name === 'toRefs'
+                        && path3.node.argument.arguments[0].type === 'Identifier'
+                        && tempSpread.get(path3.node.argument.arguments[0].name)
+                      ) {
+                        tempSpread.get(path3.node.argument.arguments[0].name)?.forEach((name) => {
+                          graph.nodes.add(name);
+                          nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
+                          if(!graph.edges.get(name)) {
+                            graph.edges.set(name, new Set());
+                            tempEdges.get(name)?.forEach((edge) => {
+                              graph.edges.get(name)?.add(edge);
+                            });
+                          }
+                        });
+                      }
+                      // ...xxx
+                      else if(
+                        path3.node.argument.type === 'Identifier' 
+                        && tempSpread.get(path3.node.argument.name)
+                      ) {
+                        tempSpread.get(path3.node.argument.name)?.forEach((name) => {
+                          graph.nodes.add(name);
+                          nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
+                          if(!graph.edges.get(name)) {
+                            graph.edges.set(name, new Set());
+                            tempEdges.get(name)?.forEach((edge) => {
+                              graph.edges.get(name)?.add(edge);
+                            });
+                          }
+                        });
                       }
                     },
                   }, path2.scope, path2);

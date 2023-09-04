@@ -1,18 +1,27 @@
 import * as t from '@babel/types';
 
+type TypedNode = {
+  label: string
+  type: NodeType
+}
+
 export enum NodeType {
 	var='var',
 	fun='fun',
 }
 
+type Options = {
+  isComputed: boolean
+}
+
 export class NodeCollection {
-  nodes = new Map<string, {label: string, type: NodeType}>();
-  addNode(label: string, node: t.Node, isComputed = false) {
+  nodes = new Map<string, TypedNode>();
+  addNode(label: string, node: t.Node, options: Partial<Options> = {isComputed: false}) {
     if(this.nodes.has(label)) {
       return;
     }
     if(
-      !isComputed && (
+      !options.isComputed && (
         (node.type === 'VariableDeclarator' && [
           'ArrowFunctionExpression', 
           'FunctionDeclaration',
@@ -33,10 +42,10 @@ export class NodeCollection {
     }
   }
 
-  addTypedNode(label: string, type: NodeType) {
+  addTypedNode(label: string, node: TypedNode) {
     this.nodes.set(label, {
       label,
-      type,
+      type: node.type,
     });
   }
 
@@ -47,12 +56,12 @@ export class NodeCollection {
 
     const nodes = new Set(Array.from(graph.nodes).map((node) => {
       return this.nodes.get(node)!;
-    }));
+    }).filter(node => !!node));
 
     const edges = new Map(Array.from(graph.edges).map(([from, to]) => {
       return [this.nodes.get(from)!, new Set(Array.from(to).map((node) => {
         return this.nodes.get(node)!;
-      }))];
+      }).filter(node => !!node))];
     }));
     
     return {

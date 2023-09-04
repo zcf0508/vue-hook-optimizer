@@ -1,1 +1,1 @@
-export const nodes = new Set(['msg', 'plus', 'count', 'data', 'add']);
+export const nodes = new Set(['msg', 'plus', 'count', 'number', 'add']);

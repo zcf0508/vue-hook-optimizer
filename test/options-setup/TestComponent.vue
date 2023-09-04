@@ -27,7 +27,7 @@
     <label for="number_input">
       <input 
         id="number_input" 
-        v-model="data.number"
+        v-model="number"
         w:p="l-2"
         w:border="~ gray-100"
         w:appearance="none" 
@@ -67,19 +67,19 @@ export default {
     });
     const count = computed(() => counterStore.count);
 
-    function plus() {
-      counterStore.increment();
-    }
-
-    function add() {
-      counterStore.add(Number(data.number));
+    const methods = {
+      plus() {
+        counterStore.increment();
+      },
+      add() {
+        counterStore.add(Number(data.number));
+      }
     }
 
     return {
-      data,
+      ...toRefs(data),
       count,
-      plus,
-      add,
+      ...methods,
     }
   }
 }

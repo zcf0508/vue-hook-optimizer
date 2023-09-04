@@ -6,13 +6,15 @@ const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
 
-export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node) {
-
+export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node, _spread?: string[]) {
+  const spread = _spread || [];
+  
   const nodeCollection = new NodeCollection();
 
   const graph = { 
     nodes: new Set<string>(), 
     edges: new Map<string, Set<string>>(), 
+    spread: new Map<string, Set<string>>(),
   };
 
   traverse(ast, {
@@ -85,6 +87,61 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             if(!graph.edges.get(name)) {
               graph.edges.set(name, new Set());
             }
+
+
+            if(spread.includes(name)) {
+              if(declaration.init?.type === 'ObjectExpression') {
+                declaration.init?.properties.forEach(prop => {
+                  if(
+                    (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
+                    && prop.key.type === 'Identifier'
+                  ) {
+                    const keyName = prop.key.name;
+                    graph.nodes.add(keyName);
+                    nodeCollection.addNode(keyName, prop);
+                    if(!graph.edges.get(keyName)) {
+                      graph.edges.set(keyName, new Set());
+                    }
+                    if(graph.spread.has(name)) {
+                      graph.spread.get(name)?.add(keyName);
+                    } else {
+                      graph.spread.set(name, new Set([keyName]));
+                    }
+                  } else if(prop.type === 'SpreadElement') {
+                    console.warn('not support spread in spread');
+                  }
+                });
+              }
+              if(
+                declaration.init?.type === 'CallExpression'
+                && declaration.init?.callee.type === 'Identifier'
+                && declaration.init?.callee.name === 'reactive'
+              ) {
+                const arg = declaration.init?.arguments[0];
+                if(arg.type === 'ObjectExpression') {
+                  arg.properties.forEach(prop => {
+                    if(
+                      (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
+                      && prop.key.type === 'Identifier'
+                    ) {
+                      const keyName = prop.key.name;
+                      graph.nodes.add(keyName);
+                      nodeCollection.addNode(keyName, prop);
+                      if(!graph.edges.get(keyName)) {
+                        graph.edges.set(keyName, new Set());
+                      }
+                      if(graph.spread.has(name)) {
+                        graph.spread.get(name)?.add(keyName);
+                      } else {
+                        graph.spread.set(name, new Set([keyName]));
+                      }
+                    } else if(prop.type === 'SpreadElement') {
+                      console.warn('not support spread in spread');
+                    }
+                  });
+                }
+              }
+            }
           }
         }
       });
@@ -125,6 +182,24 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
               graph.edges.get(name)?.add(path1.node.name);
             }
           },
+          MemberExpression(path1) {
+            if(
+              path1.node.object.type === 'Identifier' 
+              && spread.includes(path1.node.object.name)
+            ) {
+              const binding = path1.scope.getBinding(path1.node.object.name);
+              if(
+                spread.includes(path1.node.object.name)
+                && path1.node.property.type === 'Identifier'
+                && path1.node.property.name !== name 
+                && (binding?.scope.block.type === 'Program'
+                  || (parentScope === binding?.scope)
+                )
+              ) {
+                graph.edges.get(name)?.add(path1.node.property.name);
+              }
+            }
+          },
         });
       }
     },
@@ -149,6 +224,24 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                       graph.edges.get(name)?.add(path1.node.name);
                     }
                   },
+                  MemberExpression(path1) {
+                    if(
+                      path1.node.object.type === 'Identifier' 
+                      && spread.includes(path1.node.object.name)
+                    ) {
+                      const binding = path1.scope.getBinding(path1.node.object.name);
+                      if(
+                        spread.includes(path1.node.object.name)
+                        && path1.node.property.type === 'Identifier'
+                        && path1.node.property.name !== name 
+                        && (binding?.scope.block.type === 'Program'
+                          || (parentScope === binding?.scope)
+                        )
+                      ) {
+                        graph.edges.get(name)?.add(path1.node.property.name);
+                      }
+                    }
+                  },
                 }, path.scope, path);
               }
             }
@@ -170,6 +263,24 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                       )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
+                    }
+                  },
+                  MemberExpression(path1) {
+                    if(
+                      path1.node.object.type === 'Identifier' 
+                      && spread.includes(path1.node.object.name)
+                    ) {
+                      const binding = path1.scope.getBinding(path1.node.object.name);
+                      if(
+                        spread.includes(path1.node.object.name)
+                        && path1.node.property.type === 'Identifier'
+                        && path1.node.property.name !== name 
+                        && (binding?.scope.block.type === 'Program'
+                          || (parentScope === binding?.scope)
+                        )
+                      ) {
+                        graph.edges.get(name)?.add(path1.node.property.name);
+                      }
                     }
                   },
                 }, path.scope, path);
@@ -200,9 +311,58 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                   graph.edges.get(name)?.add(path1.node.name);
                 }
               },
+              MemberExpression(path1) {
+                if(
+                  path1.node.object.type === 'Identifier' 
+                  && spread.includes(path1.node.object.name)
+                ) {
+                  const binding = path1.scope.getBinding(path1.node.object.name);
+                  if(
+                    spread.includes(path1.node.object.name)
+                    && path1.node.property.type === 'Identifier'
+                    && path1.node.property.name !== name 
+                    && (binding?.scope.block.type === 'Program'
+                      || (parentScope === binding?.scope)
+                    )
+                  ) {
+                    graph.edges.get(name)?.add(path1.node.property.name);
+                  }
+                }
+              },
             }, path.scope, path);
           }
         }
+      }
+    },
+
+    ObjectMethod(path) {
+      if(path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
+        const name = path.node.key.name;
+        
+        path.traverse({
+          Identifier(path1) {
+            if(
+              graph.nodes.has(path1.node.name) 
+              && path1.node.name !== name 
+            ) {
+              graph.edges.get(name)?.add(path1.node.name);
+            }
+          },
+          MemberExpression(path1) {
+            if(
+              path1.node.object.type === 'Identifier' 
+              && spread.includes(path1.node.object.name)
+            ) {
+              if(
+                spread.includes(path1.node.object.name)
+                && path1.node.property.type === 'Identifier'
+                && path1.node.property.name !== name 
+              ) {
+                graph.edges.get(name)?.add(path1.node.property.name);
+              }
+            }
+          },
+        });
       }
     },
   }, parentScope, parentPath);
