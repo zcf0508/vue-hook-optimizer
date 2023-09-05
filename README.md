@@ -16,7 +16,6 @@ pnpm run play
 
 Open the browser and visit `http://localhost:3000/`.
 
-![playground](./images/playground1.png)
 
 ## How To Use
 
@@ -28,7 +27,7 @@ Open the browser and visit `http://localhost:3000/`.
 
 The tool will analyze the code, and show the relations between the variables and the methods. This is a simple demo.
 
-![demo](./images/demo1.png)
+![playground](./images/playground1.png)
 
 ## Motive
 
@@ -39,7 +38,7 @@ So I want to build a tool to help us analyze the code, and find the relations be
 ## Development Plan
 
 - [ ] add ~~node type~~ (has added `var` and `fun` types) and more info
-- [ ] provide some suggestions for optimization
+- [x] provide some suggestions for optimization
 - [x] support `options api`
 - [x] [vscode extension](./packages/vscode)
 

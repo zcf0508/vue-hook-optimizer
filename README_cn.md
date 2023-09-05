@@ -14,7 +14,6 @@ pnpm run play
 
 打开浏览器并访问 `http://localhost:3000/`.
 
-![playground](./images/playground1.png)
 
 ## 如何使用
 
@@ -26,7 +25,7 @@ pnpm run play
 
 这个工具会分析代码，并展示变量和方法之间的关联关系。这是一个简单的示例。
 
-![demo](./images/demo1.png)
+![playground](./images/playground1.png)
 
 ## 动机
 
@@ -37,7 +36,7 @@ pnpm run play
 ## 开发计划
 
 - [ ] 增加~~节点类型~~（已增加变量和函数类型），展示更多细信息
-- [ ] 提供优化建议
+- [x] 提供优化建议
 - [x] 支持 `options api`
 - [x] [vscode 扩展](./packages/vscode)
 
