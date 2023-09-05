@@ -1,18 +1,10 @@
 import type { Data } from 'vis-network';
+import { TypedNode } from './analyze/utils';
 
 export function getVisData(
   graph: {
-    nodes: Set<{
-      label: string;
-      type: string;
-  }>;
-    edges: Map<{
-      label: string;
-      type: string;
-  }, Set<{
-      label: string;
-      type: string;
-  }>>;
+    nodes: Set<TypedNode>;
+    edges: Map<TypedNode, Set<TypedNode>>;
   },
   usedNodes: Set<string>
 ) {

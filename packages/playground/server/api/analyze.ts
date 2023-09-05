@@ -1,4 +1,12 @@
-import { parse, analyzeSetupScript, analyzeOptions, analyzeTemplate, getVisData } from 'vue-hook-optimizer';
+import { 
+  parse, 
+  analyzeSetupScript, 
+  analyzeOptions, 
+  analyzeTemplate, 
+  getVisData,
+  gen,
+  TypedNode,
+} from 'vue-hook-optimizer';
 
 export default defineEventHandler(async (ctx) => {
   const { code } = await readBody(ctx);
@@ -6,17 +14,8 @@ export default defineEventHandler(async (ctx) => {
     const sfc = parse(code);
 
     let graph = {
-      nodes: new Set<{
-        label: string;
-        type: string;
-      }>(),
-      edges: new Map<{
-          label: string;
-          type: string;
-      }, Set<{
-        label: string;
-        type: string;
-      }>>(),
+      nodes: new Set<TypedNode>(),
+      edges: new Map<TypedNode, Set<TypedNode>>(),
     };
     if(sfc.descriptor.scriptSetup?.content) {
       graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
@@ -36,12 +35,14 @@ export default defineEventHandler(async (ctx) => {
     return {
       msg: '',
       data: getVisData(graph, nodes),
+      suggest: gen(graph, nodes).map((s,idx) => `${idx + 1}: ${s}`).join('\n'),
     };
   } catch (e) {
     console.log(e);
     return {
       msg: 'Some error',
       data: null,
+      suggest: '',
     };
   }
 });

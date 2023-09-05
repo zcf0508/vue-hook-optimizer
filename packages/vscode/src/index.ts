@@ -132,6 +132,11 @@ function getWebviewUri(webview: vscode.Webview, extensionPath: string, filename:
   return webview.asWebviewUri(jsFilePath);
 }
 
+
+const outputChannel = window.createOutputChannel('Vue Hook Optimizer');
+
+let alerted = false;
+
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand('vho.action.analyze', async () => {
     // 获取当前vue文件的内容
@@ -167,8 +172,21 @@ export function activate(context: vscode.ExtensionContext) {
       libVis: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.js'),
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
-      data: JSON.stringify(res.data),
+      data: JSON.stringify(res.data.vis),
     });
+
+    outputChannel.append(`${fileName}: \n`);
+    outputChannel.append(res.data.suggest + '\n\n');
+
+    if(!alerted) {
+      window.showInformationMessage(
+        'Vue Hook Optimizer: Analyze Done! Please check the output channel for suggestions.',
+      );
+      // toggle output channel
+      outputChannel.show();
+      alerted = true;
+    }
+
   }));
 }
 

@@ -1,6 +1,6 @@
 import * as t from '@babel/types';
 
-type TypedNode = {
+export type TypedNode = {
   label: string
   type: NodeType
 }

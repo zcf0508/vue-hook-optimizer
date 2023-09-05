@@ -166,13 +166,14 @@ const visData = ref<vis.Data>({
   edges: [],
 });
 
+const alerted = ref(false);
 
 async function start() {
   if(!code.value) {
     return;
   }
 
-  const { msg, data } = await $fetch<{msg: string, data: vis.Data}>('/api/analyze', {
+  const { msg, data, suggest } = await $fetch<{msg: string, data: vis.Data, suggest: string}>('/api/analyze', {
     method: 'post',
     body: JSON.stringify({
       code: code.value,
@@ -180,6 +181,11 @@ async function start() {
   });
   if(data) {
     visData.value = data;
+    console.log(suggest);
+    if(!alerted.value) {
+      alert('Analyze Done! Please check the console for suggestions.');
+      alerted.value = true;
+    }
   } else {
     alert(msg);
   }
