@@ -35,14 +35,14 @@ export default defineEventHandler(async (ctx) => {
     return {
       msg: '',
       data: getVisData(graph, nodes),
-      suggest: gen(graph, nodes).map((s,idx) => `${idx + 1}: ${s}`).join('\n'),
+      suggests: gen(graph, nodes),
     };
   } catch (e) {
     console.log(e);
     return {
       msg: 'Some error',
       data: null,
-      suggest: '',
+      suggests: '',
     };
   }
 });

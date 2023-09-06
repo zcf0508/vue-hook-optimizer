@@ -148,7 +148,10 @@ async function start() {
     return;
   }
 
-  const { msg, data, suggest } = await $fetch<{msg: string, data: vis.Data, suggest: string}>('/api/analyze', {
+  const { msg, data, suggests } = await $fetch<{msg: string, data: vis.Data, suggests: Array<{
+    type: 'info' | 'warning' | 'error',
+    message: string
+  }>}>('/api/analyze', {
     method: 'post',
     body: JSON.stringify({
       code: code.value,
@@ -156,7 +159,19 @@ async function start() {
   });
   if(data) {
     visData.value = data;
-    console.log(suggest);
+    suggests.forEach((suggest, idx) => {
+      switch(suggest.type) {
+        case 'info':
+          console.log(`%c${idx + 1}.${suggest.message}`, 'color: #3d7de4');
+          break;
+        case 'warning':
+          console.log(`%c${idx + 1}.${suggest.message}`, 'color: #f6c342');
+          break;
+        case 'error':
+          console.log(`%c${idx + 1}.${suggest.message}`, 'color: #f44336');
+          break;
+      }
+    });
     if(!alerted.value) {
       alert('Analyze Done! Please check the console for suggestions.');
       alerted.value = true;

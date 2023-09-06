@@ -3,7 +3,7 @@ import * as path from 'node:path';
 
 export default defineNuxtConfig({
   // ssr: false,
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',

@@ -31,6 +31,6 @@ export async function analyze(code: string) {
 
   return { code: 0, data: {
     vis: getVisData(graph, nodes),
-    suggest: gen(graph, nodes).map((s,idx) => `${idx + 1}: ${s}`).join('\n'),
+    suggest: gen(graph, nodes).map((s,idx) => `${idx + 1}: ${s.message}`).join('\n'),
   }, msg: 'ok'};
 }
