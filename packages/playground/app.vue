@@ -22,10 +22,14 @@
       |
     </div>
     <div ref="chartRef" class="flex-1 flex flex-col">
-      <div>
-        <button @click="start">
+      <div class="flex mt-16px">
+        <button class="mr-8px" @click="start">
           analyze
         </button>
+        <span>
+          <input id="refreshBtn" v-model="autoRefresh" type="checkbox" />
+          <label for="refreshBtn">Auto Refresh</label>
+        </span>
       </div>
       <div class="h-full w-full relative">
         <div v-if="showSearchInput" class="absolute right-[10px] top-0 z-50">
@@ -121,11 +125,13 @@ import CodeMirror from './components/codemirror/CodeMirror.vue';
 import { defaultCode } from './default-code';
 
 const code = ref(defaultCode);
+const autoRefresh = ref(false);
 
 provide('autoresize', true);
 
 function codeChange(value: string) {
   code.value = value;
+  autoRefresh.value && start();
 }
 
 const networkRef = ref<HTMLElement>();
