@@ -21,7 +21,7 @@
     >
       |
     </div>
-    <div class="flex-1 flex flex-col">
+    <div ref="chartRef" class="flex-1 flex flex-col">
       <div>
         <button @click="start">
           analyze
@@ -193,7 +193,11 @@ async function start() {
 
 const showSearchInput = ref(false);
 const searchInputRef = ref<HTMLInputElement>();
+
+const chartRef = ref<HTMLInputElement>();
+const { isOutside } = useMouseInElement(chartRef);
 onKeyStroke(['F', 'f', 'Command', 'Ctrl'], (e) => {
+  if (isOutside.value) return;
   e.preventDefault();
   showSearchInput.value = true;
   nextTick(() => {
@@ -243,5 +247,9 @@ html, body, #__nuxt {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+}
+
+:root {
+  --bg: #fff;
 }
 </style>
