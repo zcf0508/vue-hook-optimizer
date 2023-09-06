@@ -1,6 +1,7 @@
 import { TypedNode } from '@/analyze/utils';
 import { splitGraph } from './split';
-import { noIndegreeFilter } from './filter';
+import { noIndegreeFilter, onlyFunctions } from './filter';
+import { hasCycle } from './utils';
 
 export function gen(
   graph: {
@@ -35,6 +36,13 @@ export function gen(
       } not used, perhaps you can remove ${
         nodes.length> 1 ? 'them': 'it'
       }.`);
+    }
+    if(hasCycle(onlyFunctions(g))) {
+      suggestions.push(`There is a loop call in nodes [${
+        nodes.length > 10 
+          ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
+          : nodes.map(node => node.label).join(',')
+      }], perhaps you can refactor it.`);
     }
   });
 
