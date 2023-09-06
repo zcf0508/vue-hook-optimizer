@@ -136,37 +136,6 @@ function codeChange(value: string) {
 
 const networkRef = ref<HTMLElement>();
 
-const visOption: vis.Options = {
-  physics: {
-    solver: 'forceAtlas2Based',
-    forceAtlas2Based: {
-      gravitationalConstant: -100,
-    },
-  },
-  groups: {
-    used: {
-      color: {
-        border: '#3d7de4',
-        background: '#9dc2f9',
-        highlight: {
-          border: '#3d7de4',
-          background: '#9dc2f9',
-        },
-      },
-    },
-    normal: {
-      color: {
-        border: '#ccc',
-        background: '#ddd',
-        highlight: {
-          border: '#ccc',
-          background: '#ddd',
-        },
-      },
-    },
-  },
-};
-
 const visData = ref<vis.Data>({
   nodes: [],
   edges: [],
@@ -197,30 +166,48 @@ async function start() {
   }
 }
 
-const showSearchInput = ref(false);
+
 const searchInputRef = ref<HTMLInputElement>();
+const chartRef = ref<HTMLElement>();
 
-const chartRef = ref<HTMLInputElement>();
-const { isOutside } = useMouseInElement(chartRef);
-onKeyStroke(['F', 'f', 'Command', 'Ctrl'], (e) => {
-  if (isOutside.value) return;
-  e.preventDefault();
-  showSearchInput.value = true;
-  nextTick(() => {
-    if(searchInputRef.value) {
-      searchInputRef.value.focus();
-    }
-  });
-});
-
-const searchkey = ref('');
-
-function closeSearch() {
-  searchkey.value = '';
-  showSearchInput.value = false;
-}
+const {
+  showSearchInput,
+  searchkey,
+  closeSearch,
+} = useSearch(searchInputRef, chartRef);
 
 onMounted(() => {
+  const visOption: vis.Options = {
+    physics: {
+      solver: 'forceAtlas2Based',
+      forceAtlas2Based: {
+        gravitationalConstant: -100,
+      },
+    },
+    groups: {
+      used: {
+        color: {
+          border: '#3d7de4',
+          background: '#9dc2f9',
+          highlight: {
+            border: '#3d7de4',
+            background: '#9dc2f9',
+          },
+        },
+      },
+      normal: {
+        color: {
+          border: '#ccc',
+          background: '#ddd',
+          highlight: {
+            border: '#ccc',
+            background: '#ddd',
+          },
+        },
+      },
+    },
+  };
+
   const network = new vis.Network(networkRef.value!, visData.value, visOption);
   watch(visData, (val) => {
     network.setData(val);

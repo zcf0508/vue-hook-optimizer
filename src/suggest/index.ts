@@ -9,14 +9,14 @@ export function gen(
   },
   usedNodes: Set<string>
 ) {
-  const suggests: string[] = [];
+  const suggestions: string[] = [];
   const splitedGraph = splitGraph(graph.edges);
   // console.log(splitedGraph);
   splitedGraph.forEach(g => {
     const nodes = Array.from(g.keys());
     if(splitedGraph.length > 1) {
       if (nodes.length > 1) {
-        suggests.push(`Nodes[${
+        suggestions.push(`Nodes[${
           nodes.length > 10 
             ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
             : nodes.map(node => node.label).join(',')
@@ -24,7 +24,7 @@ export function gen(
       }
     }
     if(nodes.every(node => !usedNodes.has(node.label))) {
-      suggests.push(`Node${
+      suggestions.push(`Node${
         nodes.length> 1 ? 's': ''
       } [${
         nodes.length > 10 
@@ -41,9 +41,9 @@ export function gen(
   const noIndegreeNodes = noIndegreeFilter(graph.edges);
   noIndegreeNodes.forEach(node => {
     if(!usedNodes.has(node.label)) {
-      suggests.push(`Node [${node.label}] is not used, perhaps you can remove it.`);
+      suggestions.push(`Node [${node.label}] is not used, perhaps you can remove it.`);
     }
   });
   
-  return suggests;
+  return suggestions;
 }
