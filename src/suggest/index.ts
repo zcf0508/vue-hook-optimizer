@@ -15,8 +15,8 @@ export function gen(
   splitedGraph.forEach(g => {
     const nodes = Array.from(g.keys());
     if(splitedGraph.length > 1) {
-      if (nodes.length > 1) {
-        suggestions.push(`Nodes[${
+      if (nodes.length > 2 && nodes.some(node => !usedNodes.has(node.label))) {
+        suggestions.push(`Nodes [${
           nodes.length > 10 
             ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
             : nodes.map(node => node.label).join(',')
