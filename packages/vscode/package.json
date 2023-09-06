@@ -61,7 +61,22 @@
           "group": "navigation"
         }
       ]
-    }
+    },
+    "languages": [
+      {
+        "id": "vho-output",
+        "mimetypes": [
+          "text/x-code-output"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "vho-output",
+        "scopeName": "vho.output",
+        "path": "./syntaxes/vho.output.tmLanguage"
+      }
+    ]
   },
   "scripts": {
     "build": "tsc ./script/index.ts && tsup",

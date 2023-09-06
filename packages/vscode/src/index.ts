@@ -176,7 +176,18 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     outputChannel.append(`${fileName}: \n`);
-    outputChannel.append(res.data.suggest + '\n\n');
+    res.data.suggests.forEach(suggest => {
+      outputChannel.append(`[${
+        suggest.type === 'info'
+          ? 'Info'
+          : suggest.type === 'warning'
+            ? 'Warning'
+            : suggest.type === 'error'
+              ? 'Error'
+              : 'Unknown'
+      }] ${suggest.message} \n`);
+    });
+    outputChannel.append('\n');
 
     if(!alerted) {
       window.showInformationMessage(
