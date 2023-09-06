@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"vue.volar",
+		"vue.vscode-typescript-vue-plugin",
+		"voorjaar.windicss-intellisense",
+		"antfu.unocss",
+		"yoavbls.pretty-ts-errors",
+		"amodio.tsl-problem-matcher",
+	]
+}
