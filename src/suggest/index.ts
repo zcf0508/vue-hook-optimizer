@@ -15,17 +15,13 @@ export function gen(
   splitedGraph.forEach(g => {
     const nodes = Array.from(g.keys());
     if(splitedGraph.length > 1) {
-      suggests.push(`Node${
-        nodes.length> 1 ? 's': ''
-      } [${
-        nodes.length > 10 
-          ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
-          : nodes.map(node => node.label).join(',')
-      }] ${
-        nodes.length> 1 ? 'are': 'is'
-      } isolated${
-        nodes.length > 2 ? ', perhaps you can refactor them to an isolated file.' : '.'
-      }`);
+      if (nodes.length > 1) {
+        suggests.push(`Nodes[${
+          nodes.length > 10 
+            ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
+            : nodes.map(node => node.label).join(',')
+        }] are isolated, perhaps you can refactor them to an isolated file.`);
+      }
     }
     if(nodes.every(node => !usedNodes.has(node.label))) {
       suggests.push(`Node${
