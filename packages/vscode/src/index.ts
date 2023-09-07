@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { window } from 'vscode';
 import { analyze } from './analyze';
 import { template } from 'lodash-es';
+import { light, dark } from './themes';
 import path from 'path';
 
 const visTemplate = template(`<html>
@@ -47,7 +48,9 @@ const visTemplate = template(`<html>
         w-[200px]
         px-4 py-2
         border-[#ddd] border-[1px] border-solid rounded-md
+        bg-transparent
         shadow
+        backdrop-blur
       "
     >
     </div>
@@ -65,7 +68,7 @@ const visTemplate = template(`<html>
     <div
       class="
         inline-block mr-1
-        bg-[#9dc2f9] 
+        bg-[<%= legend_used %>] 
         border border-solid border-[#3d7de4]
         w-[10px] h-[10px]
       "
@@ -76,7 +79,7 @@ const visTemplate = template(`<html>
     <div
       class="
         inline-block mr-1
-        bg-[#eee] 
+        bg-[<%= legend_normal %>] 
         border border-solid border-[#ddd]
         w-[10px] h-[10px]
       "
@@ -87,7 +90,7 @@ const visTemplate = template(`<html>
     <div
       class="
         inline-block mr-1
-        border border-solid border-[#333]
+        border border-solid border-[<%= legend_variant %>]
         rounded-full 
         w-[10px] h-[10px]
       "
@@ -98,7 +101,7 @@ const visTemplate = template(`<html>
     <div
       class="
         inline-block mr-1
-        border border-solid border-[#333]
+        border border-solid border-[<%= legend_func %>]
         rotate-45 transform scale-80
         w-[10px] h-[10px]
       "
@@ -109,7 +112,7 @@ const visTemplate = template(`<html>
 </div>
 
 <script type="text/javascript">
-init('<%= data %>')
+init('<%= data %>', '<%= config %>')
 const inputEle = findSearchInput();
 if(inputEle) {
   inputEle.addEventListener('input', (e) => {
@@ -124,10 +127,10 @@ if(inputEle) {
 </body>
 </html>`);
 
-function getWebviewUri(webview: vscode.Webview, extensionPath: string, filename: string) {
+function getWebviewUri(webview: vscode.Webview, extensionPath: string, filename: string, dir: string = 'script') {
   const jsFilePath = vscode.Uri.file(path.resolve(
     extensionPath, 
-    `./script/${filename}`
+    `./${dir}/${filename}`
   ));
   return webview.asWebviewUri(jsFilePath);
 }
@@ -139,6 +142,8 @@ let alerted = false;
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand('vho.action.analyze', async () => {
+    // 根据主题获取vis config
+    const config = getVisConfigByTheme();
     // 获取当前vue文件的内容
     const editor = window.activeTextEditor;
     if (!editor) {
@@ -173,6 +178,11 @@ export function activate(context: vscode.ExtensionContext) {
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
       data: JSON.stringify(res.data.vis),
+      config: JSON.stringify(config?.vis),
+      legend_used: config?.legend.used,
+      legend_normal: config?.legend.normal,
+      legend_variant: config?.legend.variant,
+      legend_func: config?.legend.func,
     });
 
     outputChannel.append(`${fileName}: \n`);
@@ -199,6 +209,27 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
   }));
+}
+
+function getVisConfigByTheme () {
+  const config = vscode.workspace.getConfiguration('vho');
+  const theme = config.get('theme');
+
+  if (theme === 'auto') {
+    const themeKind = vscode.window.activeColorTheme.kind;
+    if (themeKind === 2 || themeKind === 3) {
+      return dark;
+    } else if (themeKind === 1 || themeKind === 4) {
+      return light;
+    } else {
+      outputChannel.append('The current theme is not supported at the moment, so it will be set as light theme.');
+      return light;
+    }
+  } else if (theme === 'light') {
+    return light;
+  } else if (theme === 'dark') {
+    return dark;
+  }
 }
 
 export function deactivate() {
