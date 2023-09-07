@@ -13,5 +13,8 @@
     "types": [
       "vitest/globals"
     ]
-  }
+  },
+  "exclude": [
+    "script/index.js"
+  ]
 }
