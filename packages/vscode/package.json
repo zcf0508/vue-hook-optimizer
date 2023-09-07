@@ -47,6 +47,17 @@
         }
       }
     ],
+    "configuration": {
+      "title": "Vue Hook Optimizer",
+      "properties": {
+        "vho.theme": {
+          "type": "string",
+          "default": "auto",
+          "enum": ["auto", "light", "dark"],
+          "description": "Choose settings that are suitable for the current theme"
+        }
+      }
+    },
     "menus": {
       "commandPalette": [
         {
@@ -80,7 +91,7 @@
   },
   "scripts": {
     "build": "tsc ./script/index.ts && tsup",
-    "dev": "tsc ./script/index.ts --watch & tsup --watch",
+    "dev": "tsc ./script/index.ts --watch & tsup --watch --env.NODE_ENV development",
     "lint": "eslint .",
     "vscode:prepublish": "pnpm build",
     "publish": "vsce publish --no-dependencies",
