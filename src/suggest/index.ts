@@ -1,6 +1,6 @@
 import { TypedNode } from '@/analyze/utils';
 import { splitGraph } from './split';
-import { noIndegreeFilter, onlyFunctions } from './filter';
+import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
 import { hasCycle } from './utils';
 
 export enum SuggestionType {
@@ -27,6 +27,7 @@ export function gen(
   // console.log(splitedGraph);
   splitedGraph.forEach(g => {
     const nodes = Array.from(g.keys());
+
     if(splitedGraph.length > 1) {
       if (nodes.length > 2 && nodes.some(node => !usedNodes.has(node.label))) {
         suggestions.push({
@@ -39,6 +40,7 @@ export function gen(
         });
       }
     }
+
     if(nodes.length > 1 && nodes.every(node => !usedNodes.has(node.label))) {
       suggestions.push({
         type: SuggestionType.info,
@@ -49,6 +51,7 @@ export function gen(
         }] are not used, perhaps you can remove them.`,
       });
     }
+
     if(hasCycle(onlyFunctions(g))) {
       suggestions.push({
         type: SuggestionType.error,
@@ -59,6 +62,34 @@ export function gen(
         }], perhaps you can refactor it.`,
       });
     }
+
+    const paths = findLinearPaths(onlyFunctions(g));
+    paths.forEach(path => {
+      suggestions.push({
+        type: SuggestionType.warning,
+        message: `Nodes [${
+          path.length > 10 
+            ? path.slice(0, 10).map(node => node.label).join(',') + '...('+path.length+')'
+            : path.map(node => node.label).join(',')
+        }] are have function chain calls, perhaps you can refactor it.`,
+      });
+    });
+
+    if(g.size > 5) {
+      const ap = findArticulationPoints(onlyFunctions(g));
+      const noIndegreeNodes = noIndegreeFilter(g);
+      ap.forEach(node => {
+        if(!noIndegreeNodes.includes(node)){
+          suggestions.push({
+            type: SuggestionType.info,
+            // eslint-disable-next-line max-len
+            message: `Node [${node.label}] is an articulation point, perhaps you need to pay special attention to this node.`,
+          });
+        }
+      });
+    }
+
+    
   });
 
   const noIndegreeNodes = noIndegreeFilter(graph.edges);
@@ -70,6 +101,17 @@ export function gen(
       });
     }
   });
+
+  const noOutdegreeNodes = noOutdegreeFilter(graph.edges);
+  noOutdegreeNodes.forEach(node => {
+    if(!usedNodes.has(node.label)) {
+      suggestions.push({
+        type: SuggestionType.info,
+        message: `Node [${node.label}] is not used, perhaps you can remove it.`,
+      });
+    }
+  });
+
   
   return suggestions;
 }
