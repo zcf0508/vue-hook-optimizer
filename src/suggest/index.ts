@@ -63,7 +63,7 @@ export function gen(
       });
     }
 
-    const paths = findLinearPaths(onlyFunctions(g));
+    const paths = findLinearPaths(g);
     paths.forEach(path => {
       suggestions.push({
         type: SuggestionType.warning,
@@ -76,20 +76,15 @@ export function gen(
     });
 
     if(g.size > 5) {
-      const ap = findArticulationPoints(onlyFunctions(g));
-      const noIndegreeNodes = noIndegreeFilter(g);
+      const ap = findArticulationPoints(g);
       ap.forEach(node => {
-        if(!noIndegreeNodes.includes(node)){
-          suggestions.push({
-            type: SuggestionType.info,
-            // eslint-disable-next-line max-len
-            message: `Node [${node.label}] is an articulation point, perhaps you need to pay special attention to this node.`,
-          });
-        }
+        suggestions.push({
+          type: SuggestionType.info,
+          // eslint-disable-next-line max-len
+          message: `Node [${node.label}] is an articulation point, perhaps you need to pay special attention to this node.`,
+        });
       });
-    }
-
-    
+    }    
   });
 
   const noIndegreeNodes = noIndegreeFilter(graph.edges);
