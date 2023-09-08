@@ -99,16 +99,15 @@ export function gen(
     }
   });
 
-  const noOutdegreeNodes = noOutdegreeFilter(graph.edges);
-  noOutdegreeNodes.forEach(node => {
-    if(!usedNodes.has(node.label)) {
-      suggestions.push({
-        type: SuggestionType.info,
-        message: `Node [${node.label}] is not used, perhaps you can remove it.`,
-      });
-    }
-  });
+  // const noOutdegreeNodes = noOutdegreeFilter(graph.edges);
+  // noOutdegreeNodes.forEach(node => {
+  //   if(!usedNodes.has(node.label)) {
+  //     suggestions.push({
+  //       type: SuggestionType.info,
+  //       message: `Node [${node.label}] is not used, perhaps you can remove it.`,
+  //     });
+  //   }
+  // });
 
-  
   return suggestions;
 }
