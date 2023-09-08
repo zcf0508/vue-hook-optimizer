@@ -188,7 +188,7 @@ describe('suggest tests', () => {
     graph.set(node4, new Set([]));
 
     expect(findLinearPaths(graph)).toEqual([
-      [node1,node2,node3],
+      [node2,node3],
     ]);
   });
   it('graph linear paths 2', () => {

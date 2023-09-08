@@ -1,4 +1,4 @@
-import { TypedNode } from '@/analyze/utils';
+import { NodeType, TypedNode } from '@/analyze/utils';
 import { splitGraph } from './split';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
 import { hasCycle } from './utils';
@@ -78,11 +78,13 @@ export function gen(
     if(g.size > 5) {
       const ap = findArticulationPoints(g);
       ap.forEach(node => {
-        suggestions.push({
-          type: SuggestionType.info,
-          // eslint-disable-next-line max-len
-          message: `Node [${node.label}] is an articulation point, perhaps you need to pay special attention to this node.`,
-        });
+        if(node.type === NodeType.fun) {
+          suggestions.push({
+            type: SuggestionType.info,
+            // eslint-disable-next-line max-len
+            message: `Node [${node.label}] is an articulation point, perhaps you need to pay special attention to this node.`,
+          });
+        }
       });
     }    
   });
