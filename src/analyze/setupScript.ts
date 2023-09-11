@@ -43,12 +43,54 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 }
               }
             }
+            if (element?.type === 'RestElement' && element.argument.type === 'Identifier') {
+              const name = element.argument.name;
+              const binding = path.scope.getBinding(name);
+              
+              if(
+                binding 
+                && (path.parent.type === 'Program'
+                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                )
+                && !(declaration.init?.type === 'CallExpression'
+                  && declaration.init?.callee.type === 'Identifier'
+                  && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                )
+              ) {
+                graph.nodes.add(name);
+                nodeCollection.addNode(name, declaration);
+                if(!graph.edges.get(name)) {
+                  graph.edges.set(name, new Set());
+                }
+              }
+            }
           });
         }
         if(declaration.id.type === 'ObjectPattern') {
           declaration.id.properties.forEach((property) => {
             if(property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
               const name = property.value.name;
+              const binding = path.scope.getBinding(name);
+              if(
+                binding 
+                && (path.parent.type === 'Program'
+                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                )
+                && !(declaration.init?.type === 'CallExpression'
+                  && declaration.init?.callee.type === 'Identifier'
+                  && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                )
+              ) {
+                graph.nodes.add(name);
+                nodeCollection.addNode(name, declaration);
+                if(!graph.edges.get(name)) {
+                  graph.edges.set(name, new Set());
+                }
+              }
+            }
+
+            if(property.type === 'RestElement' && property.argument.type === 'Identifier') {
+              const name = property.argument.name;
               const binding = path.scope.getBinding(name);
               if(
                 binding 

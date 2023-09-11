@@ -14,6 +14,8 @@ const varB = {label: 'varB', type: NodeType.var};
 const funC = {label: 'funC', type: NodeType.fun};
 const varD = {label: 'varD', type: NodeType.var};
 const varE = {label: 'varE', type: NodeType.var};
+const restArr = {label: 'restArr', type: NodeType.var};
+const restObj = {label: 'restObj', type: NodeType.var};
 
 
 edges.set(route, new Set([]));
@@ -29,8 +31,10 @@ edges.set(varB, new Set([funA]));
 edges.set(funC, new Set([]));
 edges.set(varD, new Set([funC, varB]));
 edges.set(varE, new Set([funC, varB]));
+edges.set(restArr, new Set([]));
+edges.set(restObj, new Set([]));
 
 export const graph = {
-  nodes: new Set([route, path, lmsg, data, age, addAge, updateName, funA, varB, funC, varD, varE]),
+  nodes: new Set([route, path, lmsg, data, age, addAge, updateName, funA, varB, funC, varD, varE, restArr, restObj]),
   edges,
 };

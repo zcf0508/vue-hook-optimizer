@@ -23,6 +23,9 @@ const data = reactive({
 
 const age = ref(18)
 
+const [...restArr] = arrList
+const { ...restObj } = objList
+
 function addAge() {
   age.value++
 }
