@@ -32,7 +32,7 @@
         </span>
       </div>
       <div class="h-full w-full relative">
-        <div v-if="showSearchInput" class="absolute right-[10px] top-0 z-50">
+        <div v-if="showSearchInput" class="absolute right-[10px] top-[5px] z-50">
           <div class="relative flex items-center">
             <input 
               ref="searchInputRef"
@@ -43,6 +43,8 @@
                 pl-4 pr-6 py-2
                 border-[#ddd] border-[1px] border-solid rounded-md
                 shadow
+                bg-transparent
+                backdrop-blur
               "
             >
             <span
@@ -67,7 +69,7 @@
             flex flex-col gap-2
             backdrop-blur
           "
-          :class="showSearchInput ? 'top-[40px]' : 'top-[10px]'"
+          :class="showSearchInput ? 'top-[45px]' : 'top-[10px]'"
         >
           <div class="flex items-center align-baseline">
             <div
