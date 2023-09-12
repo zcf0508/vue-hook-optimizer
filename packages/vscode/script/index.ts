@@ -1,3 +1,6 @@
+// @ts-ignore
+const vscode = acquireVsCodeApi();
+
 let network: any;
 
 function init(dataString: string, theme: string) {
@@ -18,6 +21,15 @@ function init(dataString: string, theme: string) {
   // 初始化关系图
   // @ts-ignore
   network = new vis.Network(container, data, options);
+
+  // 监听节点点击事件
+  network.on('click', (event: any) => {
+    
+    const { nodes } = event;
+    if (nodes.length) {
+      onNodeClick(data.nodes.find((node: any) => node.id === nodes[0])?.info);
+    }
+  });
 }
 
 function findSearchContainer() {
@@ -27,3 +39,14 @@ function findSearchContainer() {
 function findSearchInput() {
   return document.getElementById('searchInput') as HTMLInputElement | null;
 }
+
+function onNodeClick(info?: {line: number, column: number}) {
+  console.log(info);
+  if(!info) return;
+  vscode.postMessage({
+    command: 'nodeClick',
+    info,
+  });
+}
+
+
