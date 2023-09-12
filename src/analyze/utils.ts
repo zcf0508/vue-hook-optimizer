@@ -12,11 +12,12 @@ export enum NodeType {
 
 type Options = {
   isComputed: boolean
+  isMethod: boolean
 }
 
 export class NodeCollection {
   nodes = new Map<string, TypedNode>();
-  addNode(label: string, node: t.Node, options: Partial<Options> = {isComputed: false}) {
+  addNode(label: string, node: t.Node, options: Partial<Options> = {isComputed: false, isMethod: false}) {
     if(this.nodes.has(label)) {
       return;
     }
@@ -29,6 +30,7 @@ export class NodeCollection {
         || node.type === 'FunctionDeclaration'
         || node.type === 'ObjectMethod'
       )
+      || options.isMethod
     ) {
       this.nodes.set(label, {
         label,

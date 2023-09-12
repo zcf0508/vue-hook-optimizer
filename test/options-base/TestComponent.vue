@@ -61,18 +61,18 @@
         required: true,
       },
     },
-    data() {
+    data:()=> {
       return {
         number: 0,
       }
     },
     computed: {
-      count() {
+      count:()=> {
         return counterStore.count
       }
     },
     methods: {
-      plus() {
+      plus:()=> {
         counterStore.increment();
       },
       add() {

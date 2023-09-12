@@ -1,4 +1,4 @@
-import { NodeType, TypedNode } from '@/analyze/utils';
+import { NodeType, TypedNode } from '../analyze/utils';
 import { splitGraph } from './split';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
 import { hasCycle } from './utils';

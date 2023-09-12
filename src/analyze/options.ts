@@ -38,6 +38,36 @@ export function analyze(
             && path1.parent === path.node.declaration.arguments[0]
           )
         ) {
+          // data
+          if(
+            path1.node.key.type === 'Identifier' 
+            && path1.node.key.name === 'data'
+            && path1.node.value.type === 'ArrowFunctionExpression'
+          ) {
+            const dataNode = path1.node.value;
+            
+            traverse(dataNode, {
+              ReturnStatement(path2){
+                if(path2.parent == dataNode.body) {
+                  if(path2.node.argument?.type === 'ObjectExpression') {
+                    path2.node.argument.properties.forEach(prop => {
+                      if(prop.type === 'ObjectProperty') {
+                        if(prop.key.type === 'Identifier') {
+                          const name = prop.key.name;
+                          graph.nodes.add(name);
+                          nodeCollection.addNode(name, prop);
+                          if(!graph.edges.get(name)) {
+                            graph.edges.set(name, new Set());
+                          }
+                        }
+                      }
+                    });
+                  }
+                }
+              },
+            }, path1.scope, path1);
+          }   
+          
           // computed
           if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'computed') {
             const computedNode = path1.node;
@@ -64,11 +94,11 @@ export function analyze(
             const methodsNode = path1.node;
             if(methodsNode.value.type === 'ObjectExpression') {
               methodsNode.value.properties.forEach(prop => {
-                if(prop.type === 'ObjectMethod') {
+                if(prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') {
                   if(prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
-                    nodeCollection.addNode(name, prop);
+                    nodeCollection.addNode(name, prop, {isMethod: true});
                     if(!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
