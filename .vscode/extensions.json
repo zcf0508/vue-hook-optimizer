@@ -2,7 +2,7 @@
 	"recommendations": [
 		"vue.volar",
 		"vue.vscode-typescript-vue-plugin",
-		"voorjaar.windicss-intellisense",
+		"bradlc.vscode-tailwindcss",
 		"antfu.unocss",
 		"yoavbls.pretty-ts-errors",
 		"amodio.tsl-problem-matcher",
