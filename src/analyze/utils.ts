@@ -3,6 +3,10 @@ import * as t from '@babel/types';
 export type TypedNode = {
   label: string
   type: NodeType
+  info?: Partial<{
+    line: number,
+    column: number,
+  }>
 }
 
 export enum NodeType {
@@ -13,9 +17,14 @@ export enum NodeType {
 type Options = {
   isComputed: boolean
   isMethod: boolean
+
 }
 
 export class NodeCollection {
+  lineOffset = 0;
+  constructor(_lineOffset=0) {
+    this.lineOffset = _lineOffset;
+  }
   nodes = new Map<string, TypedNode>();
   addNode(label: string, node: t.Node, options: Partial<Options> = {isComputed: false, isMethod: false}) {
     if(this.nodes.has(label)) {
@@ -35,11 +44,19 @@ export class NodeCollection {
       this.nodes.set(label, {
         label,
         type: NodeType.fun,
+        info: {
+          line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
+          column: node.loc?.start.column || 0,
+        },
       });
     } else {
       this.nodes.set(label, {
         label,
         type: NodeType.var,
+        info: {
+          line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
+          column: node.loc?.start.column || 0,
+        },
       });
     }
   }
@@ -48,6 +65,9 @@ export class NodeCollection {
     this.nodes.set(label, {
       label,
       type: node.type,
+      info: {
+        ...(node.info || {}),
+      },
     });
   }
 

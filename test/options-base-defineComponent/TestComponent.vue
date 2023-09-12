@@ -80,7 +80,7 @@
       }
     },
     methods: {
-      plus() {
+      plus: ()=> {
         counterStore.increment();
       },
       add() {

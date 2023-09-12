@@ -1,5 +1,9 @@
-import type { Data } from 'vis-network';
+import type { Data, Node, Edge } from 'vis-network';
 import { TypedNode } from './analyze/utils';
+
+type CustomNode = Node & {
+  info: TypedNode['info']
+}
 
 export function getVisData(
   graph: {
@@ -8,8 +12,8 @@ export function getVisData(
   },
   usedNodes: Set<string>
 ) {
-  const nodes: Data['nodes'] = [];
-  const edges: Data['edges'] = [];
+  const nodes: CustomNode[] = [];
+  const edges: Edge[] = [];
 
   graph.nodes.forEach((node) => {
     nodes.push({
@@ -17,6 +21,7 @@ export function getVisData(
       label: node.label,
       shape: node.type === 'var' ? 'dot' : 'diamond',
       group: usedNodes.has(node.label) ? 'used' : 'normal',
+      info: node.info,
     });
   });
 

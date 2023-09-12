@@ -8,8 +8,10 @@ const traverse: typeof _traverse =
   _traverse.default?.default || _traverse.default || _traverse;
 
 export function analyze(
-  content: string
+  content: string,
+  lineOffset = 0,
 ) {
+  // console.log({lineOffset});
   // console.log(content);
   const ast = babelParse(content, { sourceType: 'module',
     plugins: [
@@ -19,7 +21,7 @@ export function analyze(
 
   // ---
 
-  const nodeCollection = new NodeCollection();
+  const nodeCollection = new NodeCollection(lineOffset);
 
   const graph = { 
     nodes: new Set<string>(), 
@@ -159,7 +161,7 @@ export function analyze(
                 spread: tempSpread,
               },
               nodeCollection: tempNodeCollection,
-            } = processSetup(setupNode, path1.scope, setupNode, spread);
+            } = processSetup(setupNode, path1.scope, setupNode, spread, lineOffset);
             
             // 3 filter data by return
             traverse(setupNode, {

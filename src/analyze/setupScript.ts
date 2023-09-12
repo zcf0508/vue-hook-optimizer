@@ -6,10 +6,10 @@ const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
 
-export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node, _spread?: string[]) {
+export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node, _spread?: string[], _lineOffset=0) {
   const spread = _spread || [];
   
-  const nodeCollection = new NodeCollection();
+  const nodeCollection = new NodeCollection(_lineOffset);
 
   const graph = { 
     nodes: new Set<string>(), 
@@ -37,7 +37,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, declaration);
+                nodeCollection.addNode(name, element);
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -58,7 +58,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, declaration);
+                nodeCollection.addNode(name, element.argument);
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -82,7 +82,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, declaration);
+                nodeCollection.addNode(name, property.value);
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -103,7 +103,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, declaration);
+                nodeCollection.addNode(name, property.argument);
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -196,7 +196,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
         || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
         )) {
           graph.nodes.add(name);
-          nodeCollection.addNode(name, path.node);
+          nodeCollection.addNode(name, path.node.id!, {isMethod: true});
           if(!graph.edges.get(name)) {
             graph.edges.set(name, new Set());
           }
@@ -416,7 +416,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
 }
 
 export function analyze(
-  content: string
+  content: string,
+  lineOffset = 0,
 ) {
   // console.log(content);
   const ast = babelParse(content, { sourceType: 'module',
@@ -426,6 +427,6 @@ export function analyze(
   });
 
   // ---
-  const { graph, nodeCollection } = processSetup(ast);
+  const { graph, nodeCollection } = processSetup(ast, undefined, undefined, undefined, lineOffset);
   return nodeCollection.map(graph);
 }
