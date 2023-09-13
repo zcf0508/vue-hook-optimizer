@@ -95,7 +95,7 @@
   },
   "scripts": {
     "build": "tsc ./script/index.ts && tsup",
-    "dev": "tsc ./script/index.ts & tsup --env.NODE_ENV development",
+    "dev": "nodemon",
     "lint": "eslint .",
     "vscode:prepublish": "pnpm build",
     "publish": "vsce publish --no-dependencies",
