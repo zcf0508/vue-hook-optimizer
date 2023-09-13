@@ -25,9 +25,12 @@ export class NodeCollection {
         (node.type === 'VariableDeclarator' && [
           'ArrowFunctionExpression', 
           'FunctionDeclaration',
+          'FunctionExpression',
         ].includes(node.init?.type || '')) 
         || node.type === 'FunctionDeclaration'
         || node.type === 'ObjectMethod'
+        || node.type === 'ArrowFunctionExpression'
+        || node.type === 'FunctionExpression'
       )
     ) {
       this.nodes.set(label, {
