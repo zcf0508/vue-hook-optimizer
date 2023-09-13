@@ -7,3 +7,6 @@ export {
 export {
   analyze as analyzeOptions,
 } from './options';
+export {
+  analyze as analyzeTsx,
+} from './tsx';

@@ -3,6 +3,7 @@ import {
   analyzeSetupScript, 
   analyzeOptions, 
   analyzeTemplate, 
+  analyzeTsx,
   getVisData,
   gen,
   TypedNode,
@@ -17,17 +18,26 @@ export default defineEventHandler(async (ctx) => {
       nodes: new Set<TypedNode>(),
       edges: new Map<TypedNode, Set<TypedNode>>(),
     };
+    let nodes = new Set<string>();
+
     if(sfc.descriptor.scriptSetup?.content) {
       graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
     }
     else if(sfc.descriptor.script?.content) {
-      graph = analyzeOptions(sfc.descriptor.script?.content!);
+      if (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') {
+        const res = await analyzeTsx(sfc.descriptor.script?.content!);
+        graph = res.graph;
+        nodes = res.nodesUsedInTemplate;
+      } else {
+        graph = analyzeOptions(sfc.descriptor.script?.content!);
+      }
     }
     
 
-    let nodes = new Set<string>();
     try {
-      nodes = analyzeTemplate(sfc.descriptor.template!.content);
+      if (sfc.descriptor.template?.content) {
+        nodes = analyzeTemplate(sfc.descriptor.template!.content);
+      }
     } catch(e) {
       console.log(e);
     }

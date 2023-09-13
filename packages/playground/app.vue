@@ -124,9 +124,10 @@
 <script lang="ts" setup>
 import * as vis from 'vis-network';
 import CodeMirror from './components/codemirror/CodeMirror.vue';
-import { defaultCode } from './default-code';
+import { defaultCode, tsx } from './default-code';
 
-const code = ref(defaultCode);
+// const code = ref(defaultCode);
+const code = ref(tsx);
 const autoRefresh = ref(false);
 
 provide('autoresize', true);
@@ -179,7 +180,8 @@ async function start() {
       alerted.value = true;
     }
   } else {
-    alert(msg);
+    // alert(msg);
+    console.log(msg);
   }
 }
 
