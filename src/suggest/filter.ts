@@ -89,6 +89,9 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
       visitedNodes.add(node);
 
       while (graph.get(nextNode)?.size === 1) {
+        if(visitedNodes.has(nextNode)) {
+          break;
+        }
         path.push(nextNode);
         visitedNodes.add(nextNode);
         nextNode = Array.from(graph.get(nextNode)!)[0];
