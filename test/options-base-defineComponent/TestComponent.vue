@@ -82,9 +82,11 @@
     methods: {
       plus: ()=> {
         counterStore.increment();
+        this.add();
       },
       add() {
         counterStore.add(Number(this.number));
+        this.plus()
       }
     }
   })

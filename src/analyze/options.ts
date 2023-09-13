@@ -314,7 +314,7 @@ export function analyze(
             const methodsNode = path1.node;
             if(methodsNode.value.type === 'ObjectExpression') {
               methodsNode.value.properties.forEach(prop => {
-                if(prop.type === 'ObjectMethod' && prop.key.type === 'Identifier') {
+                if((prop.type === 'ObjectMethod' || prop.type === 'ObjectProperty') && prop.key.type === 'Identifier') {
                   const name = prop.key.name;
                   traverse(prop, {
                     MemberExpression(path2) {

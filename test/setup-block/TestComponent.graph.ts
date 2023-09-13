@@ -12,8 +12,8 @@ const updateName: TypedNode = {label: 'updateName', type: NodeType.fun, info: {l
 const funA: TypedNode = {label: 'funA', type: NodeType.fun, info: {line: 36, column: 9}};
 const varB: TypedNode = {label: 'varB', type: NodeType.var, info: {line:43, column: 8}};
 const funC: TypedNode = {label: 'funC', type: NodeType.fun, info: {line: 45, column: 9}};
-const varD: TypedNode = {label: 'varD', type: NodeType.var,info: {line: 51, column: 8}};
-const varE: TypedNode = {label: 'varE', type: NodeType.var, info: {line: 51, column: 14}};
+const varD: TypedNode = {label: 'varD', type: NodeType.var,info: {line: 52, column: 8}};
+const varE: TypedNode = {label: 'varE', type: NodeType.var, info: {line: 52, column: 14}};
 const restArr: TypedNode = {label: 'restArr', type: NodeType.var, info: {line: 25, column: 10}};
 const restObj: TypedNode = {label: 'restObj', type: NodeType.var, info: {line: 26, column: 11}};
 
@@ -30,7 +30,7 @@ edges.set(addAge, new Set([age]));
 edges.set(updateName, new Set([data]));
 edges.set(funA, new Set([]));
 edges.set(varB, new Set([funA]));
-edges.set(funC, new Set([]));
+edges.set(funC, new Set([funC]));
 edges.set(varD, new Set([funC, varB]));
 edges.set(varE, new Set([funC, varB]));
 

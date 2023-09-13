@@ -211,12 +211,15 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
     FunctionDeclaration(path) {
       const name = path.node.id?.name;
       if(name && graph.nodes.has(name)) {
-        path.traverse({
+        traverse(path.node.body, {
           Identifier(path1) {
             const binding = path1.scope.getBinding(path1.node.name);
             if(
               graph.nodes.has(path1.node.name) 
-              && path1.node.name !== name 
+              && (
+                path1.parent.type !== 'MemberExpression'
+                || path1.parent.object === path1.node
+              )
               && (binding?.scope.block.type === 'Program'
                 || (parentScope === binding?.scope)
               )
@@ -233,7 +236,6 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
               if(
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
-                && path1.node.property.name !== name 
                 && (binding?.scope.block.type === 'Program'
                   || (parentScope === binding?.scope)
                 )
@@ -242,7 +244,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
               }
             }
           },
-        });
+        }, path.scope, path);
       }
     },
 
@@ -258,7 +260,10 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                     const binding = path1.scope.getBinding(path1.node.name);
                     if(
                       graph.nodes.has(path1.node.name) 
-                      && path1.node.name !== name 
+                      && (
+                        path1.parent.type !== 'MemberExpression'
+                        || path1.parent.object === path1.node
+                      )
                       && (binding?.scope.block.type === 'Program'
                         || (parentScope === binding?.scope)
                       )
@@ -275,7 +280,6 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                       if(
                         spread.includes(path1.node.object.name)
                         && path1.node.property.type === 'Identifier'
-                        && path1.node.property.name !== name 
                         && (binding?.scope.block.type === 'Program'
                           || (parentScope === binding?.scope)
                         )
@@ -299,7 +303,10 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                     const binding = path1.scope.getBinding(path1.node.name);
                     if(
                       graph.nodes.has(path1.node.name) 
-                      && path1.node.name !== name 
+                      && (
+                        path1.parent.type !== 'MemberExpression'
+                        || path1.parent.object === path1.node
+                      )
                       && (binding?.scope.block.type === 'Program'
                         || (parentScope === binding?.scope)
                       )
@@ -316,7 +323,6 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                       if(
                         spread.includes(path1.node.object.name)
                         && path1.node.property.type === 'Identifier'
-                        && path1.node.property.name !== name 
                         && (binding?.scope.block.type === 'Program'
                           || (parentScope === binding?.scope)
                         )
@@ -345,7 +351,10 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 const binding = path1.scope.getBinding(path1.node.name);
                 if(
                   graph.nodes.has(path1.node.name) 
-                  && path1.node.name !== name 
+                  && (
+                    path1.parent.type !== 'MemberExpression'
+                    || path1.parent.object === path1.node
+                  )
                   && (binding?.scope.block.type === 'Program'
                     || (parentScope === binding?.scope)
                   )
@@ -362,7 +371,6 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                   if(
                     spread.includes(path1.node.object.name)
                     && path1.node.property.type === 'Identifier'
-                    && path1.node.property.name !== name 
                     && (binding?.scope.block.type === 'Program'
                       || (parentScope === binding?.scope)
                     )
@@ -381,11 +389,18 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
       if(path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
         const name = path.node.key.name;
         
-        path.traverse({
+        traverse(path.node.body, {
           Identifier(path1) {
+            const binding = path1.scope.getBinding(path1.node.name);
             if(
-              graph.nodes.has(path1.node.name) 
-              && path1.node.name !== name 
+              graph.nodes.has(path1.node.name)
+              && (
+                path1.parent.type !== 'MemberExpression'
+                || path1.parent.object === path1.node
+              )
+              && (binding?.scope.block.type === 'Program'
+                || (parentScope === binding?.scope)
+              )
             ) {
               graph.edges.get(name)?.add(path1.node.name);
             }
@@ -395,16 +410,19 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
               path1.node.object.type === 'Identifier' 
               && spread.includes(path1.node.object.name)
             ) {
+              const binding = path1.scope.getBinding(path1.node.object.name);
               if(
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
-                && path1.node.property.name !== name 
+                && (binding?.scope.block.type === 'Program'
+                  || (parentScope === binding?.scope)
+                )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);
               }
             }
           },
-        });
+        }, path.scope, path);
       }
     },
   }, parentScope, parentPath);

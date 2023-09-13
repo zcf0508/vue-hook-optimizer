@@ -70,9 +70,11 @@ export default {
     const methods = {
       plus() {
         counterStore.increment();
+        methods.add();
       },
       add() {
         counterStore.add(Number(data.number));
+        methods.plus();
       }
     }
 
