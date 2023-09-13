@@ -74,11 +74,11 @@
     methods: {
       plus:()=> {
         counterStore.increment();
-        this.add();
+        this.plus();
       },
       add() {
         counterStore.add(Number(this.number));
-        this.plus();
+        this.add();
       }
     }
   }

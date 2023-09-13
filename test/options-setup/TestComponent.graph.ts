@@ -9,8 +9,8 @@ const add: TypedNode = {label: 'add', type: NodeType.fun, info: {line: 74, colum
 
 edges.set(number, new Set([]));
 edges.set(count, new Set([]));
-edges.set(plus, new Set([add]));
-edges.set(add, new Set([number, plus]));
+edges.set(plus, new Set([plus]));
+edges.set(add, new Set([number, add]));
 
 export const graph = {
   nodes: new Set([number, count, plus, add]),

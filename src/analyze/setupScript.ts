@@ -425,6 +425,47 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
         }, path.scope, path);
       }
     },
+
+    ObjectProperty(path) {
+      if(path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
+        const name = path.node.key.name;
+        
+        traverse(path.node.value, {
+          Identifier(path1) {
+            const binding = path1.scope.getBinding(path1.node.name);
+            if(
+              graph.nodes.has(path1.node.name)
+              && (
+                path1.parent.type !== 'MemberExpression'
+                || path1.parent.object === path1.node
+              )
+              && (binding?.scope.block.type === 'Program'
+                || (parentScope === binding?.scope)
+              )
+            ) {
+              graph.edges.get(name)?.add(path1.node.name);
+            }
+          },
+          MemberExpression(path1) {
+            if(
+              path1.node.object.type === 'Identifier' 
+              && spread.includes(path1.node.object.name)
+            ) {
+              const binding = path1.scope.getBinding(path1.node.object.name);
+              if(
+                spread.includes(path1.node.object.name)
+                && path1.node.property.type === 'Identifier'
+                && (binding?.scope.block.type === 'Program'
+                  || (parentScope === binding?.scope)
+                )
+              ) {
+                graph.edges.get(name)?.add(path1.node.property.name);
+              }
+            }
+          },
+        }, path.scope, path);
+      }
+    },
   }, parentScope, parentPath);
 
   return {

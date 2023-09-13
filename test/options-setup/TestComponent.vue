@@ -68,13 +68,13 @@ export default {
     const count = computed(() => counterStore.count);
 
     const methods = {
-      plus() {
+      plus: ()=> {
         counterStore.increment();
-        methods.add();
+        methods.plus();
       },
       add() {
         counterStore.add(Number(data.number));
-        methods.plus();
+        methods.add();
       }
     }
 

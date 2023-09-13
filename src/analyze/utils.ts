@@ -35,9 +35,16 @@ export class NodeCollection {
         (node.type === 'VariableDeclarator' && [
           'ArrowFunctionExpression', 
           'FunctionDeclaration',
+          'FunctionExpression',
         ].includes(node.init?.type || '')) 
+        || (node.type === 'ObjectProperty' && [
+          'ArrowFunctionExpression', 
+          'FunctionDeclaration',
+          'FunctionExpression',
+        ].includes(node.value?.type || '')) 
         || node.type === 'FunctionDeclaration'
         || node.type === 'ObjectMethod'
+        || node.type === 'FunctionExpression'
       )
       || options.isMethod
     ) {
