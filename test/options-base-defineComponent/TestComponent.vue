@@ -80,11 +80,13 @@
       }
     },
     methods: {
-      plus() {
+      plus: ()=> {
         counterStore.increment();
+        this.plus();
       },
       add() {
         counterStore.add(Number(this.number));
+        this.add()
       }
     }
   })

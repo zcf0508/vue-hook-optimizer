@@ -26,6 +26,7 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
+    graph.set(node1, new Set([node1]));
     graph.set(node1, new Set([node2]));
     graph.set(node2, new Set([node1, node3]));
     graph.set(node3, new Set([node4]));
@@ -74,6 +75,7 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
+    graph.set(node1, new Set([node1]));
     graph.set(node1, new Set([node2]));
     graph.set(node2, new Set([node1, node3]));
     graph.set(node3, new Set([node4]));
@@ -128,6 +130,7 @@ describe('suggest tests', () => {
       label: 'node5',
       type: NodeType.fun,
     };
+    graph.set(node1, new Set([node1]));
     graph.set(node1, new Set([node2, node5]));
     graph.set(node2, new Set([node3, node4]));
 
@@ -182,10 +185,15 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
+    const node5: TypedNode = {
+      label: 'node4',
+      type: NodeType.fun,
+    };
     graph.set(node1, new Set([node2]));
     graph.set(node2, new Set([node3]));
     graph.set(node3, new Set([node4]));
     graph.set(node4, new Set([]));
+    graph.set(node5, new Set([node5]));
 
     expect(findLinearPaths(graph)).toEqual([
       [node2,node3],
@@ -238,6 +246,7 @@ describe('suggest tests', () => {
       label: 'node5',
       type: NodeType.fun,
     };
+    graph.set(node1, new Set([node1]));
     graph.set(node1, new Set([node3]));
     graph.set(node2, new Set([node3]));
     graph.set(node3, new Set([node4, node5]));

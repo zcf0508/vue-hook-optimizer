@@ -16,10 +16,16 @@ export async function analyze(code: string) {
     edges: new Map<TypedNode, Set<TypedNode>>(),
   };
   if(sfc.descriptor.scriptSetup?.content) {
-    graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
+    graph = analyzeSetupScript(
+      sfc.descriptor.scriptSetup?.content!,
+      (sfc.descriptor.scriptSetup.loc.start.line || 1) - 1,
+    );
   }
   else if(sfc.descriptor.script?.content) {
-    graph = analyzeOptions(sfc.descriptor.script?.content!);
+    graph = analyzeOptions(
+      sfc.descriptor.script?.content!,
+      (sfc.descriptor.script.loc.start.line || 1) - 1,
+    );
   }
 
   let nodes = new Set<string>();

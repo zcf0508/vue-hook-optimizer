@@ -158,8 +158,8 @@ export function activate(context: vscode.ExtensionContext) {
       window.showErrorMessage(res.msg);
       return;
     }
-    
-    const fileName = document.fileName.split('/').pop();
+    const filePath = document.fileName;
+    const fileName = filePath.split('/').pop();
     const panel = window.createWebviewPanel(
       'vueHookOptimizerAnalyze', // viewType
       `Analyze ${fileName}`, // 视图标题
@@ -184,6 +184,23 @@ export function activate(context: vscode.ExtensionContext) {
       legend_variant: config?.legend.variant,
       legend_func: config?.legend.func,
     });
+
+    panel.webview.onDidReceiveMessage(
+      async (message) => {
+        switch (message.command) {
+          case 'nodeClick':
+            const { line, column } = message.info;
+            const position = new vscode.Position(line, column);
+            const document = await vscode.workspace.openTextDocument(filePath);
+            const editor = await vscode.window.showTextDocument(document);
+            editor.selection = new vscode.Selection(position, position);
+            editor.revealRange(new vscode.Range(position, position));
+            break;
+        }
+      },
+      undefined,
+      context.subscriptions
+    );
 
     outputChannel.append(`${fileName}: \n`);
     res.data.suggests.forEach(suggest => {

@@ -46,6 +46,7 @@ const { varB } = funA()
 function funC(varB) {
   const varD = 1
   const varE = 2
+  funC()
   return [varD, varE]
 }
 

@@ -1,4 +1,4 @@
-import { TypedNode } from '@/analyze/utils';
+import { TypedNode } from '../analyze/utils';
 
 function dfs(
   graph: Map<TypedNode, Set<TypedNode>>,

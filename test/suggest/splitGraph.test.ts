@@ -21,6 +21,7 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
+    graph.set(node1, new Set([node1]));
     graph.set(node1, new Set([node2]));
     graph.set(node2, new Set([node1, node3]));
     graph.set(node3, new Set([node4]));

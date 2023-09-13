@@ -9,7 +9,10 @@ describe('test analyze', () => {
   const source = fs.readFileSync(path.resolve(__dirname, './TestComponent.vue'), 'utf-8');
   const sfc = parse(source);
   it('test analyze setup script', () => {
-    const graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
+    const graph = analyzeSetupScript(
+      sfc.descriptor.scriptSetup?.content!, 
+      (sfc.descriptor.scriptSetup?.loc.start.line || 1) - 1,
+    );
     expect(graph).toEqual(graphRes);
   });
   it('test analyze template', () => {

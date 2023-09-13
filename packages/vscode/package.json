@@ -2,7 +2,7 @@
   "publisher": "zcf0508",
   "name": "vue-hook-optimizer-ext",
   "displayName": "vue-hook-optimizer",
-  "version": "0.0.22",
+  "version": "0.0.24",
   "private": true,
   "packageManager": "pnpm@8.6.0",
   "description": "",
@@ -95,7 +95,7 @@
   },
   "scripts": {
     "build": "tsc ./script/index.ts && tsup",
-    "dev": "tsc ./script/index.ts --watch & tsup --watch --env.NODE_ENV development",
+    "dev": "nodemon",
     "lint": "eslint .",
     "vscode:prepublish": "pnpm build",
     "publish": "vsce publish --no-dependencies",
