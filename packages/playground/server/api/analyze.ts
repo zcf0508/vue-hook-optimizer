@@ -24,7 +24,7 @@ export default defineEventHandler(async (ctx) => {
       graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
     }
     else if(sfc.descriptor.script?.content) {
-      if (sfc.descriptor.script.lang === 'tsx') {
+      if (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') {
         const res = await analyzeTsx(sfc.descriptor.script?.content!);
         graph = res.graph;
         nodes = res.nodesUsedInTemplate;
@@ -35,7 +35,7 @@ export default defineEventHandler(async (ctx) => {
     
 
     try {
-      if (sfc.descriptor.script?.lang !== 'tsx') {
+      if (sfc.descriptor.template?.content) {
         nodes = analyzeTemplate(sfc.descriptor.template!.content);
       }
     } catch(e) {

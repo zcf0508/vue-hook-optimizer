@@ -22,8 +22,10 @@ type Options = {
 
 export class NodeCollection {
   lineOffset = 0;
-  constructor(_lineOffset=0) {
+  addInfo = true;
+  constructor(_lineOffset=0, _addInfo=true) {
     this.lineOffset = _lineOffset;
+    this.addInfo = _addInfo;
   }
   nodes = new Map<string, TypedNode>();
   addNode(label: string, node: t.Node, options: Partial<Options> = {isComputed: false, isMethod: false}) {
@@ -52,19 +54,23 @@ export class NodeCollection {
       this.nodes.set(label, {
         label,
         type: NodeType.fun,
-        info: {
-          line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
-          column: node.loc?.start.column || 0,
-        },
+        ...(this.addInfo ? {
+          info: {
+            line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
+            column: node.loc?.start.column || 0,
+          },
+        } : {}),
       });
     } else {
       this.nodes.set(label, {
         label,
         type: NodeType.var,
-        info: {
-          line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
-          column: node.loc?.start.column || 0,
-        },
+        ...(this.addInfo ? {
+          info: {
+            line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
+            column: node.loc?.start.column || 0,
+          },
+        } : {}),
       });
     }
   }

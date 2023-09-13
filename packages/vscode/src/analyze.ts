@@ -2,7 +2,8 @@ import {
   parse, 
   analyzeSetupScript, 
   analyzeOptions, 
-  analyzeTemplate, 
+  analyzeTemplate,
+  analyzeTsx,
   getVisData,
   gen,
   TypedNode,
@@ -15,6 +16,8 @@ export async function analyze(code: string) {
     nodes: new Set<TypedNode>(),
     edges: new Map<TypedNode, Set<TypedNode>>(),
   };
+  let nodes = new Set<string>();
+
   if(sfc.descriptor.scriptSetup?.content) {
     graph = analyzeSetupScript(
       sfc.descriptor.scriptSetup?.content!,
@@ -22,15 +25,24 @@ export async function analyze(code: string) {
     );
   }
   else if(sfc.descriptor.script?.content) {
-    graph = analyzeOptions(
-      sfc.descriptor.script?.content!,
-      (sfc.descriptor.script.loc.start.line || 1) - 1,
-    );
+    if (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') {
+      const res = await analyzeTsx(sfc.descriptor.script?.content!,
+        (sfc.descriptor.script.loc.start.line || 1) - 1,
+      );
+      graph = res.graph;
+      nodes = res.nodesUsedInTemplate;
+    } else {
+      graph = analyzeOptions(
+        sfc.descriptor.script?.content!,
+        (sfc.descriptor.script.loc.start.line || 1) - 1,
+      );
+    }
   }
 
-  let nodes = new Set<string>();
   try {
-    nodes = analyzeTemplate(sfc.descriptor.template!.content);
+    if (sfc.descriptor.template?.content) {
+      nodes = analyzeTemplate(sfc.descriptor.template!.content);
+    }
   } catch(e) {
     console.log(e);
   }

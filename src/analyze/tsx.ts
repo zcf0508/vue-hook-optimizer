@@ -2,6 +2,8 @@ import { transformAsync } from '@babel/core';
 import _traverse, { Binding, NodePath, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
 import { NodeCollection, NodeType } from './utils';
+// @ts-ignore
+import bts from '@babel/plugin-transform-typescript';
 
 const traverse: typeof _traverse =
   //@ts-ignore
@@ -71,17 +73,17 @@ function rescureArrayPattern(node: t.ArrayPattern, rootScope: Scope, res: t.Iden
   }, parentScope, parentPath);
 }
 
-export function processTsx(ast: t.Node, parentScope?: Scope, parentPath?: t.Node, _spread?: string[]) {
-  const spread = _spread || [];
+
+export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true, 
+  parentScope?: Scope, parentPath?: t.Node, _spread?: string[]) {
   
-  const nodeCollection = new NodeCollection();
+  const nodeCollection = new NodeCollection(lineOffset, addInfo);
 
   const nodesUsedInTemplate = new Set<string>();
 
   const graph = { 
     nodes: new Set<string>(), 
-    edges: new Map<string, Set<string>>(), 
-    spread: new Map<string, Set<string>>(),
+    edges: new Map<string, Set<string>>(),
   };
 
   function addNode (name: string, node: t.Node, 
@@ -347,7 +349,6 @@ export function processTsx(ast: t.Node, parentScope?: Scope, parentPath?: t.Node
   });
   
 
-
   return {
     graph,
     nodeCollection,
@@ -355,8 +356,11 @@ export function processTsx(ast: t.Node, parentScope?: Scope, parentPath?: t.Node
   };
 }
 
+
 export async function analyze(
-  content: string
+  content: string,
+  lineOffset = 0,
+  addInfo = true,
 ) {
 
   // console.log(content);
@@ -367,7 +371,7 @@ export async function analyze(
     configFile: false,
     plugins: [
       [
-        '@babel/plugin-transform-typescript',
+        bts,
         {
           isTSX: true, 
           allowExtensions: true,
@@ -377,7 +381,7 @@ export async function analyze(
   });
 
   if (res && res.ast) {
-    const { graph, nodeCollection, nodesUsedInTemplate } = processTsx(res.ast);
+    const { graph, nodeCollection, nodesUsedInTemplate } = processTsx(res.ast, lineOffset, addInfo);
     // ---
     return {
       graph: nodeCollection.map(graph),

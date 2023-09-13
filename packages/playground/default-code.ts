@@ -90,3 +90,33 @@ code {
   color: #304455;
 }
 </style>`;
+
+
+export const tsx = `<script lang="tsx">
+export default defineComponent({
+  name: 'BaseInfoModal',
+  props: {
+    modelValue: {
+      type: Boolean,
+      default: false
+    }
+  },
+  emits: ['update:modelValue'],
+  setup(props, { emit }) {
+    const open = computed({
+      get: () => props.modelValue,
+      set: (val) => {
+        emit('update:modelValue', val)
+      }
+    })
+    return () => (
+      <a-modal v-model={[open.value, 'open']} title='基本信息' onOk={() => (open.value = false)}>
+        <p>hello</p>
+      </a-modal>
+    )
+  }
+})
+</script>
+
+<style scoped lang="less"></style>
+`;
