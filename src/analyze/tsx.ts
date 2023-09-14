@@ -19,7 +19,7 @@ import {
   parseReturnJsxPattern,
   IUsedNode,
   parseReturnObjectPattern,
-} from '@/utils/traverse';
+} from '../utils/traverse';
 
 
 export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true, 
