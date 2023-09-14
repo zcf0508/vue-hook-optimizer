@@ -14,7 +14,7 @@ export type Suggestion = {
   message: string
 }
 
-console;
+
 export function gen(
   graph: {
     nodes: Set<TypedNode>;
