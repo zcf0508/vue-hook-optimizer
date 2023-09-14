@@ -1,77 +1,25 @@
 import { transformAsync } from '@babel/core';
-import _traverse, { Binding, NodePath, Scope } from '@babel/traverse';
+import _traverse, { NodePath, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
-import { NodeCollection, NodeType } from './utils';
+import { NodeCollection } from './utils';
 // @ts-ignore
 import bts from '@babel/plugin-transform-typescript';
-
-const traverse: typeof _traverse =
-  //@ts-ignore
-  _traverse.default?.default || _traverse.default || _traverse;
-
-/**
- * 递归遍历如下结构：
- * let { loc, loc: locd, loc: { start, end }, loc: { start: { line: { deep } }} } = node;
- * 解出 loc, locd, start, end, deep
- * @param node 
- * @param scope 
- * @param res 
- */
-function rescureObjectPattern(node: t.ObjectPattern, rootScope: Scope, res: t.Identifier[], 
-  parentScope: Scope, parentPath: NodePath<t.VariableDeclarator | t.ObjectProperty>) {
-  traverse(node, {
-    ObjectProperty(path1) {
-      if (path1.node.type === 'ObjectProperty' 
-      && path1.node.key.type === 'Identifier' && path1.node.value.type === 'Identifier') {
-        const name = path1.node.value.name;
-        const _scope = path1.scope.getBinding(name)?.scope;
-        if (_scope && _scope === rootScope) {
-          res.push(path1.node.value);
-        }
-      } else if (path1.node.type === 'ObjectProperty' 
-      && path1.node.key.type === 'Identifier' && path1.node.value.type === 'ObjectPattern') {
-        rescureObjectPattern(path1.node.value, rootScope, res, path1.scope, path1);
-      }
-    },
-    RestElement(path1) {
-      if (path1.node.argument.type === 'Identifier') {
-        const name = path1.node.argument.name;
-        const _scope = path1.scope.getBinding(name)?.scope;
-        if (_scope && _scope === rootScope) {
-          res.push(path1.node.argument);
-        }
-      }
-    },
-  }, parentScope, parentPath);
-}
-
-/**
- * 递归遍历如下结构：
- * let [foo, [bar, baz]] = [1, [[2], 3]];
- * 解出 foo, bar, baz
- * @param node 
- * @param scope 
- * @param res 
- */
-function rescureArrayPattern(node: t.ArrayPattern, rootScope: Scope, res: t.Identifier[], 
-  parentScope: Scope, parentPath: NodePath<t.VariableDeclarator | t.ArrayPattern>) {
-  traverse(node, {
-    Identifier(path1) {
-      if (path1.node.type === 'Identifier') {
-        const name = path1.node.name;
-        const _scope = path1.scope.getBinding(name)?.scope;
-        if (_scope && _scope === rootScope) {
-          res.push(path1.node);
-        }
-      }
-    },
-    ArrayPattern(path1) {
-      if (path1.node.type === 'ArrayPattern') {
-        rescureArrayPattern(path1.node, rootScope, res, path1.scope, path1);
-      }
-    },
-  }, parentScope, parentPath);
-}
+import { 
+  traverse, 
+  IAddNode,
+  IAddEdge, 
+  parseNodeIdentifierPattern, 
+  parseNodeObjectPattern,
+  parseNodeArrayPattern,
+  parseNodeFunctionPattern,
+  parseEdgeIdentifierPattern,
+  parseEdgeObjectPattern,
+  parseEdgeArrayPattern,
+  parseEdgeFunctionPattern,
+  parseReturnJsxPattern,
+  IUsedNode,
+  parseReturnObjectPattern,
+} from '@/utils/traverse';
 
 
 export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true, 
@@ -86,9 +34,7 @@ export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true,
     edges: new Map<string, Set<string>>(),
   };
 
-  function addNode (name: string, node: t.Node, 
-    path: NodePath<t.VariableDeclarator | t.FunctionDeclaration>, scope: Scope
-  ) {
+  function addNode ({ name, node, path, scope}: IAddNode) {
     const binding = path.scope.getBinding(name);
     if (scope === binding?.scope) {
       graph.nodes.add(name);
@@ -99,156 +45,17 @@ export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true,
     }
   }
 
-  function parseNodeIdentifierPattern(path: NodePath<t.VariableDeclarator>, rootScope: Scope) {
-    if (path.node.id.type !== 'Identifier') return;
-
-    if (path.node.init?.type === 'ArrowFunctionExpression' || path.node.init?.type === 'FunctionExpression') {
-      // const speak = () => {}
-      addNode(path.node.id.name, path.node, path, rootScope);
-    } else {
-      // const open = 22
-      addNode(path.node.id.name, path.node, path, rootScope);
-    }
-    
-  }
-
-  function parseNodeObjectPattern (path: NodePath<t.VariableDeclarator>, rootScope: Scope) {
-    if (path.node.id.type !== 'ObjectPattern') return;
-    
-    path.node.id.properties.forEach(property => {
-      if (property.type === 'ObjectProperty' 
-      && property.key.type === 'Identifier' && property.value.type === 'Identifier') {
-        // const { x } = obj
-        addNode(property.value.name, property, path, rootScope);
-      } else if (property.type === 'ObjectProperty' 
-      && property.key.type === 'Identifier' && property.value.type === 'AssignmentPattern') {
-        // const { x = 3 } = obj
-        addNode(property.key.name, property, path, rootScope);
-      } else if (property.type === 'RestElement' && property.argument.type === 'Identifier') {
-        // const { ...rest } = obj
-        addNode(property.argument.name, property, path, rootScope);
-      } else if (property.type === 'ObjectProperty' 
-      && property.key.type === 'Identifier' && property.value.type === 'ObjectPattern') {
-        // let { loc, loc: locd, loc: { start, end } } = node;
-        const res: t.Identifier[] = [];
-        rescureObjectPattern(property.value, rootScope, res, path.scope, path);
-        res.forEach(r => addNode(r.name, r, path, rootScope));
-      }     
-    });
-    
-  }
-
-  function parseNodeArrayPattern(path: NodePath<t.VariableDeclarator>, rootScope: Scope) {
-    if (path.node.id.type !== 'ArrayPattern') return;
-
-    path.node.id.elements.forEach(ele => {
-      if (ele?.type === 'Identifier') {
-        // const [arr, brr] = array
-        addNode(ele.name, ele, path, rootScope);
-      } else if (ele?.type === 'ArrayPattern') {
-        // let [foo, [bar, baz]] = array;
-        const res: t.Identifier[] = [];
-        rescureArrayPattern(ele, rootScope, res, path.scope, path);
-        res.forEach(r => addNode(r.name, r, path, rootScope));
-      } else if (ele?.type === 'AssignmentPattern') {
-        if (ele.left.type === 'Identifier') {
-          // let [yy = 'b'] = array;
-          addNode(ele.left.name, ele, path, rootScope);
-        }
-      } else if (ele?.type === 'RestElement') {
-        if (ele.argument.type === 'Identifier') {
-          // const [arr2, ...rest2] = array
-          addNode(ele.argument.name, ele, path, rootScope);
-        }
-      }
-    });
-  }
-
-  function parseNodeFunctionPattern(path: NodePath<t.FunctionDeclaration>, rootScope: Scope) {
-    if (path.node.type !== 'FunctionDeclaration') return;
-    if (path.node.id?.type === 'Identifier') {
-      // function abc () {}
-      addNode(path.node.id.name, path.node, path, rootScope);
+  function addEdge ({ fromName, toName, path, scope, collectionNodes }: IAddEdge) {
+    const binding = path.scope.getBinding(toName);
+    if (scope === binding?.scope && collectionNodes.has(toName)) {
+      graph.edges.get(fromName)?.add(toName);
     }
   }
 
-  function parseEdgeFunctionPattern(path: NodePath<t.FunctionDeclaration>, rootScope: Scope) {
-    if (!path.node.id) return;
-    if (graph.nodes.has(path.node.id.name) && path.scope.getBinding(path.node.id.name)?.scope === rootScope) {
-      const name = path.node.id.name;
-      traverse(path.node.body, {
-        Identifier(path1) {
-          const binding = path1.scope.getBinding(path1.node.name);
-          if (binding?.scope === rootScope && graph.nodes.has(path1.node.name)) {
-            graph.edges.get(name)?.add(path1.node.name);
-          }
-        },
-      }, path.scope, path);
-    }
-  }
-
-  function parseEdgeIdentifierPattern(path: NodePath<t.VariableDeclarator>, rootScope: Scope) {
-    if (!path.node.id || path.node.id.type !== 'Identifier') return;
-    if (path.node.init?.type && 
-      ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
-    ) {
-      if (graph.nodes.has(path.node.id.name) && path.scope.getBinding(path.node.id.name)?.scope === rootScope) {
-        const name = path.node.id.name;
-        traverse(path.node.init, {
-          Identifier(path1) {
-            const binding = path1.scope.getBinding(path1.node.name);
-            if (binding?.scope === rootScope && graph.nodes.has(path1.node.name)) {
-              graph.edges.get(name)?.add(path1.node.name);
-            }
-          },
-        }, path.scope, path);
-      }
-    }
-  }
-
-  function parseEdgeObjectPattern(path: NodePath<t.VariableDeclarator>, rootScope: Scope) {
-    if (!path.node.id || path.node.id.type !== 'ObjectPattern') return;
-    if (path.node.init?.type && 
-      ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
-    ) {
-      const res: t.Identifier[] = [];
-      rescureObjectPattern(path.node.id, rootScope, res, path.scope, path);
-
-      res.filter(r => (graph.nodes.has(r.name) && path.scope.getBinding(r.name)?.scope === rootScope));
-
-      traverse(path.node.init, {
-        Identifier(path1) {
-          const binding = path1.scope.getBinding(path1.node.name);
-          if (binding?.scope === rootScope && graph.nodes.has(path1.node.name)) {
-            res.forEach(r => {
-              graph.edges.get(r.name)?.add(path1.node.name);
-            });
-          }
-        },
-      }, path.scope, path);
-    }
-  }
-
-  function parseEdgeArrayPattern(path: NodePath<t.VariableDeclarator>, rootScope: Scope) {
-    if (!path.node.id || path.node.id.type !== 'ArrayPattern') return;
-    if (path.node.init?.type && 
-      ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
-    ) {
-      const res: t.Identifier[] = [];
-      rescureArrayPattern(path.node.id, rootScope, res, path.scope, path);
-
-      res.filter(r => (graph.nodes.has(r.name) && path.scope.getBinding(r.name)?.scope === rootScope));
-
-      traverse(path.node.init, {
-        Identifier(path1) {
-          const binding = path1.scope.getBinding(path1.node.name);
-          if (binding?.scope === rootScope && graph.nodes.has(path1.node.name)) {
-            res.forEach(r => {
-              graph.edges.get(r.name)?.add(path1.node.name);
-            });
-          }
-        },
-      }, path.scope, path);
+  function addUsed ({name, path, parentPath} : IUsedNode) {
+    const binding = path.scope.getBinding(name);
+    if (binding?.scope === parentPath.scope) {
+      nodesUsedInTemplate.add(name);
     }
   }
 
@@ -270,32 +77,49 @@ export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true,
             const setupScope = path1.scope;
             traverse(path1.node, {
               VariableDeclarator(path1) {
-                parseNodeIdentifierPattern(path1, setupScope);
-                parseNodeObjectPattern(path1, setupScope);
-                parseNodeArrayPattern(path1, setupScope);
+                parseNodeIdentifierPattern({
+                  path: path1, 
+                  rootScope: setupScope,
+                  cb: addNode,
+                });
+
+                parseNodeObjectPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  cb: addNode,
+                });
+
+                parseNodeArrayPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  cb: addNode,
+                });
               },
               FunctionDeclaration(path1) {
-                parseNodeFunctionPattern(path1, setupScope);
+                parseNodeFunctionPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  cb: addNode,
+                });
               },
             }, setupScope, path1);
 
-            // setup return jsx
+            // setup return
             path1.traverse({
               ReturnStatement(path2) {
-                if (path2.node.argument 
-                  && (path2.node.argument.type === 'ArrowFunctionExpression'
-                  || path2.node.argument.type === 'FunctionExpression')
-                  && (path2.node.argument.body.type === 'JSXElement' 
-                  || path2.node.argument.body.type === 'JSXFragment')
-                ) { 
-                  path2.traverse({
-                    Identifier(path3) {
-                      if (path3.scope.getBinding(path3.node.name)?.scope === path1.scope) {
-                        nodesUsedInTemplate.add(path3.node.name);
-                      }
-                    },
-                  });
-                }
+                // setup return jsx
+                parseReturnJsxPattern({
+                  path: path2,
+                  parentPath: path1,
+                  cb: addUsed,
+                });
+                // setup return Object
+                parseReturnObjectPattern({
+                  path: path2,
+                  parentPath: path1,
+                  // TODO
+                  cb: addUsed,
+                });
               },
             });
           }
@@ -316,12 +140,34 @@ export function processTsx(ast: t.Node, lineOffset = 0, addInfo = true,
             const setupScope = path1.scope;
             traverse(path1.node, {
               VariableDeclarator(path1) {
-                parseEdgeIdentifierPattern(path1, setupScope);
-                parseEdgeObjectPattern(path1, setupScope);
-                parseEdgeArrayPattern(path1, setupScope);
+                parseEdgeIdentifierPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  collectionNodes: graph.nodes,
+                  cb: addEdge,
+                });
+                
+                parseEdgeObjectPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  collectionNodes: graph.nodes,
+                  cb: addEdge,
+                });
+
+                parseEdgeArrayPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  collectionNodes: graph.nodes,
+                  cb: addEdge,
+                });
               },
               FunctionDeclaration(path1) {
-                parseEdgeFunctionPattern(path1, setupScope);
+                parseEdgeFunctionPattern({
+                  path: path1,
+                  rootScope: setupScope,
+                  collectionNodes: graph.nodes,
+                  cb: addEdge,
+                });
               },
             }, setupScope, path1);
           }
