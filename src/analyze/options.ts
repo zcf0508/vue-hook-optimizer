@@ -16,6 +16,7 @@ export function analyze(
   const ast = babelParse(content, { sourceType: 'module',
     plugins: [
       'typescript',
+      'jsx',
     ],
   });
 
@@ -166,12 +167,21 @@ export function analyze(
             // 3 filter data by return
             traverse(setupNode, {
               ReturnStatement(path2) {
+                // only process return in setupNode scope
+                if(path2.scope !== path1.scope) {
+                  return; 
+                }
+
                 if(path2.node.argument?.type === 'ObjectExpression') {
                   const returnNode = path2.node.argument;
                   traverse(returnNode, {
                     ObjectProperty(path3) {
                       if(path3.parent === returnNode) {
-                        if(path3.node.key.type === 'Identifier' && path3.node.value.type === 'Identifier') {
+                        if(
+                          path3.node.key.type === 'Identifier' 
+                          && path3.node.value.type === 'Identifier'
+                          && tempNodes.has(path3.node.value.name)
+                        ) {
                           const valName = path3.node.value.name;
                           if(!graph.nodes.has(valName)) {
                             graph.nodes.add(valName);
@@ -234,7 +244,7 @@ export function analyze(
                     },
                   }, path2.scope, path2);
                 } else {
-                  console.warn('setup return type is not ObjectExpression');
+                  console.warn(`setup return type(${path2.node.argument?.type}) is not ObjectExpression`);
                 }
               },
             }, path1.scope, path1);

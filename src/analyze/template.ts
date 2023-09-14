@@ -44,6 +44,15 @@ export function analyze(
         }
       }
     },
+    // component
+    CallExpression(path) {
+      if(path.node.callee.type === 'Identifier' && path.node.callee.name === '_resolveComponent') {
+        if(path.node.arguments[0].type === 'StringLiteral') {
+          const name = path.node.arguments[0].value; 
+          name && nodes.add(name);
+        }
+      }
+    },
   });
 
   return nodes;

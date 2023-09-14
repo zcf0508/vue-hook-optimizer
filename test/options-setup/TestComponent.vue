@@ -50,9 +50,10 @@
     Edit
     <code>components/HelloWorld.vue</code> to test hot module replacement.
   </p>
+  <ComponentD></ComponentD>
 </template>
 
-<script lang="ts">
+<script lang="tsx">
 export default {
   name: 'TestComponent',
   props: {
@@ -81,13 +82,16 @@ export default {
 
     const a = {count};
     const b = count;
+    const ComponentD = (<>hello d</>)
 
     return {
       ...toRefs(data),
       b,
       c: count,
       ...methods,
+      ComponentD,
     }
+    
   }
 }
 </script>

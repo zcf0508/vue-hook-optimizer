@@ -25,7 +25,10 @@ export async function analyze(code: string) {
     );
   }
   else if(sfc.descriptor.script?.content) {
-    if (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') {
+    if (
+      (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
+      && !sfc.descriptor.template?.content
+    ) {
       const res = await analyzeTsx(sfc.descriptor.script?.content!,
         (sfc.descriptor.script.loc.start.line || 1) - 1,
       );
