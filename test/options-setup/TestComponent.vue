@@ -77,11 +77,15 @@ export default {
         methods.add();
         console.log(count)
       }
-    }
+    };
+
+    const a = {count};
+    const b = count;
 
     return {
       ...toRefs(data),
-      a: count,
+      b,
+      c: count,
       ...methods,
     }
   }

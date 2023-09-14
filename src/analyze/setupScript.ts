@@ -293,7 +293,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             }
           });
         }
-        if(path.node.id.type === 'ObjectPattern'){
+        else if(path.node.id.type === 'ObjectPattern'){
           path.node.id.properties.forEach((property) => {
             if(property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
               const name = property.value.name;
@@ -336,7 +336,7 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             }
           });
         }
-        if([
+        else if([
           'CallExpression', 
           'ArrowFunctionExpression', 
           'FunctionDeclaration',
@@ -377,6 +377,38 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                   ) {
                     graph.edges.get(name)?.add(path1.node.property.name);
                   }
+                }
+              },
+            }, path.scope, path);
+          }
+        }
+        else if(path.node.id.type === 'Identifier') {
+          const name = path.node.id.name;
+          if(path.node.init.type === 'Identifier') {
+            const binding = path.scope.getBinding(path.node.init.name);
+            if(
+              graph.nodes.has(path.node.init.name) 
+              && (binding?.scope.block.type === 'Program'
+                || (parentScope === binding?.scope)
+              )
+            ) {
+              graph.edges.get(name)?.add(path.node.init.name);
+            }
+          } else {
+            traverse(path.node.init, {
+              Identifier(path1) {
+                const binding = path1.scope.getBinding(path1.node.name);
+                if(
+                  graph.nodes.has(path1.node.name) 
+                  && (
+                    path1.parent.type !== 'MemberExpression'
+                    || path1.parent.object === path1.node
+                  )
+                  && (binding?.scope.block.type === 'Program'
+                    || (parentScope === binding?.scope)
+                  )
+                ) {
+                  graph.edges.get(name)?.add(path1.node.name);
                 }
               },
             }, path.scope, path);
