@@ -514,6 +514,7 @@ export function analyze(
   const ast = babelParse(content, { sourceType: 'module',
     plugins: [
       'typescript',
+      'jsx',
     ],
   });
 

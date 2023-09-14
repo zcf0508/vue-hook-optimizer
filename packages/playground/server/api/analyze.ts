@@ -24,7 +24,10 @@ export default defineEventHandler(async (ctx) => {
       graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
     }
     else if(sfc.descriptor.script?.content) {
-      if (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') {
+      if (
+        (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') 
+        && !sfc.descriptor.template?.content
+      ) {
         const res = await analyzeTsx(sfc.descriptor.script?.content!);
         graph = res.graph;
         nodes = res.nodesUsedInTemplate;
