@@ -79,9 +79,11 @@ export class NodeCollection {
     this.nodes.set(label, {
       label,
       type: node.type,
-      info: {
-        ...(node.info || {}),
-      },
+      ...(this.addInfo ? {
+        info: {
+          ...(node.info || {}),
+        },
+      } : {}),
     });
   }
 

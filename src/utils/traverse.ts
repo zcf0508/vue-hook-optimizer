@@ -22,8 +22,9 @@ export interface IUsedNode {
 export interface IAddEdge {
   fromName: string,
   toName: string,
-  path: NodePath<t.Identifier>,
+  path: NodePath<t.Identifier | t.MemberExpression>,
   scope: Scope,
+  toScope?: Scope,
   collectionNodes: Set<string>,
 }
 
@@ -39,6 +40,7 @@ export interface IParseNodeBase extends IParseVariable{
 export interface IParseEdgeBase extends IParseVariable{
   cb?: (params: IAddEdge) => void
   collectionNodes: Set<string>
+  spread?: string[]
 }
 
 
@@ -296,7 +298,7 @@ export function parseNodeFunctionPattern({path, rootScope, cb}: IParseNodeFuncti
   }
 }
 
-export function parseEdgeIdentifierPattern({path, rootScope, cb, collectionNodes}: IParseEdgeBase) {
+export function parseEdgeLeftIdentifierPattern({path, rootScope, cb, collectionNodes, spread}: IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'Identifier') return;
   if (path.node.init?.type && 
     ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
@@ -315,12 +317,26 @@ export function parseEdgeIdentifierPattern({path, rootScope, cb, collectionNodes
             collectionNodes,
           });
         },
+        MemberExpression(path1) {
+          if (spread?.length && path1.node.object.type === 'Identifier' 
+            && spread.includes(path1.node.object.name)
+            && path1.node.property.type === 'Identifier') {
+            cb?.({
+              fromName: name,
+              toName: path1.node.property.name,
+              toScope: path1.scope.getBinding(path1.node.object.name)?.scope,
+              path: path1,
+              scope: rootScope,
+              collectionNodes,
+            });
+          }
+        },
       }, path.scope, path);
     }
   }
 }
 
-export function parseEdgeObjectPattern({path, rootScope, cb, collectionNodes} : IParseEdgeBase) {
+export function parseEdgeLeftObjectPattern({path, rootScope, cb, collectionNodes} : IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'ObjectPattern') return;
   if (path.node.init?.type && 
     ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
@@ -353,7 +369,7 @@ export function parseEdgeObjectPattern({path, rootScope, cb, collectionNodes} : 
   }
 }
 
-export function parseEdgeArrayPattern({path, rootScope, cb, collectionNodes} : IParseEdgeBase) {
+export function parseEdgeLeftArrayPattern({path, rootScope, cb, collectionNodes} : IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'ArrayPattern') return;
   if (path.node.init?.type && 
     ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
@@ -423,9 +439,4 @@ export function parseReturnJsxPattern({path, parentPath, cb}: IParseReturnJSX) {
       },
     });
   }
-}
-
-export function parseReturnObjectPattern({path, parentPath, cb}: IParseReturnJSX) {
-  // TODO:
-  
 }
