@@ -75,12 +75,13 @@ export default {
       add() {
         counterStore.add(Number(data.number));
         methods.add();
+        console.log(count)
       }
     }
 
     return {
       ...toRefs(data),
-      count,
+      a: count,
       ...methods,
     }
   }

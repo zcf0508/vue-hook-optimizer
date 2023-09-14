@@ -171,18 +171,26 @@ export function analyze(
                   traverse(returnNode, {
                     ObjectProperty(path3) {
                       if(path3.parent === returnNode) {
-                        if(path3.node.key.type === 'Identifier') {
+                        if(path3.node.key.type === 'Identifier' && path3.node.value.type === 'Identifier') {
+                          const valName = path3.node.value.name;
+                          if(!graph.nodes.has(valName)) {
+                            graph.nodes.add(valName);
+                            nodeCollection.addTypedNode(
+                              valName, 
+                              tempNodeCollection.nodes.get(valName)!
+                            );
+                          }
+                          if(!graph.edges.has(valName)) {
+                            graph.edges.set(valName, new Set([...Array.from(
+                              tempEdges.get(valName) || new Set<string>()
+                            )]));
+                          }
+
                           const name = path3.node.key.name;
-                          const valName = path3.node.value.type === 'Identifier' ? path3.node.value.name : '';
-                          if(valName && tempNodes.has(valName)) {
+                          if(name !== valName) {
                             graph.nodes.add(name);
-                            nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(valName)!);
-                            if(!graph.edges.get(name)) {
-                              graph.edges.set(name, new Set());
-                              tempEdges.get(valName)?.forEach((edge) => {
-                                graph.edges.get(name)?.add(edge);
-                              });
-                            }
+                            nodeCollection.addNode(name, path3.node.key);
+                            graph.edges.set(name, new Set([valName]));
                           }
                         }
                       }
