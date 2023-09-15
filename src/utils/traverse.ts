@@ -1,10 +1,20 @@
 import * as t from '@babel/types';
 import _traverse, { NodePath, Scope } from '@babel/traverse';
-import { e } from 'vitest/dist/types-3c7dbfa5';
+import { NodeCollection } from '../analyze/utils';
 
 export const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
+
+export interface IReturnData {
+  graph: {
+    nodes: Set<string>;
+    edges: Map<string, Set<string>>;
+    spread?: Map<string, Set<string>>;
+  };
+  nodeCollection: NodeCollection;
+  nodesUsedInTemplate: Set<string>;
+}
 
 export interface IAddNode {
   name: string,
@@ -79,8 +89,42 @@ export interface IParseReturnJSX {
   cb?: (params: IUsedNode) => void,
 }
 
+export interface IParseSetup {
+  node: t.ObjectExpression,
+  parentScope: Scope,
+  parentPath: NodePath<t.ExportDefaultDeclaration>
+}
 
+export interface ICollectSpread {
+  path: NodePath<t.ObjectMethod>,
+  spread: string[]
+}
 
+export interface IAddIdentifiesToGraphByScanReturn {
+  path: NodePath<t.ObjectMethod>,
+  graph: IReturnData['graph'],
+  nodeCollection: IReturnData['nodeCollection'],
+  tempNodeCollection: IReturnData['nodeCollection'],
+  tempEdges: IReturnData['graph']['edges']
+}
+
+export interface IAddSpreadToGraphByScanReturn {
+  path: NodePath<t.ObjectMethod>,
+  graph: IReturnData['graph'],
+  nodeCollection: IReturnData['nodeCollection'],
+  tempNodeCollection: IReturnData['nodeCollection'],
+  tempEdges: IReturnData['graph']['edges']
+  tempSpread: Map<string, Set<string>>
+}
+
+export interface IAddGraphBySpreadIdentifier {
+  path: NodePath<t.VariableDeclarator>, 
+  graph: IReturnData['graph'] & {
+    spread: Map<string, Set<string>>;
+  }, 
+  nodeCollection: IReturnData['nodeCollection'], 
+  iname: string
+}
 
 
 /**
@@ -438,5 +482,210 @@ export function parseReturnJsxPattern({path, parentPath, cb}: IParseReturnJSX) {
         });
       },
     });
+  }
+}
+
+
+export function traverseSetup ({node, parentScope, parentPath}: IParseSetup) {
+  let path: NodePath<t.ObjectMethod>;
+
+  traverse(node, {
+    ObjectMethod(path1) {
+      if (
+        (
+          parentPath.node.declaration.type === 'ObjectExpression' 
+              && path1.parent === parentPath.node.declaration
+        ) || (
+          parentPath.node.declaration.type === 'CallExpression' 
+              && path1.parent === parentPath.node.declaration.arguments[0]
+        )
+      ) {
+        if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
+          path = path1;
+        }
+      }
+    },
+  }, parentScope, parentPath);
+
+  return path!;
+}
+
+export function collectionSpread ({path: path1, spread}: ICollectSpread) {
+  path1.traverse({
+    ReturnStatement(path2) {
+      // get setup return obj spread
+      if(path2.node.argument?.type === 'ObjectExpression') {
+        const returnNode = path2.node.argument;
+        traverse(returnNode, {
+          SpreadElement(path3) {
+            // ...toRefs(xxx)
+            if(
+              path3.node.argument.type === 'CallExpression' 
+              && path3.node.argument.callee.type === 'Identifier' 
+              && path3.node.argument.callee.name === 'toRefs'
+              && path3.node.argument.arguments[0].type === 'Identifier'
+            ) {
+              spread.push(path3.node.argument.arguments[0].name);
+            }
+            // ...xxx
+            else if(
+              path3.node.argument.type === 'Identifier' 
+            ) {
+              spread.push(path3.node.argument.name);
+            }
+          },
+        }, path2.scope, path2);
+      }
+    },
+  });
+}
+
+export function addIdentifiesToGraphByScanReturn (
+  {path: path1, graph, nodeCollection, tempNodeCollection, tempEdges}: IAddIdentifiesToGraphByScanReturn
+) {
+  path1.traverse({
+    ReturnStatement(path2) {
+      // get setup return obj spread
+      if(path2.node.argument?.type === 'ObjectExpression') {
+        const returnNode = path2.node.argument;
+        traverse(returnNode, {
+          ObjectProperty(path3) {
+            // not spread node
+            if(path3.parent === returnNode) {
+              if(path3.node.key.type === 'Identifier' && path3.node.value.type === 'Identifier') {
+                const valName = path3.node.value.name;
+                if(!graph.nodes.has(valName)) {
+                  graph.nodes.add(valName);
+                  nodeCollection.addTypedNode(
+                    valName, 
+                    tempNodeCollection.nodes.get(valName)!
+                  );
+                }
+                if(!graph.edges.has(valName)) {
+                  graph.edges.set(valName, new Set([...Array.from(
+                    tempEdges.get(valName) || new Set<string>()
+                  )]));
+                }
+
+                const name = path3.node.key.name;
+                if(name !== valName) {
+                  graph.nodes.add(name);
+                  nodeCollection.addNode(name, path3.node.key);
+                  graph.edges.set(name, new Set([valName]));
+                }
+              }
+            }
+          },
+        }, path2.scope, path2);
+      }
+    },
+  });
+} 
+
+export function addSpreadToGraphByScanReturn (
+  {path: path1, graph, nodeCollection, tempNodeCollection, tempEdges, tempSpread}
+  : IAddSpreadToGraphByScanReturn
+) {
+  path1.traverse({
+    ReturnStatement(path2) {
+      // get setup return obj spread
+      if(path2.node.argument?.type === 'ObjectExpression') {
+        const returnNode = path2.node.argument;
+        traverse(returnNode, {
+          SpreadElement(path3) {
+            // ...toRefs(xxx)
+            if(
+              path3.node.argument.type === 'CallExpression' 
+              && path3.node.argument.callee.type === 'Identifier' 
+              && path3.node.argument.callee.name === 'toRefs'
+              && path3.node.argument.arguments[0].type === 'Identifier'
+              && tempSpread.get(path3.node.argument.arguments[0].name)
+            ) {
+              tempSpread.get(path3.node.argument.arguments[0].name)?.forEach((name) => {
+                graph.nodes.add(name);
+                nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
+                if(!graph.edges.get(name)) {
+                  graph.edges.set(name, new Set());
+                  tempEdges.get(name)?.forEach((edge) => {
+                    graph.edges.get(name)?.add(edge);
+                  });
+                }
+              });
+            }
+            // ...xxx
+            else if(
+              path3.node.argument.type === 'Identifier' 
+              && tempSpread.get(path3.node.argument.name)
+            ) {
+              tempSpread.get(path3.node.argument.name)?.forEach((name) => {
+                graph.nodes.add(name);
+                nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
+                if(!graph.edges.get(name)) {
+                  graph.edges.set(name, new Set());
+                  tempEdges.get(name)?.forEach((edge) => {
+                    graph.edges.get(name)?.add(edge);
+                  });
+                }
+              });
+            }
+          },
+        }, path2.scope, path2);
+      }
+    },
+  });
+} 
+
+export function addGraphBySpreadIdentifier ({path: path1, graph, nodeCollection, iname }: IAddGraphBySpreadIdentifier) {
+  if(path1.node.init?.type === 'ObjectExpression') {
+    path1.node.init?.properties.forEach(prop => {
+      if(
+        (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
+        && prop.key.type === 'Identifier'
+      ) {
+        const keyName = prop.key.name;
+        graph.nodes.add(keyName);
+        nodeCollection.addNode(keyName, prop);
+        if(!graph.edges.get(keyName)) {
+          graph.edges.set(keyName, new Set());
+        }
+        if(graph.spread.has(iname)) {
+          graph.spread.get(iname)?.add(keyName);
+        } else {
+          graph.spread.set(iname, new Set([keyName]));
+        }
+      } else if(prop.type === 'SpreadElement') {
+        console.warn('not support spread in spread');
+      }
+    });
+  }
+
+  if(
+    path1.node.init?.type === 'CallExpression'
+    && path1.node.init?.callee.type === 'Identifier'
+    && path1.node.init?.callee.name === 'reactive'
+  ) {
+    const arg = path1.node.init?.arguments[0];
+    if(arg.type === 'ObjectExpression') {
+      arg.properties.forEach(prop => {
+        if(
+          (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
+          && prop.key.type === 'Identifier'
+        ) {
+          const keyName = prop.key.name;
+          graph.nodes.add(keyName);
+          nodeCollection.addNode(keyName, prop);
+          if(!graph.edges.get(keyName)) {
+            graph.edges.set(keyName, new Set());
+          }
+          if(graph.spread.has(iname)) {
+            graph.spread.get(iname)?.add(keyName);
+          } else {
+            graph.spread.set(iname, new Set([keyName]));
+          }
+        } else if(prop.type === 'SpreadElement') {
+          console.warn('not support spread in spread');
+        }
+      });
+    }
   }
 }
