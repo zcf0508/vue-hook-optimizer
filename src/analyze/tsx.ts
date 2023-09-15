@@ -8,6 +8,7 @@ import {
   traverse, 
   IAddNode,
   IAddEdge, 
+  IReturnData,
   parseNodeIdentifierPattern, 
   parseNodeObjectPattern,
   parseNodeArrayPattern,
@@ -18,16 +19,17 @@ import {
   parseEdgeFunctionPattern,
   parseReturnJsxPattern,
   IUsedNode,
+  traverseSetup,
+  collectionSpread,
+  addIdentifiesToGraphByScanReturn,
+  addSpreadToGraphByScanReturn,
+  addGraphBySpreadIdentifier,
 } from '../utils/traverse';
 
 interface IProcessMain {
   node: t.Node, 
   lineOffset?: number, 
-  addInfo?: boolean, 
-  parentScope?: Scope, 
-  parentNode?: t.Node,
-  parentPath?: NodePath<t.Node>
-  spread?: string[]
+  addInfo?: boolean,
 }
 
 interface IProcessBranch {
@@ -40,435 +42,222 @@ interface IProcessBranch {
   spread?: string[]
 }
 
-interface IReturnData {
-  graph: {
-    nodes: Set<string>;
-    edges: Map<string, Set<string>>;
-    spread?: Map<string, Set<string>>;
+// deal when setup return object
+function processByReturnNotJSX(params: IProcessBranch) {
+  const {node, parentPath, lineOffset, addInfo} = params;
+  const spread: string[] = [];
+
+  const nodeCollection = new NodeCollection(lineOffset, addInfo);
+
+  const graph = { 
+    nodes: new Set<string>(), 
+    edges: new Map<string, Set<string>>(), 
   };
-  nodeCollection: NodeCollection;
-  nodesUsedInTemplate: Set<string>;
+
+  // 解析return, 收集spread
+  const setupPath = traverseSetup({node, parentScope: parentPath.scope, parentPath});
+    
+  // setup return
+  collectionSpread({path: setupPath, spread});
+    
+  // 收集除return之外的所有节点和边
+  const {
+    graph : {
+      nodes: tempNodes,
+      edges: tempEdges,
+      spread: tempSpread,
+    },
+    nodeCollection: tempNodeCollection,
+    nodesUsedInTemplate,
+  } = processByReturnJSX({ node, parentPath, spread, lineOffset, addInfo });
+
+
+  // 根据return信息添加必要节点
+  addIdentifiesToGraphByScanReturn({
+    path: setupPath,
+    graph,
+    nodeCollection,
+    tempNodeCollection,
+    tempEdges,
+  });
+
+  // 根据return信息添加必要节点
+  addSpreadToGraphByScanReturn({
+    path: setupPath,
+    graph,
+    nodeCollection,
+    tempNodeCollection,
+    tempEdges,
+    tempSpread,
+  });
+
+  return {
+    graph,
+    nodeCollection,
+    nodesUsedInTemplate,
+  };
+}
+
+// deal when setup return jsx
+function processByReturnJSX(params: IProcessBranch) {
+  const {node, parentPath, spread = [], lineOffset, addInfo } = params;
+
+  const nodeCollection = new NodeCollection(lineOffset, addInfo);
+  const nodesUsedInTemplate = new Set<string>();
+
+  const graph = { 
+    nodes: new Set<string>(), 
+    edges: new Map<string, Set<string>>(),
+    spread: new Map<string, Set<string>>(),
+  };
+
+  function addNode ({ name, node, path, scope}: IAddNode) {
+    const binding = path.scope.getBinding(name);
+    if (scope === binding?.scope) {
+      graph.nodes.add(name);
+      nodeCollection.addNode(name, node);
+      if(!graph.edges.get(name)) {
+        graph.edges.set(name, new Set());
+      }
+    }
+  }
+
+  function addEdge ({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
+    const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
+    if (scope === bindingScope && collectionNodes.has(toName)) {
+      graph.edges.get(fromName)?.add(toName);
+    }
+  }
+
+  function addUsed ({name, path, parentPath} : IUsedNode) {
+    const binding = path.scope.getBinding(name);
+    if (binding?.scope === parentPath.scope) {
+      nodesUsedInTemplate.add(name);
+    }
+  }
+  
+  const setupPath = traverseSetup({node, parentScope: parentPath.scope, parentPath});
+  const setupScope = setupPath.scope;
+  const setupNode = setupPath.node;
+  
+  // 收集节点, 并收集spread依赖
+  traverse(setupNode, {
+    VariableDeclarator(path1) {
+      parseNodeIdentifierPattern({
+        path: path1, 
+        rootScope: setupScope,
+        cb: (params) => {
+          if (!spread.includes(params.name)) {
+            addNode(params);
+          } else {
+            addGraphBySpreadIdentifier({
+              path: path1,
+              graph,
+              nodeCollection,
+              iname: params.name,
+            });
+          }
+        },
+      });
+
+      parseNodeObjectPattern({
+        path: path1,
+        rootScope: setupScope,
+        cb: addNode,
+      });
+
+      parseNodeArrayPattern({
+        path: path1,
+        rootScope: setupScope,
+        cb: addNode,
+      });
+    },
+    FunctionDeclaration(path1) {
+      parseNodeFunctionPattern({
+        path: path1,
+        rootScope: setupScope,
+        cb: addNode,
+      });
+    },
+  }, setupScope, setupPath);
+
+  // 搜集jsx模版使用节点
+  setupPath.traverse({
+    ReturnStatement(path2) {
+      // setup return jsx
+      parseReturnJsxPattern({
+        path: path2,
+        parentPath: setupPath,
+        cb: addUsed,
+      });
+    },
+  });
+
+  // 收集边
+  traverse(setupNode, {
+    VariableDeclarator(path1) {
+      parseEdgeLeftIdentifierPattern({
+        path: path1,
+        rootScope: setupScope,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+        spread,
+      });
+      
+      parseEdgeLeftObjectPattern({
+        path: path1,
+        rootScope: setupScope,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+
+      parseEdgeLeftArrayPattern({
+        path: path1,
+        rootScope: setupScope,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+    },
+    FunctionDeclaration(path1) {
+      parseEdgeFunctionPattern({
+        path: path1,
+        rootScope: setupScope,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+    },
+  }, setupScope, setupPath);
+
+  return {
+    graph,
+    nodeCollection,
+    nodesUsedInTemplate,
+  };
+  
 }
 
 export function processTsx(params : IProcessMain) {
-
   let result: IReturnData | undefined;
-
-
-  function processByReturnNotJSX(params: IProcessBranch) {
-    const {node, parentPath, lineOffset, addInfo} = params;
-    const spread: string[] = [];
-
-    const nodeCollection = new NodeCollection(lineOffset, addInfo);
-
-    const graph = { 
-      nodes: new Set<string>(), 
-      edges: new Map<string, Set<string>>(), 
-    };
-
-    // 解析return, 收集spread
-    traverse(node, {
-      ObjectMethod(path1) {
-        if (
-          (
-            parentPath.node.declaration.type === 'ObjectExpression' 
-            && path1.parent === parentPath.node.declaration
-          ) || (
-            parentPath.node.declaration.type === 'CallExpression' 
-            && path1.parent === parentPath.node.declaration.arguments[0]
-          )
-        ) {
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
-            // setup return
-            path1.traverse({
-              ReturnStatement(path2) {
-                // get setup return obj spread
-                if(path2.node.argument?.type === 'ObjectExpression') {
-                  const returnNode = path2.node.argument;
-                  traverse(returnNode, {
-                    SpreadElement(path3) {
-                      // ...toRefs(xxx)
-                      if(
-                        path3.node.argument.type === 'CallExpression' 
-                        && path3.node.argument.callee.type === 'Identifier' 
-                        && path3.node.argument.callee.name === 'toRefs'
-                        && path3.node.argument.arguments[0].type === 'Identifier'
-                      ) {
-                        spread.push(path3.node.argument.arguments[0].name);
-                      }
-                      // ...xxx
-                      else if(
-                        path3.node.argument.type === 'Identifier' 
-                      ) {
-                        spread.push(path3.node.argument.name);
-                      }
-                    },
-                  }, path2.scope, path2);
-                }
-              },
-            });
-          }
-        }
-      },
-    }, parentPath.scope, parentPath);
-
-    const {
-      graph : {
-        nodes: tempNodes,
-        edges: tempEdges,
-        spread: tempSpread,
-      },
-      nodeCollection: tempNodeCollection,
-      nodesUsedInTemplate,
-    } = processByReturnJSX({ node, parentPath, spread, lineOffset, addInfo });
-
-    // 处理合并节点
-    traverse(node, {
-      ObjectMethod(path1) {
-        if (
-          (
-            parentPath.node.declaration.type === 'ObjectExpression' 
-            && path1.parent === parentPath.node.declaration
-          ) || (
-            parentPath.node.declaration.type === 'CallExpression' 
-            && path1.parent === parentPath.node.declaration.arguments[0]
-          )
-        ) {
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
-            // setup return
-            path1.traverse({
-              ReturnStatement(path2) {
-                // get setup return obj spread
-                if(path2.node.argument?.type === 'ObjectExpression') {
-                  const returnNode = path2.node.argument;
-                  traverse(returnNode, {
-                    ObjectProperty(path3) {
-                      // not spread node
-                      if(path3.parent === returnNode) {
-                        if(path3.node.key.type === 'Identifier' && path3.node.value.type === 'Identifier') {
-                          const valName = path3.node.value.name;
-                          if(!graph.nodes.has(valName)) {
-                            graph.nodes.add(valName);
-                            nodeCollection.addTypedNode(
-                              valName, 
-                              tempNodeCollection.nodes.get(valName)!
-                            );
-                          }
-                          if(!graph.edges.has(valName)) {
-                            graph.edges.set(valName, new Set([...Array.from(
-                              tempEdges.get(valName) || new Set<string>()
-                            )]));
-                          }
-
-                          const name = path3.node.key.name;
-                          if(name !== valName) {
-                            graph.nodes.add(name);
-                            nodeCollection.addNode(name, path3.node.key);
-                            graph.edges.set(name, new Set([valName]));
-                          }
-                        }
-                      }
-                    },
-                    SpreadElement(path3) {
-                      // ...toRefs(xxx)
-                      if(
-                        path3.node.argument.type === 'CallExpression' 
-                        && path3.node.argument.callee.type === 'Identifier' 
-                        && path3.node.argument.callee.name === 'toRefs'
-                        && path3.node.argument.arguments[0].type === 'Identifier'
-                        && tempSpread.get(path3.node.argument.arguments[0].name)
-                      ) {
-                        tempSpread.get(path3.node.argument.arguments[0].name)?.forEach((name) => {
-                          graph.nodes.add(name);
-                          nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
-                          if(!graph.edges.get(name)) {
-                            graph.edges.set(name, new Set());
-                            tempEdges.get(name)?.forEach((edge) => {
-                              graph.edges.get(name)?.add(edge);
-                            });
-                          }
-                        });
-                      }
-                      // ...xxx
-                      else if(
-                        path3.node.argument.type === 'Identifier' 
-                        && tempSpread.get(path3.node.argument.name)
-                      ) {
-                        tempSpread.get(path3.node.argument.name)?.forEach((name) => {
-                          graph.nodes.add(name);
-                          nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
-                          if(!graph.edges.get(name)) {
-                            graph.edges.set(name, new Set());
-                            tempEdges.get(name)?.forEach((edge) => {
-                              graph.edges.get(name)?.add(edge);
-                            });
-                          }
-                        });
-                      }
-                    },
-                  }, path2.scope, path2);
-                }
-              },
-            });
-          }
-        }
-      },
-    }, parentPath.scope, parentPath);
-
-    return {
-      graph,
-      nodeCollection,
-      nodesUsedInTemplate,
-    };
-  }
-
-  function processByReturnJSX(params: IProcessBranch) {
-    const {node, parentPath, spread = [], lineOffset, addInfo } = params;
-
-    const nodeCollection = new NodeCollection(lineOffset, addInfo);
-    const nodesUsedInTemplate = new Set<string>();
-
-    const graph = { 
-      nodes: new Set<string>(), 
-      edges: new Map<string, Set<string>>(),
-      spread: new Map<string, Set<string>>(),
-    };
-
-    function addNode ({ name, node, path, scope}: IAddNode) {
-      const binding = path.scope.getBinding(name);
-      if (scope === binding?.scope) {
-        graph.nodes.add(name);
-        nodeCollection.addNode(name, node);
-        if(!graph.edges.get(name)) {
-          graph.edges.set(name, new Set());
-        }
-      }
-    }
-
-    function addEdge ({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
-      const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
-      if (scope === bindingScope && collectionNodes.has(toName)) {
-        graph.edges.get(fromName)?.add(toName);
-      }
-    }
-
-    function addUsed ({name, path, parentPath} : IUsedNode) {
-      const binding = path.scope.getBinding(name);
-      if (binding?.scope === parentPath.scope) {
-        nodesUsedInTemplate.add(name);
-      }
-    }
-
-    // 收集节点, 并收集spread依赖
-    traverse(node, {
-      ObjectMethod(path1) {
-        if (
-          (
-            parentPath.node.declaration.type === 'ObjectExpression' 
-            && path1.parent === parentPath.node.declaration
-          ) || (
-            parentPath.node.declaration.type === 'CallExpression' 
-            && path1.parent === parentPath.node.declaration.arguments[0]
-          )
-        ) {
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
-            // setup
-            const setupScope = path1.scope;
-            traverse(path1.node, {
-              VariableDeclarator(path1) {
-                parseNodeIdentifierPattern({
-                  path: path1, 
-                  rootScope: setupScope,
-                  cb: (params) => {
-                    if (!spread.includes(params.name)) {
-                      addNode(params);
-                    } else {
-                      if(path1.node.init?.type === 'ObjectExpression') {
-                        path1.node.init?.properties.forEach(prop => {
-                          if(
-                            (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
-                            && prop.key.type === 'Identifier'
-                          ) {
-                            const keyName = prop.key.name;
-                            graph.nodes.add(keyName);
-                            nodeCollection.addNode(keyName, prop);
-                            if(!graph.edges.get(keyName)) {
-                              graph.edges.set(keyName, new Set());
-                            }
-                            if(graph.spread.has(params.name)) {
-                              graph.spread.get(params.name)?.add(keyName);
-                            } else {
-                              graph.spread.set(params.name, new Set([keyName]));
-                            }
-                          } else if(prop.type === 'SpreadElement') {
-                            console.warn('not support spread in spread');
-                          }
-                        });
-                      }
-
-                      if(
-                        path1.node.init?.type === 'CallExpression'
-                        && path1.node.init?.callee.type === 'Identifier'
-                        && path1.node.init?.callee.name === 'reactive'
-                      ) {
-                        const arg = path1.node.init?.arguments[0];
-                        if(arg.type === 'ObjectExpression') {
-                          arg.properties.forEach(prop => {
-                            if(
-                              (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
-                              && prop.key.type === 'Identifier'
-                            ) {
-                              const keyName = prop.key.name;
-                              graph.nodes.add(keyName);
-                              nodeCollection.addNode(keyName, prop);
-                              if(!graph.edges.get(keyName)) {
-                                graph.edges.set(keyName, new Set());
-                              }
-                              if(graph.spread.has(params.name)) {
-                                graph.spread.get(params.name)?.add(keyName);
-                              } else {
-                                graph.spread.set(params.name, new Set([keyName]));
-                              }
-                            } else if(prop.type === 'SpreadElement') {
-                              console.warn('not support spread in spread');
-                            }
-                          });
-                        }
-                      }
-                    }
-                  },
-                });
-
-                parseNodeObjectPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  cb: addNode,
-                });
-
-                parseNodeArrayPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  cb: addNode,
-                });
-              },
-              FunctionDeclaration(path1) {
-                parseNodeFunctionPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  cb: addNode,
-                });
-              },
-            }, setupScope, path1);
-
-            // setup return
-            path1.traverse({
-              ReturnStatement(path2) {
-                // setup return jsx
-                parseReturnJsxPattern({
-                  path: path2,
-                  parentPath: path1,
-                  cb: addUsed,
-                });
-              },
-            });
-          }
-        }
-      },
-    }, parentPath.scope, parentPath);
-
-    // 收集边
-    traverse(node, {
-      ObjectMethod(path1) {
-        if (
-          (parentPath.node.declaration.type === 'ObjectExpression' && path1.parent === parentPath.node.declaration)
-          || 
-          (parentPath.node.declaration.type === 'CallExpression' 
-          && path1.parent === parentPath.node.declaration.arguments[0])
-        ) {
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
-            // setup
-            const setupScope = path1.scope;
-            traverse(path1.node, {
-              VariableDeclarator(path1) {
-                parseEdgeLeftIdentifierPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  collectionNodes: graph.nodes,
-                  cb: addEdge,
-                  spread,
-                });
-                
-                parseEdgeLeftObjectPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  collectionNodes: graph.nodes,
-                  cb: addEdge,
-                });
-
-                parseEdgeLeftArrayPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  collectionNodes: graph.nodes,
-                  cb: addEdge,
-                });
-              },
-              FunctionDeclaration(path1) {
-                parseEdgeFunctionPattern({
-                  path: path1,
-                  rootScope: setupScope,
-                  collectionNodes: graph.nodes,
-                  cb: addEdge,
-                });
-              },
-            }, setupScope, path1);
-          }
-        } 
-      },
-    }, parentPath.scope, parentPath);
-
-    return {
-      graph,
-      nodeCollection,
-      nodesUsedInTemplate,
-    };
-    
-  }
-
+  
   function process(params: IProcessBranch) {
     const { node, parentPath } = params;
-    // 解析return, 收集spread
-    traverse(node, {
-      ObjectMethod(path1) {
-        if (
-          (
-            parentPath.node.declaration.type === 'ObjectExpression' 
-            && path1.parent === parentPath.node.declaration
-          ) || (
-            parentPath.node.declaration.type === 'CallExpression' 
-            && path1.parent === parentPath.node.declaration.arguments[0]
-          )
+    // resolve `return` then determine use processByReturnJSX or processByReturnNotJSX
+    const setupPath = traverseSetup({node, parentScope: parentPath.scope, parentPath});
+
+    setupPath.traverse({
+      ReturnStatement(path) {
+        if (path.node.argument 
+          && (path.node.argument.type === 'ArrowFunctionExpression'
+          || path.node.argument.type === 'FunctionExpression')
+          && (path.node.argument.body.type === 'JSXElement' 
+          || path.node.argument.body.type === 'JSXFragment')
         ) {
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
-            // setup return
-            path1.traverse({
-              ReturnStatement(path2) {
-                if (path2.node.argument 
-                  && (path2.node.argument.type === 'ArrowFunctionExpression'
-                  || path2.node.argument.type === 'FunctionExpression')
-                  && (path2.node.argument.body.type === 'JSXElement' 
-                  || path2.node.argument.body.type === 'JSXFragment')
-                ) { 
-                  result = processByReturnJSX(params);
-                } else {
-                  result = processByReturnNotJSX(params);
-                }
-              },
-            });
-          }
+          result = processByReturnJSX(params);
+        } else {
+          result = processByReturnNotJSX(params);
         }
       },
-    }, parentPath.scope, parentPath);
-
+    });
   }
   
   traverse(params.node, {
@@ -498,7 +287,6 @@ export function processTsx(params : IProcessMain) {
     },
   });
   
-
   return result!;
 }
 
