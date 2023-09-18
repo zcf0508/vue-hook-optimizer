@@ -10,13 +10,14 @@ const traverse: typeof _traverse =
 export function analyze(
   content: string,
   lineOffset = 0,
+  jsx = false,
 ) {
   // console.log({lineOffset});
   // console.log(content);
   const ast = babelParse(content, { sourceType: 'module',
     plugins: [
       'typescript',
-      'jsx',
+      ...jsx ? ['jsx' as const] : [],
     ],
   });
 

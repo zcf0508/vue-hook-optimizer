@@ -38,6 +38,7 @@ export async function analyze(code: string) {
       graph = analyzeOptions(
         sfc.descriptor.script?.content!,
         (sfc.descriptor.script.loc.start.line || 1) - 1,
+        (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
       );
     }
   }

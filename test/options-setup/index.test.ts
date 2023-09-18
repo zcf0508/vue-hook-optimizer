@@ -12,6 +12,7 @@ describe('test analyze', () => {
     const graph = analyzeOptions(
       sfc.descriptor.script?.content!,
       (sfc.descriptor.script?.loc.start.line || 1) - 1,
+      true,
     );
     expect(graph).toEqual(graphRes);
   });

@@ -32,7 +32,11 @@ export default defineEventHandler(async (ctx) => {
         graph = res.graph;
         nodes = res.nodesUsedInTemplate;
       } else {
-        graph = analyzeOptions(sfc.descriptor.script?.content!);
+        graph = analyzeOptions(
+          sfc.descriptor.script?.content!, 
+          0, 
+          (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
+        );
       }
     }
     

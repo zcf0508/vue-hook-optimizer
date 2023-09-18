@@ -1,5 +1,5 @@
 <template>
-  <h1>{{ msg }}</h1>
+  <h1 ref="msgRef">{{ msg }}</h1>
 
   <p>
     Recommended IDE setup:
@@ -82,7 +82,9 @@ export default {
 
     const a = {count};
     const b = count;
-    const ComponentD = (<>hello d</>)
+    const ComponentD = (<>hello d</>);
+
+    const msgRef = ref();
 
     return {
       ...toRefs(data),
@@ -90,6 +92,7 @@ export default {
       c: count,
       ...methods,
       ComponentD,
+      msgRef,
     }
     
   }
