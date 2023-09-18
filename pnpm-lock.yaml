@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@ast-grep/napi':
+        specifier: ^0.12.1
+        version: 0.12.1
     devDependencies:
       '@babel/parser':
         specifier: 7.22.5
@@ -173,6 +177,72 @@ packages:
   /@antfu/utils@0.7.6:
     resolution: {integrity: sha512-pvFiLP2BeOKA/ZOS6jxx4XhKzdVLHDhGlFEaZ2flWWYf2xOqVniqpk38I04DFRyz+L0ASggl7SkItTc+ZLju4w==}
     dev: true
+
+  /@ast-grep/napi-darwin-arm64@0.12.1:
+    resolution: {integrity: sha512-kgPu+LHbYKIMUkPWmmHQbvv5XbhEmO4bbhxgXevXYTipjsEzruRd77Gq61WGonrW2rUrnxFMEItCRzSbBJB2kA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-darwin-x64@0.12.1:
+    resolution: {integrity: sha512-zuv8cOmmMXiWtaW8cyuQyg5pbZWRFtvAHJYsBtC4bHPfVn9Gr6KrpgwWEFG7HPriijC/RUu27iCO9m5ewjRWdA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-linux-x64-gnu@0.12.1:
+    resolution: {integrity: sha512-o1ef64PSHMqbMLS/KFT/VOMfBXbRSjCo8AlwKSV9L0d/rbhsDEbonBIIjhANOY+WXI3Nqxhe/+8myiaFx43uiA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-win32-arm64-msvc@0.12.1:
+    resolution: {integrity: sha512-UOWB2AFyKTwcfn75eWhS8bxBxjm9bgqGR/Q9d7GetKeirSe+JU7jboPmjrX4g0G1BfSucz5uH7PgDL8UZwpehg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-win32-ia32-msvc@0.12.1:
+    resolution: {integrity: sha512-0gp6toeRj0ZSj6Mj6oTY/Ym9sLejlemNHgoZFgBiHbj/GTNa8NZni/RA8D8/VYY5A0kNQJi+HhP7rH8IZajuDw==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-win32-x64-msvc@0.12.1:
+    resolution: {integrity: sha512-J9Sp1xmVWEnCp7RcZRZkrhlgcgIz2s/NcXH5u83NjyQFu8/kgLLgQQXDUQmFtkiGmIU1x8h5cpNOGXfvJ9ux9A==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi@0.12.1:
+    resolution: {integrity: sha512-++JzBNaWRmRcSNHb1grnvKaQG8Gz/tBK0i9vCPPRBWUkwrRwLudM9EXAqLRhmvNSuXh6bi5T9EGll7uGTApH+g==}
+    engines: {node: '>= 10'}
+    optionalDependencies:
+      '@ast-grep/napi-darwin-arm64': 0.12.1
+      '@ast-grep/napi-darwin-x64': 0.12.1
+      '@ast-grep/napi-linux-x64-gnu': 0.12.1
+      '@ast-grep/napi-win32-arm64-msvc': 0.12.1
+      '@ast-grep/napi-win32-ia32-msvc': 0.12.1
+      '@ast-grep/napi-win32-x64-msvc': 0.12.1
+    dev: false
 
   /@babel/code-frame@7.22.10:
     resolution: {integrity: sha512-/KKIMG4UEL35WmI9OlvMhurwtytjvXoFcGNrOvyG9zIzA8YmPjVtIZUf7b05+TPO7G7/GEmLHDaoCgACHl9hhA==}
