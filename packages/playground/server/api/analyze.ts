@@ -21,7 +21,11 @@ export default defineEventHandler(async (ctx) => {
     let nodes = new Set<string>();
 
     if(sfc.descriptor.scriptSetup?.content) {
-      graph = analyzeSetupScript(sfc.descriptor.scriptSetup?.content!);
+      graph = analyzeSetupScript(
+        sfc.descriptor.scriptSetup?.content!,
+        0,
+        (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx')
+      );
     }
     else if(sfc.descriptor.script?.content) {
       if (

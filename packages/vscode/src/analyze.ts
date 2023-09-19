@@ -22,6 +22,7 @@ export async function analyze(code: string) {
     graph = analyzeSetupScript(
       sfc.descriptor.scriptSetup?.content!,
       (sfc.descriptor.scriptSetup.loc.start.line || 1) - 1,
+      (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx')
     );
   }
   else if(sfc.descriptor.script?.content) {

@@ -509,12 +509,13 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
 export function analyze(
   content: string,
   lineOffset = 0,
+  jsx = false,
 ) {
   // console.log(content);
   const ast = babelParse(content, { sourceType: 'module',
     plugins: [
       'typescript',
-      'jsx',
+      ...jsx ? ['jsx' as const] : [],
     ],
   });
 
