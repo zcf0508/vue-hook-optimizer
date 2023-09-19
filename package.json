@@ -1,6 +1,6 @@
 {
   "name": "vue-hook-optimizer",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
   "packageManager": "pnpm@8.6.12",
   "homepage": "https://github.com/zcf0508/vue-hook-optimizer",
