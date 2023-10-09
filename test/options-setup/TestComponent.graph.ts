@@ -14,8 +14,8 @@ const msgRef: TypedNode = { label: 'msgRef', type: NodeType.var, info: {line: 86
 
 edges.set(number, new Set([]));
 edges.set(b, new Set([count]));
-edges.set(c, new Set([count]));
 edges.set(count, new Set([]));
+edges.set(c, new Set([count]));
 edges.set(plus, new Set([plus]));
 edges.set(add, new Set([number, add, count]));
 edges.set(ComponentD, new Set([]));
