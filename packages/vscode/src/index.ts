@@ -120,6 +120,15 @@ if(inputEle) {
     if(searchKey && network) {
       // TODO: support fuzzy matching
       network.selectNodes(network.findNode(searchKey), true);
+      if(network.findNode(searchKey).length > 0){
+        network.focus(network.findNode(searchKey)[0], {
+          scale: 1.0,
+          animation: {
+            duration: 400,
+            easingFunction: 'easeInOutQuad',
+          },
+        });
+      }
     }
   });
 }

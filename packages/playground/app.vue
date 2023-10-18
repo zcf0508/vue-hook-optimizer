@@ -236,6 +236,15 @@ onMounted(() => {
     if(val) {
       // TODO: support fuzzy matching
       network.selectNodes(network.findNode(val), true);
+      if(network.findNode(val).length > 0){
+        network.focus(network.findNode(val)[0], {
+          scale: 1.0,
+          animation: {
+            duration: 400,
+            easingFunction: 'easeInOutQuad',
+          },
+        });
+      }
     }
   });
 });
