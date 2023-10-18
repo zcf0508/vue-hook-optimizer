@@ -6,6 +6,9 @@ export function useSearch(
 
   const { isOutside } = useMouseInElement(chartRef);
   onKeyStroke(['F', 'f', 'Command', 'Ctrl'], (e) => {
+    // 判断是不是同时按下
+    if (!e.metaKey && !e.ctrlKey) return;
+
     if (isOutside.value) return;
     e.preventDefault();
     showSearchInput.value = true;
