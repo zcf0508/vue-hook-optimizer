@@ -24,8 +24,7 @@ describe('utils tests', () => {
     graph.set(node1, new Set([node2]));
     graph.set(node2, new Set([node1]));
     graph.set(node3, new Set([node4]));
-
-    expect(hasCycle(graph)).toEqual(true);
+    expect(hasCycle(graph).hasCycle).toEqual(true);
   });
   it('test hasCycle 2', () => {
     const graph = new Map<TypedNode, Set<TypedNode>>();
@@ -48,7 +47,6 @@ describe('utils tests', () => {
     graph.set(node1, new Set([node2]));
     graph.set(node2, new Set([node3]));
     graph.set(node3, new Set([node4]));
-
-    expect(hasCycle(graph)).toEqual(false);
+    expect(hasCycle(graph).hasCycle).toEqual(false);
   });
 });

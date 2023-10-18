@@ -51,14 +51,12 @@ export function gen(
         }] are not used, perhaps you can remove them.`,
       });
     }
-
-    if(hasCycle(onlyFunctions(g))) {
+    const hasCycleResult = hasCycle(g);
+    if(hasCycleResult.hasCycle) {
       suggestions.push({
         type: SuggestionType.error,
         message: `There is a loop call in nodes [${
-          nodes.length > 10 
-            ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
-            : nodes.map(node => node.label).join(',')
+          hasCycleResult.cycleNodes.map(node => node.label).join(',')
         }], perhaps you can refactor it.`,
       });
     }
