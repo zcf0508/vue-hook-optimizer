@@ -1,7 +1,7 @@
 import { transformAsync } from '@babel/core';
 import _traverse, { NodePath, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
-import { NodeCollection } from './utils';
+import { NodeCollection, getComment } from './utils';
 // @ts-ignore
 import bts from '@babel/plugin-transform-typescript';
 import { 
@@ -111,11 +111,13 @@ function processByReturnJSX(params: IProcessBranch) {
     spread: new Map<string, Set<string>>(),
   };
 
-  function addNode ({ name, node, path, scope}: IAddNode) {
+  function addNode ({ name, node, path, scope}: IAddNode, commentParentNode?: t.Node) {
     const binding = path.scope.getBinding(name);
     if (scope === binding?.scope) {
       graph.nodes.add(name);
-      nodeCollection.addNode(name, node);
+      nodeCollection.addNode(name, node, {
+        comment: commentParentNode ? getComment(commentParentNode) : '',
+      });
       if(!graph.edges.get(name)) {
         graph.edges.set(name, new Set());
       }
@@ -148,7 +150,7 @@ function processByReturnJSX(params: IProcessBranch) {
         rootScope: setupScope,
         cb: (params) => {
           if (!spread.includes(params.name)) {
-            addNode(params);
+            addNode(params, path1.node);
           } else {
             addGraphBySpreadIdentifier({
               path: path1,

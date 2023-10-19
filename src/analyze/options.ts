@@ -2,7 +2,7 @@ import { babelParse } from '@vue/compiler-sfc';
 import _traverse, { NodePath } from '@babel/traverse';
 import * as t from '@babel/types';
 import { processSetup } from './setupScript';
-import { NodeCollection } from './utils';
+import { NodeCollection, getComment } from './utils';
 const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
@@ -59,7 +59,9 @@ export function analyze(
                         if(prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
-                          nodeCollection.addNode(name, prop);
+                          nodeCollection.addNode(name, prop, {
+                            comment: getComment(prop),
+                          });
                           if(!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                           }
@@ -83,6 +85,7 @@ export function analyze(
                     graph.nodes.add(name);
                     nodeCollection.addNode(name, prop, {
                       isComputed: true,
+                      comment: getComment(prop),
                     });
                     if(!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
@@ -102,7 +105,10 @@ export function analyze(
                   if(prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
-                    nodeCollection.addNode(name, prop, {isMethod: true});
+                    nodeCollection.addNode(name, prop, {
+                      isMethod: true,
+                      comment: getComment(prop),
+                    });
                     if(!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
@@ -200,7 +206,9 @@ export function analyze(
                           const name = path3.node.key.name;
                           if(name !== valName) {
                             graph.nodes.add(name);
-                            nodeCollection.addNode(name, path3.node.key);
+                            nodeCollection.addNode(name, path3.node.key, {
+                              comment: getComment(path3.node),
+                            });
                             graph.edges.set(name, new Set([valName]));
                           }
                         }
@@ -264,7 +272,9 @@ export function analyze(
                         if(prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
-                          nodeCollection.addNode(name, prop);
+                          nodeCollection.addNode(name, prop, {
+                            comment: getComment(prop),
+                          });
                           if(!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                           }

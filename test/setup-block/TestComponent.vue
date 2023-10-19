@@ -16,7 +16,7 @@ watch(lmsg, (val) => {
   emits('update:msg', val)
 })
 
-
+/** 这是注释11 */
 const data = reactive({
   name: ''
 })
@@ -42,8 +42,8 @@ function funA() {
 }
 
 const { varB } = funA()
-
-function funC(varB) {
+/** 这是注释 */
+function funC(varB) { // 这是注释
   const varD = 1
   const varE = 2
   funC()

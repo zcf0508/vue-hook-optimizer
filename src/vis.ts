@@ -21,6 +21,7 @@ export function getVisData(
       label: node.label,
       shape: node.type === 'var' ? 'dot' : 'diamond',
       group: usedNodes.has(node.label) ? 'used' : 'normal',
+      title: node.info?.comment,
       info: node.info,
     });
   });

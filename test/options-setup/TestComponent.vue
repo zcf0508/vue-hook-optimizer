@@ -64,7 +64,7 @@ export default {
   },
   setup() {
     const data = reactive({
-      number: 0,
+      /** 这是注释 */number: 0,
     });
     const count = computed(() => counterStore.count);
 

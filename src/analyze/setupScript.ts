@@ -1,7 +1,7 @@
 import { babelParse } from '@vue/compiler-sfc';
 import _traverse, { Scope } from '@babel/traverse';
 import * as t from '@babel/types';
-import { NodeCollection, NodeType } from './utils';
+import { NodeCollection, NodeType, getComment } from './utils';
 const traverse: typeof _traverse =
   //@ts-ignore
   _traverse.default?.default || _traverse.default || _traverse;
@@ -37,7 +37,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, element);
+                nodeCollection.addNode(name, element, {
+                  comment: getComment(path.node),
+                });
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -58,7 +60,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, element.argument);
+                nodeCollection.addNode(name, element.argument, {
+                  comment: getComment(path.node),
+                });
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -82,7 +86,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, property.value);
+                nodeCollection.addNode(name, property.value, {
+                  comment: getComment(property),
+                });
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -103,7 +109,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 )
               ) {
                 graph.nodes.add(name);
-                nodeCollection.addNode(name, property.argument);
+                nodeCollection.addNode(name, property.argument, {
+                  comment: getComment(property),
+                });
                 if(!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
@@ -125,7 +133,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             )
           ) {
             graph.nodes.add(name);
-            nodeCollection.addNode(name, declaration);
+            nodeCollection.addNode(name, declaration, {
+              comment: getComment(path.node),
+            });
             if(!graph.edges.get(name)) {
               graph.edges.set(name, new Set());
             }
@@ -140,7 +150,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                   ) {
                     const keyName = prop.key.name;
                     graph.nodes.add(keyName);
-                    nodeCollection.addNode(keyName, prop);
+                    nodeCollection.addNode(keyName, prop, {
+                      comment: getComment(prop),
+                    });
                     if(!graph.edges.get(keyName)) {
                       graph.edges.set(keyName, new Set());
                     }
@@ -168,7 +180,9 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                     ) {
                       const keyName = prop.key.name;
                       graph.nodes.add(keyName);
-                      nodeCollection.addNode(keyName, prop);
+                      nodeCollection.addNode(keyName, prop, {
+                        comment: getComment(prop),
+                      });
                       if(!graph.edges.get(keyName)) {
                         graph.edges.set(keyName, new Set());
                       }
@@ -196,7 +210,10 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
         || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
         )) {
           graph.nodes.add(name);
-          nodeCollection.addNode(name, path.node.id!, {isMethod: true});
+          nodeCollection.addNode(name, path.node.id!, {
+            isMethod: true,
+            comment: getComment(path.node),
+          });
           if(!graph.edges.get(name)) {
             graph.edges.set(name, new Set());
           }

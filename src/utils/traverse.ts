@@ -1,6 +1,6 @@
 import * as t from '@babel/types';
 import _traverse, { NodePath, Scope } from '@babel/traverse';
-import { NodeCollection } from '../analyze/utils';
+import { NodeCollection, getComment } from '../analyze/utils';
 
 export const traverse: typeof _traverse =
   //@ts-ignore
@@ -570,7 +570,9 @@ export function addIdentifiesToGraphByScanReturn (
                 const name = path3.node.key.name;
                 if(name !== valName) {
                   graph.nodes.add(name);
-                  nodeCollection.addNode(name, path3.node.key);
+                  nodeCollection.addNode(name, path3.node.key, {
+                    comment: getComment(path3.node),
+                  });
                   graph.edges.set(name, new Set([valName]));
                 }
               }
@@ -644,7 +646,9 @@ export function addGraphBySpreadIdentifier ({path: path1, graph, nodeCollection,
       ) {
         const keyName = prop.key.name;
         graph.nodes.add(keyName);
-        nodeCollection.addNode(keyName, prop);
+        nodeCollection.addNode(keyName, prop, {
+          comment: getComment(prop),
+        });
         if(!graph.edges.get(keyName)) {
           graph.edges.set(keyName, new Set());
         }
@@ -673,7 +677,9 @@ export function addGraphBySpreadIdentifier ({path: path1, graph, nodeCollection,
         ) {
           const keyName = prop.key.name;
           graph.nodes.add(keyName);
-          nodeCollection.addNode(keyName, prop);
+          nodeCollection.addNode(keyName, prop, {
+            comment: getComment(prop),
+          });
           if(!graph.edges.get(keyName)) {
             graph.edges.set(keyName, new Set());
           }

@@ -2,7 +2,7 @@ import { NodeType, TypedNode } from '@/analyze/utils';
 
 const edges = new Map<TypedNode, Set<TypedNode>>();
 
-const number: TypedNode = {label: 'number', type: NodeType.var, info: {line: 66, column: 6}};
+const number: TypedNode = {label: 'number', type: NodeType.var, info: {line: 66, column: 17, comment: '这是注释'}};
 const count: TypedNode = {label: 'count', type: NodeType.var, info: {line: 68, column: 10}};
 const plus: TypedNode = {label: 'plus', type: NodeType.fun, info: {line: 71, column: 6}};
 const add: TypedNode = {label: 'add', type: NodeType.fun, info: {line: 75, column: 6}};

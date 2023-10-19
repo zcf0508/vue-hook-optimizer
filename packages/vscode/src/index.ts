@@ -13,6 +13,7 @@ const visTemplate = template(`<html>
     <script type="text/javascript" src="<%= libVis %>"></script>
     <script src="<%= libTailwind %>"></script>
     <script src="<%= libIndex %>"></script>
+    <link href="<%= visStyle %>" type="text/css">
     <script>
       tailwind.config = {
         theme: {
@@ -181,9 +182,10 @@ export function activate(context: vscode.ExtensionContext) {
         retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
       }
     );
-
+    outputChannel.append(JSON.stringify(res.data.vis));
     panel.webview.html = visTemplate({
       libVis: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.js'),
+      visStyle: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.css'),
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
       data: JSON.stringify(res.data.vis),

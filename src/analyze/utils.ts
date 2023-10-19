@@ -6,6 +6,7 @@ export type TypedNode = {
   info?: Partial<{
     line: number,
     column: number,
+    comment: string
   }>
 }
 
@@ -17,7 +18,7 @@ export enum NodeType {
 type Options = {
   isComputed: boolean
   isMethod: boolean
-
+  comment: string
 }
 
 export class NodeCollection {
@@ -28,7 +29,12 @@ export class NodeCollection {
     this.addInfo = _addInfo;
   }
   nodes = new Map<string, TypedNode>();
-  addNode(label: string, node: t.Node, options: Partial<Options> = {isComputed: false, isMethod: false}) {
+
+  addNode(
+    label: string, 
+    node: t.Node, 
+    options: Partial<Options> = {isComputed: false, isMethod: false, comment: ''}
+  ) {
     if(this.nodes.has(label)) {
       return;
     }
@@ -58,6 +64,7 @@ export class NodeCollection {
           info: {
             line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
             column: node.loc?.start.column || 0,
+            ...options.comment ? {comment: options.comment} : {},
           },
         } : {}),
       });
@@ -69,6 +76,7 @@ export class NodeCollection {
           info: {
             line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
             column: node.loc?.start.column || 0,
+            ...options.comment ? {comment: options.comment} : {},
           },
         } : {}),
       });
@@ -107,4 +115,25 @@ export class NodeCollection {
       edges,
     };
   }
+}
+
+
+export function getComment(node: t.Node) {
+  let comment = '';
+  
+  node.leadingComments?.map(_comment => {
+    if(_comment.value.startsWith('* ')) {
+      comment += `${_comment.value.replace(/^\*[\s]*/g, '').trim()}\n`;
+    }
+  });
+  
+  node.trailingComments?.map(_comment => {
+    if(_comment.value.startsWith('* ')) {
+      comment += `${_comment.value.replace(/^\*[\s]*/g, '').trim()}\n`;
+    } else {
+      comment += `${_comment.value.trim()}\n`;
+    }
+  });
+
+  return comment.trim();
 }
