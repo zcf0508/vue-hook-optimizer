@@ -113,7 +113,7 @@ const visTemplate = template(`<html>
 </div>
 
 <script type="text/javascript">
-init(\`<%= data %>\`, \`<%= config %>\`)
+init(decodeURIComponent(atob(\`<%= data %>\`)), decodeURIComponent(atob(\`<%= config %>\`)));
 const inputEle = findSearchInput();
 if(inputEle) {
   inputEle.addEventListener('input', (e) => {
@@ -162,7 +162,6 @@ export function activate(context: vscode.ExtensionContext) {
     const document = editor.document;
     const code = document.getText();
     const res = await analyze(code);
-    console.log(res);
 
     if(res.code !== 0) {
       window.showErrorMessage(res.msg);
@@ -188,8 +187,8 @@ export function activate(context: vscode.ExtensionContext) {
       visStyle: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.css'),
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
-      data: JSON.stringify(res.data.vis).replace(/\\n/g, '\\\\n'),
-      config: JSON.stringify(config?.vis).replace(/\\n/g, '\\\\n'),
+      data: btoa(encodeURIComponent(JSON.stringify(res.data.vis))),
+      config: btoa(encodeURIComponent(JSON.stringify(config?.vis))),
       legend_used: config?.legend.used,
       legend_normal: config?.legend.normal,
       legend_variant: config?.legend.variant,
