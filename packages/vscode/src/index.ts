@@ -113,7 +113,7 @@ const visTemplate = template(`<html>
 </div>
 
 <script type="text/javascript">
-init('<%= data %>', '<%= config %>')
+init(\`<%= data %>\`, \`<%= config %>\`)
 const inputEle = findSearchInput();
 if(inputEle) {
   inputEle.addEventListener('input', (e) => {
@@ -188,8 +188,8 @@ export function activate(context: vscode.ExtensionContext) {
       visStyle: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.css'),
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
-      data: JSON.stringify(res.data.vis),
-      config: JSON.stringify(config?.vis),
+      data: JSON.stringify(res.data.vis).replace(/\\n/g, '\\\\n'),
+      config: JSON.stringify(config?.vis).replace(/\\n/g, '\\\\n'),
       legend_used: config?.legend.used,
       legend_normal: config?.legend.normal,
       legend_variant: config?.legend.variant,
