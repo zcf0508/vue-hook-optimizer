@@ -182,7 +182,7 @@ export function activate(context: vscode.ExtensionContext) {
         retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
       }
     );
-    outputChannel.append(JSON.stringify(res.data.vis));
+
     panel.webview.html = visTemplate({
       libVis: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.js'),
       visStyle: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.css'),
