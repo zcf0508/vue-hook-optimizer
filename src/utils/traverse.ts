@@ -344,9 +344,7 @@ export function parseNodeFunctionPattern({path, rootScope, cb}: IParseNodeFuncti
 
 export function parseEdgeLeftIdentifierPattern({path, rootScope, cb, collectionNodes, spread}: IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'Identifier') return;
-  if(path.node.id.name === 'dds3') {
-    console.log(path.node.init?.type);
-  }
+
   if (path.node.init?.type && 
     [
       'ArrowFunctionExpression', 
