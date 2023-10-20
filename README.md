@@ -41,6 +41,7 @@ So I want to build a tool to help us analyze the code, and find the relations be
 - [x] provide some suggestions for optimization
 - [x] support `options api`
 - [x] [vscode extension](./packages/vscode)
+- [ ] support `React`
 
 ## Contribution
 
