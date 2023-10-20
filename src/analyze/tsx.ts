@@ -431,7 +431,11 @@ export function processTsx(params : IProcessMain) {
         }
       }
       if(params.type === 'react') {
-        if(['FunctionDeclaration', 'ArrowFunctionExpression'].includes(path.node.declaration.type)) {
+        if(
+          (path.node.declaration.type === 'FunctionDeclaration'
+          || path.node.declaration.type === 'ArrowFunctionExpression')
+          && path.node.declaration.body.type === 'BlockStatement'
+        ) {
           // export default function () {}
 
           const functionPath = path.get('declaration') as NodePath<t.FunctionDeclaration>;
