@@ -28,6 +28,7 @@ import {
 
 interface IProcessMain {
   node: t.Node, 
+  type: 'vue' | 'react',
   lineOffset?: number, 
   addInfo?: boolean,
 }
@@ -40,6 +41,22 @@ interface IProcessBranch {
   parentNode?: t.ExportDefaultDeclaration,
   parentPath: NodePath<t.ExportDefaultDeclaration>
   spread?: string[]
+}
+
+type IProcessReact = {
+  node: t.BlockStatement, 
+  lineOffset?: number, 
+  addInfo?: boolean, 
+  parentScope: Scope, 
+  parentNode: t.FunctionDeclaration,
+  parentPath: NodePath<t.FunctionDeclaration>
+} | {
+  node: t.BlockStatement, 
+  lineOffset?: number, 
+  addInfo?: boolean, 
+  parentScope: Scope, 
+  parentNode: t.ClassMethod,
+  parentPath: NodePath<t.ClassMethod>
 }
 
 // deal when setup return object
@@ -238,6 +255,131 @@ function processByReturnJSX(params: IProcessBranch) {
   
 }
 
+function processByReact(params: IProcessReact) {
+  const {node, parentScope, parentPath, lineOffset, addInfo } = params;
+
+  const nodeCollection = new NodeCollection(lineOffset, addInfo);
+  const nodesUsedInTemplate = new Set<string>();
+
+  const graph = { 
+    nodes: new Set<string>(), 
+    edges: new Map<string, Set<string>>(),
+    spread: new Map<string, Set<string>>(),
+  };
+
+  function addNode ({ name, node, path, scope}: IAddNode, commentParentNode?: t.Node) {
+    const binding = path.scope.getBinding(name);
+    if (scope === binding?.scope) {
+      graph.nodes.add(name);
+      nodeCollection.addNode(name, node, {
+        comment: commentParentNode ? getComment(commentParentNode) : '',
+      });
+      if(!graph.edges.get(name)) {
+        graph.edges.set(name, new Set());
+      }
+    }
+  }
+
+  function addEdge ({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
+    const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
+    if (scope === bindingScope && collectionNodes.has(toName)) {
+      graph.edges.get(fromName)?.add(toName);
+    }
+  }
+
+  function addUsed ({name, path, parentPath} : IUsedNode) {
+    const binding = path.scope.getBinding(name);
+    if (binding?.scope === parentPath.scope) {
+      nodesUsedInTemplate.add(name);
+    }
+  }
+  
+  // 收集节点依赖
+  traverse(node, {
+    VariableDeclarator(path1) {
+      parseNodeIdentifierPattern({
+        path: path1, 
+        rootScope: parentScope!,
+        cb: (params) => {
+          addNode(params, path1.node);
+        },
+      });
+
+      parseNodeObjectPattern({
+        path: path1,
+        rootScope: parentScope!,
+        cb: addNode,
+      });
+
+      parseNodeArrayPattern({
+        path: path1,
+        rootScope: parentScope!,
+        cb: addNode,
+      });
+    },
+    FunctionDeclaration(path1) {
+      parseNodeFunctionPattern({
+        path: path1,
+        rootScope: parentScope!,
+        cb: addNode,
+      });
+    },
+  }, parentScope, parentPath);
+
+  // 搜集jsx模版使用节点
+  traverse(node, {
+    ReturnStatement(path2) {
+      // setup return jsx
+      parseReturnJsxPattern({
+        path: path2,
+        parentPath: parentPath,
+        cb: addUsed,
+      });
+    },
+  }, parentScope, parentPath);
+
+  // 收集边
+  traverse(node, {
+    VariableDeclarator(path1) {
+      parseEdgeLeftIdentifierPattern({
+        path: path1,
+        rootScope: parentScope!,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+      
+      parseEdgeLeftObjectPattern({
+        path: path1,
+        rootScope: parentScope!,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+
+      parseEdgeLeftArrayPattern({
+        path: path1,
+        rootScope: parentScope!,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+    },
+    FunctionDeclaration(path1) {
+      parseEdgeFunctionPattern({
+        path: path1,
+        rootScope: parentScope!,
+        collectionNodes: graph.nodes,
+        cb: addEdge,
+      });
+    },
+  }, parentScope, parentPath);
+
+  return {
+    graph,
+    nodeCollection,
+    nodesUsedInTemplate,
+  };
+  
+}
+
 export function processTsx(params : IProcessMain) {
   let result: IReturnData | undefined;
   
@@ -261,30 +403,69 @@ export function processTsx(params : IProcessMain) {
       },
     });
   }
-  
+
   traverse(params.node, {
     ExportDefaultDeclaration(path) {
-      if(path.node.declaration.type === 'ObjectExpression') {
-        // export default {}
-        process({
-          ...params,
-          node: path.node.declaration, 
-          parentNode: path.node,
-          parentPath: path,
-        });
-      } else if(
-        path.node.declaration.type === 'CallExpression' 
-        && path.node.declaration.callee.type === 'Identifier'
-        && path.node.declaration.callee.name === 'defineComponent'
-        && path.node.declaration.arguments[0].type === 'ObjectExpression'
-      ) {
-        // export default defineComponent({})
-        process({
-          ...params,
-          node: path.node.declaration.arguments[0], 
-          parentNode: path.node,
-          parentPath: path,
-        });
+      if(params.type === 'vue') {
+        if(path.node.declaration.type === 'ObjectExpression') {
+          // export default {}
+          process({
+            ...params,
+            node: path.node.declaration, 
+            parentNode: path.node,
+            parentPath: path,
+          });
+        } else if(
+          path.node.declaration.type === 'CallExpression' 
+          && path.node.declaration.callee.type === 'Identifier'
+          && path.node.declaration.callee.name === 'defineComponent'
+          && path.node.declaration.arguments[0].type === 'ObjectExpression'
+        ) {
+          // export default defineComponent({})
+          process({
+            ...params,
+            node: path.node.declaration.arguments[0], 
+            parentNode: path.node,
+            parentPath: path,
+          });
+        }
+      }
+      if(params.type === 'react') {
+        if(['FunctionDeclaration', 'ArrowFunctionExpression'].includes(path.node.declaration.type)) {
+          // export default function () {}
+
+          const functionPath = path.get('declaration') as NodePath<t.FunctionDeclaration>;
+
+          result = processByReact({
+            ...params,
+            node: path.node.declaration.body, 
+            parentNode: functionPath.node,
+            parentPath: functionPath,
+            parentScope: functionPath.scope,
+          });
+        }
+        if(path.node.declaration.type === 'ClassDeclaration') {
+          // export default class Index {}
+
+          const renderFunction = path.node.declaration.body.body.find(node => {
+            if (node.type === 'ClassMethod' && node.key.type === 'Identifier' && node.key.name === 'render') {
+              return node;
+            }
+          }) as t.ClassMethod;
+          if(!renderFunction) return;
+
+          const renderPath = path.get(`declaration.body.body.${
+            path.node.declaration.body.body.indexOf(renderFunction)
+          }`) as NodePath<t.ClassMethod>;
+
+          result = processByReact({
+            ...params,
+            node: renderFunction.body, 
+            parentNode: renderFunction,
+            parentPath: renderPath,
+            parentScope: renderPath.scope,
+          });
+        }
       }
     },
   });
@@ -295,6 +476,7 @@ export function processTsx(params : IProcessMain) {
 
 export async function analyze(
   content: string,
+  type = 'vue' as 'vue' | 'react',
   lineOffset = 0,
   addInfo = true,
 ) {
@@ -319,6 +501,7 @@ export async function analyze(
   if (res && res.ast) {
     const { graph, nodeCollection, nodesUsedInTemplate } = processTsx({
       node: res.ast,
+      type,
       lineOffset,
       addInfo,
     });

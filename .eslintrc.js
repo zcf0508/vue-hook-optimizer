@@ -64,7 +64,8 @@ module.exports = {
   },
   ignorePatterns: [
     '**.min.*',
-    'test/**/TestComponent.vue',
+    'test/**/TestComponent*.vue',
+    'test/**/TestComponent*.jsx',
     '*.d.ts',
     'dist',
     'output',

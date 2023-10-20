@@ -26,7 +26,7 @@ export interface IAddNode {
 export interface IUsedNode {
   name: string,
   path: NodePath<t.Identifier>,
-  parentPath: NodePath<t.ObjectMethod>,
+  parentPath: NodePath<t.Node>,
 }
 
 export interface IAddEdge {
@@ -85,7 +85,7 @@ export interface IParseEdgeFunction {
 
 export interface IParseReturnJSX {
   path: NodePath<t.ReturnStatement>, 
-  parentPath: NodePath<t.ObjectMethod>,
+  parentPath: NodePath<t.Node>,
   cb?: (params: IUsedNode) => void,
 }
 
@@ -409,7 +409,7 @@ export function parseEdgeLeftObjectPattern({path, rootScope, cb, collectionNodes
 
     // res.filter(r => (graph.nodes.has(r.name) && path.scope.getBinding(r.name)?.scope === rootScope));
     res.filter(r => (collectionNodes.has(r.name) && path.scope.getBinding(r.name)?.scope === rootScope));
-
+    
     traverse(path.node.init, {
       Identifier(path1) {
         res.forEach(r => {
@@ -483,11 +483,26 @@ export function parseEdgeFunctionPattern({path, rootScope, cb, collectionNodes}:
 }
 
 export function parseReturnJsxPattern({path, parentPath, cb}: IParseReturnJSX) {
-  if (path.node.argument 
-    && (path.node.argument.type === 'ArrowFunctionExpression'
-    || path.node.argument.type === 'FunctionExpression')
-    && (path.node.argument.body.type === 'JSXElement' 
-    || path.node.argument.body.type === 'JSXFragment')
+  if (
+    path.node.argument 
+    && (
+      // return () => (<div></div>)
+      //return function() (<div></div>)
+      (
+        (
+          path.node.argument.type === 'ArrowFunctionExpression'
+          || path.node.argument.type === 'FunctionExpression'
+        ) && (
+          path.node.argument.body.type === 'JSXElement' 
+          || path.node.argument.body.type === 'JSXFragment'
+        )
+      )
+      // return (<div></div>)
+      || (
+        path.node.argument.type === 'JSXElement'
+        || path.node.argument.type === 'JSXFragment'
+      )
+    )
   ) { 
     path.traverse({
       Identifier(path1) {
