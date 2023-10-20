@@ -360,13 +360,24 @@ export function parseEdgeLeftIdentifierPattern({path, rootScope, cb, collectionN
       traverse(path.node.init, {
         Identifier(path1) {
           // graph.edges.get(name)?.add(path1.node.name);
-          cb?.({
-            fromName: name,
-            toName: path1.node.name,
-            path: path1,
-            scope: rootScope,
-            collectionNodes,
-          });
+
+          const binding = path1.scope.getBinding(path1.node.name);
+          if(
+            binding?.scope === rootScope 
+            && collectionNodes.has(path1.node.name) 
+            && (
+              path1.parent.type !== 'MemberExpression'
+              || path1.parent.object === path1.node
+            )
+          ) {
+            cb?.({
+              fromName: name,
+              toName: path1.node.name,
+              path: path1,
+              scope: rootScope,
+              collectionNodes,
+            });
+          }
         },
         MemberExpression(path1) {
           if (spread?.length && path1.node.object.type === 'Identifier' 
@@ -412,15 +423,25 @@ export function parseEdgeLeftObjectPattern({path, rootScope, cb, collectionNodes
     
     traverse(path.node.init, {
       Identifier(path1) {
-        res.forEach(r => {
-          cb?.({
-            fromName: r.name,
-            toName: path1.node.name,
-            path: path1,
-            scope: rootScope,
-            collectionNodes,
+        const binding = path1.scope.getBinding(path1.node.name);
+        if(
+          binding?.scope === rootScope 
+          && collectionNodes.has(path1.node.name)
+          && (
+            path1.parent.type !== 'MemberExpression'
+            || path1.parent.object === path1.node
+          )
+        ) {
+          res.forEach(r => {
+            cb?.({
+              fromName: r.name,
+              toName: path1.node.name,
+              path: path1,
+              scope: rootScope,
+              collectionNodes,
+            });
           });
-        });
+        }
       },
     }, path.scope, path);
   }
@@ -450,15 +471,25 @@ export function parseEdgeLeftArrayPattern({path, rootScope, cb, collectionNodes}
 
     traverse(path.node.init, {
       Identifier(path1) {
-        res.forEach(r => {
-          cb?.({
-            fromName: r.name,
-            toName: path1.node.name,
-            path: path1,
-            scope: rootScope,
-            collectionNodes,
+        const binding = path1.scope.getBinding(path1.node.name);
+        if(
+          binding?.scope === rootScope 
+          && collectionNodes.has(path1.node.name)
+          && (
+            path1.parent.type !== 'MemberExpression'
+            || path1.parent.object === path1.node
+          )
+        ) {
+          res.forEach(r => {
+            cb?.({
+              fromName: r.name,
+              toName: path1.node.name,
+              path: path1,
+              scope: rootScope,
+              collectionNodes,
+            });
           });
-        });
+        }
       },
     }, path.scope, path);
   }
@@ -470,13 +501,16 @@ export function parseEdgeFunctionPattern({path, rootScope, cb, collectionNodes}:
     const name = path.node.id.name;
     traverse(path.node.body, {
       Identifier(path1) {
-        cb?.({
-          fromName: name,
-          toName: path1.node.name,
-          path: path1,
-          scope: rootScope,
-          collectionNodes,
-        });
+        const binding = path1.scope.getBinding(path1.node.name);
+        if(binding?.scope === rootScope && collectionNodes.has(path1.node.name)) {
+          cb?.({
+            fromName: name,
+            toName: path1.node.name,
+            path: path1,
+            scope: rootScope,
+            collectionNodes,
+          });
+        }
       },
     }, path.scope, path);
   }
