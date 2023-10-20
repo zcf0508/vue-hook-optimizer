@@ -344,8 +344,17 @@ export function parseNodeFunctionPattern({path, rootScope, cb}: IParseNodeFuncti
 
 export function parseEdgeLeftIdentifierPattern({path, rootScope, cb, collectionNodes, spread}: IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'Identifier') return;
+  if(path.node.id.name === 'dds3') {
+    console.log(path.node.init?.type);
+  }
   if (path.node.init?.type && 
-    ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
+    [
+      'ArrowFunctionExpression', 
+      'FunctionExpression', 
+      'CallExpression', 
+      'ObjectExpression',
+      'ArrayExpression',
+    ].includes(path.node.init.type)
   ) {
     // if (graph.nodes.has(path.node.id.name) && path.scope.getBinding(path.node.id.name)?.scope === rootScope) {
     if (collectionNodes.has(path.node.id.name) && path.scope.getBinding(path.node.id.name)?.scope === rootScope) {

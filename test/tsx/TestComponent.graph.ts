@@ -8,6 +8,7 @@ const edges = new Map<{
 const open = {label: 'open', type: NodeType.var};
 const dds = {label: 'dds', type: NodeType.fun};
 const dds2 = {label: 'dds2', type: NodeType.fun};
+const dds3 = {label: 'dds3', type: NodeType.var};
 const delayTime = {label: 'delayTime', type: NodeType.var};
 const d2 = {label: 'd2', type: NodeType.var};
 const route = {label: 'route', type: NodeType.var};
@@ -41,6 +42,7 @@ const xyz = {label: 'xyz', type: NodeType.fun};
 edges.set(open, new Set([]));
 edges.set(dds, new Set([]));
 edges.set(dds2, new Set([]));
+edges.set(dds3, new Set([dds2]));
 edges.set(delayTime, new Set([]));
 edges.set(d2, new Set([]));
 edges.set(route, new Set([]));
@@ -75,6 +77,7 @@ export const graph = {
     open, 
     dds, 
     dds2, 
+    dds3, 
     delayTime, 
     d2,
     route, 

@@ -17,6 +17,7 @@ export default {
     })
     const dds = function() {}
     const dds2 = () => {}
+    const dds3 = [dds2]
     const delayTime = 500, d2 = 800
     const route = useRoute()
     const infoOpen = ref(false)
