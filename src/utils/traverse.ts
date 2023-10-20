@@ -390,7 +390,13 @@ export function parseEdgeLeftIdentifierPattern({path, rootScope, cb, collectionN
 export function parseEdgeLeftObjectPattern({path, rootScope, cb, collectionNodes} : IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'ObjectPattern') return;
   if (path.node.init?.type && 
-    ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
+    [
+      'ArrowFunctionExpression', 
+      'FunctionExpression', 
+      'CallExpression',
+      'ObjectExpression',
+      'ArrayExpression',
+    ].includes(path.node.init.type)
   ) {
     const res: t.Identifier[] = [];
     rescureObjectPattern({
@@ -423,7 +429,13 @@ export function parseEdgeLeftObjectPattern({path, rootScope, cb, collectionNodes
 export function parseEdgeLeftArrayPattern({path, rootScope, cb, collectionNodes} : IParseEdgeBase) {
   if (!path.node.id || path.node.id.type !== 'ArrayPattern') return;
   if (path.node.init?.type && 
-    ['ArrowFunctionExpression', 'FunctionExpression', 'CallExpression'].includes(path.node.init.type)
+    [
+      'ArrowFunctionExpression', 
+      'FunctionExpression', 
+      'CallExpression',
+      'ObjectExpression',
+      'ArrayExpression',
+    ].includes(path.node.init.type)
   ) {
     const res: t.Identifier[] = [];
     rescureArrayPattern({
