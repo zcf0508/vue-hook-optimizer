@@ -39,7 +39,7 @@ pnpm run play
 - [x] 提供优化建议
 - [x] 支持 `options api`
 - [x] [vscode 扩展](./packages/vscode)
-- [ ] 支持 `React`
+- [x] 支持 `React`
 
 ## 贡献
 
