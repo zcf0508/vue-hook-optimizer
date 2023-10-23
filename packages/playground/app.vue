@@ -11,7 +11,7 @@
       :style="`max-width: ${boundSplit}%`"
     >
       <ClientOnly>
-        <CodeMirror :value="code" @change="codeChange"></CodeMirror>
+        <CodeMirror :value="code" :mode="framework==='vue'?'htmlmixed':'javascript'" @change="codeChange"></CodeMirror>
       </ClientOnly>
     </div>
     <div 
@@ -26,9 +26,25 @@
         <button class="mr-8px" @click="start">
           analyze
         </button>
-        <span>
+        <span class="flex items-center">
           <input id="refreshBtn" v-model="autoRefresh" type="checkbox" />
           <label for="refreshBtn">Auto Refresh</label>
+        </span>
+        <span class="ml-1 flex items-center">
+          <input
+            id="framework_vue"
+            v-model="framework"
+            type="radio"
+            value="vue"
+          />
+          <label for="framework_vue" title="Vue Single-File Component">Vue</label>
+          <input
+            id="framework_react"
+            v-model="framework"
+            type="radio"
+            value="react"
+          />
+          <label for="framework_react" title="Functional Component or Class Component">React</label>
         </span>
       </div>
       <div class="h-full w-full relative">
@@ -130,13 +146,20 @@ import { defaultCode, tsx } from './default-code';
 // const code = ref(defaultCode);
 const code = ref(tsx);
 const autoRefresh = ref(false);
+const framework = ref<'vue' | 'react'>('vue');
 
 provide('autoresize', true);
 
 function codeChange(value: string) {
   code.value = value;
-  autoRefresh.value && start();
+  // autoRefresh.value && start();
 }
+
+watch(() =>[autoRefresh.value, code.value, framework.value], () => {
+  if(autoRefresh.value) {
+    start();
+  }
+});
 
 const networkRef = ref<HTMLElement>();
 
@@ -159,6 +182,7 @@ async function start() {
     method: 'post',
     body: JSON.stringify({
       code: code.value,
+      framework: framework.value,
     }),
   });
   if(data) {
