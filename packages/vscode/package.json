@@ -58,7 +58,16 @@
             "light",
             "dark"
           ],
-          "description": "Choose settings that are suitable for the current theme"
+          "description": "Choose settings that are suitable for the current theme."
+        },
+        "vho.language": {
+          "type": "string",
+          "default": "vue",
+          "enum": [
+            "vue",
+            "react"
+          ],
+          "description": "Choose the language used by components. It is recommended that differentiated settings be made according to the workspace."
         }
       }
     },
@@ -66,13 +75,13 @@
       "commandPalette": [
         {
           "command": "vho.action.analyze",
-          "when": "editorLangId == vue"
+          "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact"
         }
       ],
       "editor/title": [
         {
           "command": "vho.action.analyze",
-          "when": "editorLangId == vue",
+          "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact",
           "group": "navigation"
         }
       ]

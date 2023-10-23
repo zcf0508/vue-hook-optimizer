@@ -161,7 +161,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
     const document = editor.document;
     const code = document.getText();
-    const res = await analyze(code);
+    const res = await analyze(code, getLauguageConfig());
 
     if(res.code !== 0) {
       window.showErrorMessage(res.msg);
@@ -257,6 +257,11 @@ function getVisConfigByTheme () {
   } else if (theme === 'dark') {
     return dark;
   }
+}
+
+function getLauguageConfig() {
+  const config = vscode.workspace.getConfiguration('vho');
+  return config.get<'vue' | 'react'>('language') || 'vue';
 }
 
 export function deactivate() {
