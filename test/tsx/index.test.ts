@@ -11,13 +11,12 @@ import {nodes as nodesRes2} from './TestComponent.nodes2';
 import {nodes as nodesRes3} from './TestComponent.nodes3';
 import {nodes as nodesRes4} from './TestComponent.nodes4';
 
-
-
 describe('test vue analyze', () => {
   const source = fs.readFileSync(path.resolve(__dirname, './TestComponent.vue'), 'utf-8');
   const source2 = fs.readFileSync(path.resolve(__dirname, './TestComponent2.vue'), 'utf-8');
   const sfc = parse(source);
   const sfc2 = parse(source2);
+  
   it('test analyze tsx setup', async () => {
     const { graph, nodesUsedInTemplate } = await analyzeTsx(
       sfc.descriptor.script?.content!, 

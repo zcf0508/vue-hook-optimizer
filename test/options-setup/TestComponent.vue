@@ -82,7 +82,7 @@ export default {
 
     const a = {count};
     const b = {count: count.value};
-    const ComponentD = (<>hello d</>);
+    const ComponentD = () => (<>hello d</>);
 
     const msgRef = ref();
 

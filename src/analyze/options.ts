@@ -23,12 +23,15 @@ export function analyze(
 
   // ---
 
-  const nodeCollection = new NodeCollection(lineOffset);
+  let nodeCollection = new NodeCollection(lineOffset);
 
   const graph = { 
     nodes: new Set<string>(), 
     edges: new Map<string, Set<string>>(), 
   };
+
+  /** used in render block or setup return */
+  const nodesUsedInTemplate = new Set<string>();
 
   function process(node: t.ObjectExpression, path: NodePath<t.ExportDefaultDeclaration>) {
     traverse(node, {
@@ -120,6 +123,30 @@ export function analyze(
               });
             }
           }
+
+          if(
+            path1.node.key.type === 'Identifier' 
+            && path1.node.key.name === 'render'
+            && (
+              path1.node.value.type === 'ArrowFunctionExpression'
+              || path1.node.value.type === 'FunctionExpression'
+            )
+          ) {
+            traverse(path1.node.value, {
+              ReturnStatement(path2) {
+                const templateNode = path2.node;
+                traverse(templateNode, {
+                  MemberExpression(path3) {
+                    if(path3.node.object && path3.node.object.type === 'ThisExpression') {
+                      if(path3.node.property && path3.node.property.type === 'Identifier') {
+                        nodesUsedInTemplate.add(path3.node.property.name);
+                      }
+                    }
+                  },
+                }, path2.scope, path2);
+              },
+            }, path1.scope, path1);
+          }
         }
       },
       ObjectMethod(path1) {
@@ -158,6 +185,26 @@ export function analyze(
                         path3.node.argument.type === 'Identifier' 
                       ) {
                         spread.push(path3.node.argument.name);
+                      }
+                    },
+                  }, path2.scope, path2);
+                }
+                if(
+                  path2.node.argument?.type === 'FunctionExpression'
+                  || path2.node.argument?.type === 'ArrowFunctionExpression'
+                ) {
+                  const templateNode = path2.node.argument.body;
+                  traverse(templateNode, {
+                    Identifier(path3) {
+                      const binding = path3.scope.getBinding(path3.node.name);
+                      if(binding?.scope === path1.scope) {
+                        nodesUsedInTemplate.add(path3.node.name);
+                      }
+                    },
+                    JSXIdentifier(path3) {
+                      const binding = path3.scope.getBinding(path3.node.name);
+                      if(binding?.scope === path1.scope) {
+                        nodesUsedInTemplate.add(path3.node.name);
                       }
                     },
                   }, path2.scope, path2);
@@ -256,7 +303,9 @@ export function analyze(
                     },
                   }, path2.scope, path2);
                 } else {
-                  console.warn(`setup return type(${path2.node.argument?.type}) is not ObjectExpression`);
+                  graph.edges = tempEdges;
+                  graph.nodes = tempNodes;
+                  nodeCollection = tempNodeCollection;
                 }
               },
             }, path1.scope, path1);
@@ -383,5 +432,8 @@ export function analyze(
   });
 
 
-  return nodeCollection.map(graph);
+  return {
+    graph: nodeCollection.map(graph),
+    nodesUsedInTemplate,
+  };
 }

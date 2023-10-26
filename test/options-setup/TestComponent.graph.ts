@@ -9,7 +9,7 @@ const add: TypedNode = {label: 'add', type: NodeType.fun, info: {line: 75, colum
 // const a: TypedNode = {label: 'a', type: NodeType.var, info: {line: 82, column: 10}};
 const b: TypedNode = {label: 'b', type: NodeType.var, info: {line: 83, column: 10}};
 const c: TypedNode = {label: 'c', type: NodeType.var, info: {line: 91, column: 6}};
-const ComponentD: TypedNode = { label: 'ComponentD', type: NodeType.var, info: {line: 84, column: 10}};
+const ComponentD: TypedNode = { label: 'ComponentD', type: NodeType.fun, info: {line: 84, column: 10}};
 const msgRef: TypedNode = { label: 'msgRef', type: NodeType.var, info: {line: 86, column: 10}};
 
 edges.set(number, new Set([]));

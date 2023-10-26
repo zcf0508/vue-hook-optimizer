@@ -9,7 +9,7 @@ describe('test analyze', () => {
   const source = fs.readFileSync(path.resolve(__dirname, './TestComponent.vue'), 'utf-8');
   const sfc = parse(source);
   it('test analyze options base', () => {
-    const graph = analyzeOptions(
+    const {graph} = analyzeOptions(
       sfc.descriptor.script?.content!,
       (sfc.descriptor.script?.loc.start.line || 1) - 1,
     );
