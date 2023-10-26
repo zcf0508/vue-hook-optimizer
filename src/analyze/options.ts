@@ -46,7 +46,10 @@ export function analyze(
           if(
             path1.node.key.type === 'Identifier' 
             && path1.node.key.name === 'data'
-            && path1.node.value.type === 'ArrowFunctionExpression'
+            && (
+              path1.node.value.type === 'ArrowFunctionExpression'
+              || path1.node.value.type === 'FunctionExpression'
+            )
           ) {
             const dataNode = path1.node.value;
             

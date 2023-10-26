@@ -61,7 +61,7 @@
         required: true,
       },
     },
-    data:()=> {
+    data: function() {
       return {
         number: 0,
       }
