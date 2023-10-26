@@ -27,23 +27,13 @@ export async function analyze(code: string, language: 'vue' | 'react') {
       );
     }
     else if(sfc.descriptor.script?.content) {
-      if (
+      const res = analyzeOptions(
+        sfc.descriptor.script?.content!,
+        (sfc.descriptor.script.loc.start.line || 1) - 1,
         (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
-        && !sfc.descriptor.template?.content
-      ) {
-        const res = await analyzeTsx(sfc.descriptor.script?.content!,
-          'vue',
-          (sfc.descriptor.script.loc.start.line || 1) - 1,
-        );
-        graph = res.graph;
-        nodes = res.nodesUsedInTemplate;
-      } else {
-        graph = analyzeOptions(
-          sfc.descriptor.script?.content!,
-          (sfc.descriptor.script.loc.start.line || 1) - 1,
-          (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
-        );
-      }
+      );
+      graph = res.graph;
+      nodes = res.nodesUsedInTemplate;
     }
 
     try {

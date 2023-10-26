@@ -31,20 +31,13 @@ export default defineEventHandler(async (ctx) => {
         );
       }
       else if(sfc.descriptor.script?.content) {
-        if (
-          (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx') 
-          && !sfc.descriptor.template?.content
-        ) {
-          const res = await analyzeTsx(sfc.descriptor.script?.content!);
-          graph = res.graph;
-          nodes = res.nodesUsedInTemplate;
-        } else {
-          graph = analyzeOptions(
-            sfc.descriptor.script?.content!, 
-            0, 
-            (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
-          );
-        }
+        const res = analyzeOptions(
+          sfc.descriptor.script?.content!, 
+          0, 
+          (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
+        );
+        graph = res.graph;
+        nodes = res.nodesUsedInTemplate;
       }
 
       try {
