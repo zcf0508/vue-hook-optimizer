@@ -337,7 +337,25 @@ export function analyze(
                 }
               },
             }, path1.scope, path1);
-          }              
+          }   
+          
+          // render
+          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'render') {
+            traverse(path1.node, {
+              ReturnStatement(path2) {
+                const templateNode = path2.node;
+                traverse(templateNode, {
+                  MemberExpression(path3) {
+                    if(path3.node.object && path3.node.object.type === 'ThisExpression') {
+                      if(path3.node.property && path3.node.property.type === 'Identifier') {
+                        nodesUsedInTemplate.add(path3.node.property.name);
+                      }
+                    }
+                  },
+                }, path2.scope, path2);
+              },
+            }, path1.scope, path1);
+          }
         }
       },
     }, path.scope, path);
