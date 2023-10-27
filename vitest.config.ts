@@ -7,5 +7,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
     globals: true,
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text'],
+    },
   },
 });

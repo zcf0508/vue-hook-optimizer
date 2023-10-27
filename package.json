@@ -38,6 +38,7 @@
     "play": "npm -C packages/playground run dev",
     "lint": "eslint .",
     "test": "vitest",
+    "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "release": "bumpp -r",
     "prepublishOnly": "npm run build"
@@ -60,6 +61,7 @@
     "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
+    "@vitest/coverage-istanbul": "^0.34.6",
     "@vue/compiler-sfc": "^3.3.4",
     "bumpp": "^9.1.1",
     "cross-env": "^7.0.3",

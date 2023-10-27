@@ -73,6 +73,9 @@ jobs:
 
       - name: Test
         run: pnpm run test
+        
+      - name: Coverage
+        run: pnpm run coverage
 
       - name: Typecheck
         run: pnpm run typecheck
