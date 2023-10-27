@@ -38,6 +38,18 @@ export default defineEventHandler(async (ctx) => {
         );
         graph = res.graph;
         nodes = res.nodesUsedInTemplate;
+      } else {
+        try {
+          const res = analyzeOptions(
+            code,
+            0, 
+            true
+          );
+          graph = res.graph;
+          nodes = res.nodesUsedInTemplate;
+        } catch(e) {
+          console.log(e);
+        }
       }
 
       try {
