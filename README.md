@@ -3,7 +3,7 @@
 
 [中文文档](./README_cn.md)
 
-This is a tool to analyze your `vue` code. Viste [hook.huali.cafe](https://hook.huali.cafe) or try the vscode extension [vue-hook-optimizer-ext](https://marketplace.visualstudio.com/items?itemName=zcf0508.vue-hook-optimizer-ext).
+This is a tool to analyze your components code. It supports `Vue` and `React`. Viste [playground](vue-hook-optimizer.vercel.app/) or try the vscode extension [vue-hook-optimizer-ext](https://marketplace.visualstudio.com/items?itemName=zcf0508.vue-hook-optimizer-ext).
 
 ## Install And Run Playground
 
@@ -19,9 +19,7 @@ Open the browser and visit `http://localhost:3000/`.
 
 ## How To Use
 
-1. paste your `vue` code into the editor
-
-~~Up to now, it only supports the code with `<script setup>` syntax block.If your code use `options api`, it's not working at the moment.~~
+1. paste your component code into the editor
 
 2. click `Analyze` button
 

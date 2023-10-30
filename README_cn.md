@@ -1,7 +1,7 @@
 [![NPM version](https://img.shields.io/npm/v/vue-hook-optimizer?color=a1b858&label=)](https://www.npmjs.com/package/vue-hook-optimizer)
 <a href="https://marketplace.visualstudio.com/items?itemName=zcf0508.vue-hook-optimizer-ext" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/v/zcf0508.vue-hook-optimizer-ext.svg?color=eee&amp;label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="Visual Studio Marketplace Version" /></a>
 
-这是一个用来分析 `vue` 代码的工具。访问 [hook.huali.cafe](https://hook.huali.cafe) 或者试试 vscode 扩展 [vue-hook-optimizer-ext](https://marketplace.visualstudio.com/items?itemName=zcf0508.vue-hook-optimizer-ext)。
+这是一个用来分析组件代码的工具。它支持 `Vue` 和 `React`。访问 [playground](vue-hook-optimizer.vercel.app/) 或者试试 vscode 扩展 [vue-hook-optimizer-ext](https://marketplace.visualstudio.com/items?itemName=zcf0508.vue-hook-optimizer-ext)。
 
 ## 安装和运行
 
@@ -17,9 +17,7 @@ pnpm run play
 
 ## 如何使用
 
-1. 把你的 `vue` 代码粘贴到编辑器中
-
-~~目前只支持使用 `<script setup>` 编写的代码。如果你还在使用 `options api` ，那这个工具暂时还无法正常工作。~~
+1. 把你的组件代码粘贴到编辑器中
 
 2. 点击 `Analyze` 按钮
 
