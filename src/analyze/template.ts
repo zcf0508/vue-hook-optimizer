@@ -1,9 +1,7 @@
 import { v4 as uuid } from 'uuid';
-import { compileTemplate, babelParse } from '@vue/compiler-sfc';
-import _traverse from '@babel/traverse';
-const traverse: typeof _traverse =
-  //@ts-ignore
-  _traverse.default?.default || _traverse.default || _traverse;
+import { compileTemplate } from '@vue/compiler-sfc';
+import * as acorn from 'acorn';
+import { simple as simpleWalk } from 'acorn-walk';
 
 export function analyze(
   content: string
@@ -15,41 +13,37 @@ export function analyze(
     filename: `${id}.js`,
   });
 
-  // console.log(code);
-  const ast = babelParse(code, { sourceType: 'module',
-    plugins: [
-      'typescript',
-    ],
-  });
-
-  // ----
+  const ast = acorn.parse(code, { sourceType: 'module', ecmaVersion: 'latest' });
 
   const nodes = new Set<string>();
-  
-  traverse(ast, {
-    MemberExpression(path) {
-      if(path.type === 'MemberExpression') {
-        if(path.node.object && path.node.object.type === 'Identifier' && path.node.object.name === '_ctx') {
-          if(path.node.property && path.node.property.type === 'Identifier') {
-            nodes.add(path.node.property.name);
+
+  simpleWalk(ast, {
+    MemberExpression(node) {
+      if(node.type === 'MemberExpression') {
+        if(node.object && node.object.type === 'Identifier' && node.object.name === '_ctx') {
+          if(node.property && node.property.type === 'Identifier') {
+            nodes.add(node.property.name);
           }
         }
       }
     },
-    ObjectProperty(path) {
-      if(path.node.key.type === 'Identifier' && path.node.key.name === 'ref') {
-        if(path.node.value.type === 'StringLiteral') {
-          const name = path.node.value.value; 
-          name && nodes.add(name);
+    Property(node) {
+      if(node.type === 'Property') {
+        if(node.key.type === 'Identifier' && node.key.name === 'ref') {
+          if(node.value.type === 'Literal') {
+            const name = node.value.value; 
+            name && nodes.add(`${name}`);
+          }
         }
       }
     },
-    // component
-    CallExpression(path) {
-      if(path.node.callee.type === 'Identifier' && path.node.callee.name === '_resolveComponent') {
-        if(path.node.arguments[0].type === 'StringLiteral') {
-          const name = path.node.arguments[0].value; 
-          name && nodes.add(name);
+    CallExpression(node) {
+      if(node.type === 'CallExpression') {
+        if(node.callee.type === 'Identifier' && node.callee.name === '_resolveComponent') {
+          if(node.arguments[0].type === 'Literal') {
+            const name = node.arguments[0].value; 
+            name && nodes.add(`${name}`);
+          }
         }
       }
     },
