@@ -2,7 +2,7 @@
   "publisher": "zcf0508",
   "name": "vue-hook-optimizer-ext",
   "displayName": "vue-hook-optimizer",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "private": true,
   "packageManager": "pnpm@8.6.0",
   "description": "",
