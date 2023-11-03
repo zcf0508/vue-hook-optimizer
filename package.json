@@ -50,10 +50,9 @@
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/parser": "7.22.5",
-    "@babel/plugin-transform-typescript": "^7.22.5",
-    "@babel/preset-typescript": "^7.22.5",
-    "@babel/traverse": "^7.22.5",
+    "@babel/plugin-transform-typescript": "7.22.5",
+    "@babel/preset-typescript": "7.22.5",
+    "@babel/traverse": "7.22.5",
     "@types/babel__core": "^7.20.1",
     "@types/babel__traverse": "7.20.1",
     "@types/lodash-es": "^4.17.8",
@@ -76,5 +75,13 @@
     "vis-network": "^9.1.6",
     "vitest": "^0.34.1",
     "vue-eslint-parser": "^9.3.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@babel/core": "7.22.5",
+      "@babel/parser": "7.22.5",
+      "@babel/traverse": "7.22.5",
+      "@babel/types": "7.22.5"
+    }
   }
 }
