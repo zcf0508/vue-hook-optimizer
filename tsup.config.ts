@@ -7,4 +7,10 @@ export default defineConfig({
   clean: true,
   dts: true,
   format: ['cjs', 'esm'],
+  external: [
+    '@babel/core',
+    '@babel/parser',
+    '@babel/traverse',
+    '@babel/types',
+  ],
 });

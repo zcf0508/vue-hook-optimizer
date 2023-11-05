@@ -26,6 +26,5 @@
       "vitest/globals"
     ]
   },
-  "include": ["src", "test", ".eslintrc.js", "vitest.config.ts"],
-  "exclude": ["node_modules", "dist", "playground", "vscode"]
+  "exclude": ["node_modules", "dist", "packages"]
 }
