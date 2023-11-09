@@ -7,7 +7,7 @@ const emits = defineEmits(['update:msg'])
 
 const route = useRoute();
 
-const path = computed(() => route.path)
+const path = computed(() => route.path?.age)
 
 const lmsg = ref(props.msg)
 

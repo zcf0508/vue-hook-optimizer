@@ -366,7 +366,8 @@ export function parseEdgeLeftIdentifierPattern({path, rootScope, cb, collectionN
             binding?.scope === rootScope 
             && collectionNodes.has(path1.node.name) 
             && (
-              path1.parent.type !== 'MemberExpression'
+              (path1.parent.type !== 'MemberExpression'
+                && path1.parent.type !== 'OptionalMemberExpression')
               || path1.parent.object === path1.node
             )
           ) {
@@ -428,7 +429,8 @@ export function parseEdgeLeftObjectPattern({path, rootScope, cb, collectionNodes
           binding?.scope === rootScope 
           && collectionNodes.has(path1.node.name)
           && (
-            path1.parent.type !== 'MemberExpression'
+            (path1.parent.type !== 'MemberExpression'
+              && path1.parent.type !== 'OptionalMemberExpression')
             || path1.parent.object === path1.node
           )
         ) {
@@ -476,7 +478,8 @@ export function parseEdgeLeftArrayPattern({path, rootScope, cb, collectionNodes}
           binding?.scope === rootScope 
           && collectionNodes.has(path1.node.name)
           && (
-            path1.parent.type !== 'MemberExpression'
+            (path1.parent.type !== 'MemberExpression'
+              && path1.parent.type !== 'OptionalMemberExpression')
             || path1.parent.object === path1.node
           )
         ) {

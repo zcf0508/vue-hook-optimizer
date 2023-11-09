@@ -234,7 +234,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             if(
               graph.nodes.has(path1.node.name) 
               && (
-                path1.parent.type !== 'MemberExpression'
+                (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
@@ -278,7 +279,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                     if(
                       graph.nodes.has(path1.node.name) 
                       && (
-                        path1.parent.type !== 'MemberExpression'
+                        (path1.parent.type !== 'MemberExpression'
+                          && path1.parent.type !== 'OptionalMemberExpression')
                         || path1.parent.object === path1.node
                       )
                       && (binding?.scope.block.type === 'Program'
@@ -321,7 +323,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                     if(
                       graph.nodes.has(path1.node.name) 
                       && (
-                        path1.parent.type !== 'MemberExpression'
+                        (path1.parent.type !== 'MemberExpression'
+                          && path1.parent.type !== 'OptionalMemberExpression')
                         || path1.parent.object === path1.node
                       )
                       && (binding?.scope.block.type === 'Program'
@@ -369,7 +372,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 if(
                   graph.nodes.has(path1.node.name) 
                   && (
-                    path1.parent.type !== 'MemberExpression'
+                    (path1.parent.type !== 'MemberExpression'
+                      && path1.parent.type !== 'OptionalMemberExpression')
                     || path1.parent.object === path1.node
                   )
                   && (binding?.scope.block.type === 'Program'
@@ -418,7 +422,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                 if(
                   graph.nodes.has(path1.node.name) 
                   && (
-                    path1.parent.type !== 'MemberExpression'
+                    (path1.parent.type !== 'MemberExpression'
+                      && path1.parent.type !== 'OptionalMemberExpression')
                     || path1.parent.object === path1.node
                   )
                   && (binding?.scope.block.type === 'Program'
@@ -444,7 +449,8 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             if(
               graph.nodes.has(path1.node.name)
               && (
-                path1.parent.type !== 'MemberExpression'
+                (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
