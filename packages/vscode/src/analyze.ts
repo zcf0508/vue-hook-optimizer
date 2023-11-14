@@ -7,7 +7,7 @@ import {
   getVisData,
   gen,
   TypedNode,
-} from 'vue-hook-optimizer';
+} from '../../../src';
 
 export async function analyze(code: string, language: 'vue' | 'react') {
   let graph = {
