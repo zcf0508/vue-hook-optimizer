@@ -26,6 +26,6 @@
       "vitest/globals"
     ]
   },
-  "include": ["src", "test", ".eslintrc.js", "vitest.config.ts", "tsup.config.ts"],
+  "include": ["src", "test", ".eslintrc.js", "vitest.config.ts", "tsup.config.ts", "unocss.config.ts"],
   "exclude": ["node_modules", "dist", "packages"]
 }

@@ -2,6 +2,7 @@ import { NodeType, TypedNode } from '../analyze/utils';
 import { splitGraph } from './split';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
 import { hasCycle } from './utils';
+import * as t from '@babel/types';
 
 export enum SuggestionType {
   'info'='info',
@@ -12,6 +13,7 @@ export enum SuggestionType {
 export type Suggestion = {
   type: SuggestionType
   message: string
+  nodeInfo?: TypedNode | Array<TypedNode>
 }
 
 
@@ -37,6 +39,7 @@ export function gen(
               ? nodes.slice(0, 10).map(node => node.label).join(',') + '...('+nodes.length+')'
               : nodes.map(node => node.label).join(',')
           }] are isolated, perhaps you can refactor them to an isolated file.`,
+          nodeInfo: nodes,
         });
       }
     }
@@ -49,6 +52,7 @@ export function gen(
             ? nodes.slice(0, 10).map(node => node.label).join(',') + '...'
             : nodes.map(node => node.label).join(',')
         }] are not used, perhaps you can remove them.`,
+        nodeInfo: nodes,
       });
     }
     const hasCycleResult = hasCycle(g);
@@ -58,6 +62,7 @@ export function gen(
         message: `There is a loop call in nodes [${
           hasCycleResult.cycleNodes.map(node => node.label).join(',')
         }], perhaps you can refactor it.`,
+        nodeInfo: nodes,
       });
     }
 
@@ -70,6 +75,7 @@ export function gen(
             ? path.slice(0, 10).map(node => node.label).join(',') + '...('+path.length+')'
             : path.map(node => node.label).join(',')
         }] are have function chain calls, perhaps you can refactor it.`,
+        nodeInfo: path,
       });
     });
 
@@ -81,6 +87,7 @@ export function gen(
             type: SuggestionType.info,
             // eslint-disable-next-line max-len
             message: `Node [${node.label}] is an articulation point, perhaps you need to pay special attention to this node.`,
+            nodeInfo: node,
           });
         }
       });
@@ -93,6 +100,7 @@ export function gen(
       suggestions.push({
         type: SuggestionType.info,
         message: `Node [${node.label}] is not used, perhaps you can remove it.`,
+        nodeInfo: node,
       });
     }
   });
@@ -103,6 +111,7 @@ export function gen(
   //     suggestions.push({
   //       type: SuggestionType.info,
   //       message: `Node [${node.label}] is not used, perhaps you can remove it.`,
+  //       nodeInfo: node,
   //     });
   //   }
   // });

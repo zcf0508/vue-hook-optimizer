@@ -2,12 +2,18 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: process.cwd(),
-    project: ['tsconfig.json', './packages/playground/tsconfig.json', './packages/vscode/tsconfig.json'],
+    project: [
+      'tsconfig.json', 
+      './packages/playground/tsconfig.json', 
+      './packages/vscode/tsconfig.json',
+      './packages/eslint/tsconfig.json',
+    ],
     extraFileExtensions: ['.vue'],
   },
   plugins: [
     'vue',
     '@typescript-eslint',
+    'vue-hook-optimizer',
   ],
   overrides: [
     {
@@ -49,6 +55,9 @@ module.exports = {
     },
   ],
   rules: {
+    'vue-hook-optimizer/not-used-in-template': ['warn', {
+      framework: 'vue',
+    }],
     semi: ['error', 'always'],
     indent: ['error', 2, { SwitchCase: 1 }],
     'max-len': [

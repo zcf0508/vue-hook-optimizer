@@ -1,0 +1,60 @@
+{
+  "name": "eslint-plugin-vue-hook-optimizer",
+  "type": "module",
+  "version": "0.0.44",
+  "description": "vue-hook-optimizer eslint plugin",
+  "private": true,
+  "packageManager": "pnpm@8.6.0",
+  "author": "zcf0508 <zcf0508@live.com>",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/antfu",
+  "homepage": "https://github.com/zcf0508/vue-hook-optimizer/eslint",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zcf0508/vue-hook-optimizer.git",
+    "directory": "eslint"
+  },
+  "bugs": {
+    "url": "https://github.com/zcf0508/vue-hook-optimizer/issues"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/antfu"
+  },
+  "keywords": [],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "lint": "npm run dev && eslint .",
+    "prepublishOnly": "npm run  build",
+    "release": "bumpp && npm publish",
+    "start": "esno src/index.ts",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "eslint": "*"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.44.8",
+    "@typescript-eslint/utils": "^6.13.1",
+    "eslint": "^8.55.0",
+    "eslint-define-config": "^2.0.0",
+    "esno": "^4.0.0",
+    "unbuild": "^2.0.0",
+    "vue-hook-optimizer": "workspace:*"
+  }
+}

@@ -1,3 +1,3 @@
-import config  from './packages/playground/unocss.config'
+import config  from './packages/playground/unocss.config';
 
-export default config
+export default config;
