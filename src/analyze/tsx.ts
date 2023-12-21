@@ -1,9 +1,6 @@
-import { transformAsync } from '@babel/core';
 import _traverse, { NodePath, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
 import { NodeCollection, getComment } from './utils';
-// @ts-ignore
-import bts from '@babel/plugin-transform-typescript';
 import { 
   traverse, 
   IAddNode,
@@ -25,6 +22,7 @@ import {
   addSpreadToGraphByScanReturn,
   addGraphBySpreadIdentifier,
 } from '../utils/traverse';
+import { babelParse } from '@vue/compiler-sfc';
 
 interface IProcessMain {
   node: t.Node, 
@@ -478,43 +476,29 @@ export function processTsx(params : IProcessMain) {
 }
 
 
-export async function analyze(
+export function analyze(
   content: string,
   type = 'vue' as 'vue' | 'react',
   lineOffset = 0,
   addInfo = true,
 ) {
 
-  // console.log(content);
-  const res = await transformAsync(content, {
-    babelrc: false,
-    ast: true,
-    sourceMaps: false,
-    configFile: false,
+  const ast = babelParse(content, { sourceType: 'module',
     plugins: [
-      [
-        bts,
-        {
-          isTSX: true, 
-          allowExtensions: true,
-        },
-      ],
+      'typescript',
+      'jsx',
     ],
   });
 
-  if (res && res.ast) {
-    const { graph, nodeCollection, nodesUsedInTemplate } = processTsx({
-      node: res.ast,
-      type,
-      lineOffset,
-      addInfo,
-    });
-    // ---
-    return {
-      graph: nodeCollection.map(graph),
-      nodesUsedInTemplate,
-    };
-  }
+  const { graph, nodeCollection, nodesUsedInTemplate } = processTsx({
+    node: ast,
+    type,
+    lineOffset,
+    addInfo,
+  });
 
-  throw new Error('transpile error: can\'t find ast');
+  return {
+    graph: nodeCollection.map(graph),
+    nodesUsedInTemplate,
+  };
 }
