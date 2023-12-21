@@ -45,12 +45,12 @@ jobs:
       - name: PNPM build eslint-plugin
         run: pnpm run build:eslint
 
-      - name: Publish eslint-plugin to NPM
-        run: pnpm publish --access public --no-git-checks
-        working-directory: ./packages/eslint
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_CONFIG_PROVENANCE: true
+      # - name: Publish eslint-plugin to NPM
+      #   run: pnpm publish --access public --no-git-checks
+      #   working-directory: ./packages/eslint
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      #     NPM_CONFIG_PROVENANCE: true
 
       - name: Publish to VSCE
         run: pnpm vsce publish --no-dependencies -p ${{secrets.VSCE_TOKEN}}
