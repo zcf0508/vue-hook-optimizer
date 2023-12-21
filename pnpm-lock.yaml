@@ -150,7 +150,7 @@ importers:
   packages/vscode:
     devDependencies:
       '@types/vscode':
-        specifier: ^1.85.0
+        specifier: ^1.78.1
         version: 1.85.0
       '@vscode/vsce':
         specifier: ^2.22.0
