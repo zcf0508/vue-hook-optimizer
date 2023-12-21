@@ -70,7 +70,6 @@
     "ts-node": "^10.9.2",
     "tsup": "^7.3.0",
     "typescript": "^5.3.3",
-    "uuid": "^9.0.1",
     "vis-network": "^9.1.9",
     "vitest": "^0.34.6",
     "vue-eslint-parser": "^9.3.2"

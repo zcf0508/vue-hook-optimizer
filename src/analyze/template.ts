@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import { compileTemplate, babelParse } from '@vue/compiler-sfc';
 import _traverse from '@babel/traverse';
 const traverse: typeof _traverse =
@@ -8,7 +7,7 @@ const traverse: typeof _traverse =
 export function analyze(
   content: string
 ) {
-  const id = uuid();
+  const id = 'template';
   const { code } = compileTemplate({
     id: id,
     source: content,
