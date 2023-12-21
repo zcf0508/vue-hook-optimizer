@@ -31,7 +31,7 @@ export default createEslintRule<Options, MessageIds>({
           type: 'string',
           enum: [
             'vue', 
-            // 'react',
+            'react',
           ],
         },
       } ,
@@ -99,15 +99,15 @@ export default createEslintRule<Options, MessageIds>({
           }
         }
         
-        // if(framework === 'react') {
-        //   const res = await analyzeTsx(
-        //     code, 
-        //     'react',
-        //     0,
-        //   );
-        //   graph = res.graph;
-        //   nodes = res.nodesUsedInTemplate;
-        // }
+        if(framework === 'react') {
+          const res = analyzeTsx(
+            code, 
+            'react',
+            0,
+          );
+          graph = res.graph;
+          nodes = res.nodesUsedInTemplate;
+        }
     
         return gen(graph, nodes);
       } catch (e) {

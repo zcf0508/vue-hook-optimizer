@@ -31,7 +31,7 @@ const b = ref(0)
 ```js
 {
   "not-used-in-template": ['warn', {
-    framework: 'vue', // react is not supported yet
+    framework: 'vue', // vue or react
   }]
 }
 ```
