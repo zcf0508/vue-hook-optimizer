@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { defineBuildConfig } from 'unbuild';
 
 export default defineBuildConfig({
@@ -6,6 +7,9 @@ export default defineBuildConfig({
   ],
   declaration: true,
   clean: true,
+  alias: {
+    'vue-hook-optimizer': path.resolve(__dirname, '../../src'),
+  },
   rollup: {
     emitCJS: true,
   },

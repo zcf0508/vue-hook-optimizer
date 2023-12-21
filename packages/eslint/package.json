@@ -39,9 +39,8 @@
     "build": "unbuild",
     "dev": "unbuild --stub",
     "lint": "npm run dev && eslint .",
-    "prepublishOnly": "npm run  build",
-    "release": "bumpp && npm publish",
-    "start": "esno src/index.ts",
+    "prepublishOnly": "npm run build",
+    "release": "bumpp",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
@@ -51,10 +50,7 @@
   "devDependencies": {
     "@types/eslint": "^8.56.0",
     "@typescript-eslint/utils": "^6.15.0",
-    "eslint": "^8.56.0",
     "eslint-define-config": "^2.0.0",
-    "esno": "^4.0.0",
-    "unbuild": "^2.0.0",
-    "vue-hook-optimizer": "workspace:*"
+    "unbuild": "^2.0.0"
   }
 }

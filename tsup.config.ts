@@ -12,5 +12,6 @@ export default defineConfig({
     '@babel/parser',
     '@babel/traverse',
     '@babel/types',
+    '@vue/compiler-sfc',
   ],
 });

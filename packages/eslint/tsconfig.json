@@ -12,6 +12,11 @@
     "strictNullChecks": true,
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "vue-hook-optimizer": [
+        "../../src"
+      ]
+    }
   },
 }

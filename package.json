@@ -60,7 +60,6 @@
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "@vitest/coverage-istanbul": "^0.34.6",
-    "@vue/compiler-sfc": "^3.3.13",
     "bumpp": "^9.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
@@ -80,6 +79,12 @@
     "@babel/core": "^7.22.5",
     "@babel/parser": "^7.22.5",
     "@babel/traverse": "^7.22.5",
-    "@babel/types": "^7.22.5"
+    "@babel/types": "^7.22.5",
+    "@vue/compiler-sfc": "^3.3.4"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": "3.28.1"
+    }
   }
 }

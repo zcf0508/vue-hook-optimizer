@@ -2,8 +2,7 @@
 import * as path from 'node:path';
 
 export default defineNuxtConfig({
-  // ssr: false,
-  devtools: { enabled: false },
+  devtools: false,
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',

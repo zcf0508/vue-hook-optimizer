@@ -150,8 +150,6 @@ const framework = ref<'vue' | 'react'>('vue');
 
 provide('autoresize', true);
 
-const a = ref(0);
-
 function codeChange(value: string) {
   code.value = value;
   // autoRefresh.value && start();
