@@ -4,7 +4,7 @@
   "displayName": "vue-hook-optimizer",
   "version": "0.0.44",
   "private": true,
-  "packageManager": "pnpm@8.6.0",
+  "packageManager": "pnpm@8.12.1",
   "description": "",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
@@ -114,12 +114,12 @@
     "release": "pnpm run publish"
   },
   "devDependencies": {
-    "@types/node": "^18.16.16",
-    "@types/vscode": "^1.78.1",
-    "@vscode/vsce": "^2.19.0",
+    "@types/node": "^18.19.3",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
     "esno": "^0.16.3",
-    "rimraf": "^5.0.1",
+    "rimraf": "^5.0.5",
     "tsup": "^6.7.0",
-    "vite": "^4.2.3"
+    "vite": "^4.4.12"
   }
 }
