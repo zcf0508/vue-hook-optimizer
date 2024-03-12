@@ -1,4 +1,4 @@
-import { TypedNode } from '../analyze/utils';
+import type { TypedNode } from '../analyze/utils';
 
 export function hasCycle(graph: Map<TypedNode, Set<TypedNode>>): { hasCycle: boolean, cycleNodes: TypedNode[] } {
   const visited: Set<TypedNode> = new Set();

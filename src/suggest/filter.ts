@@ -1,4 +1,5 @@
-import { NodeType, TypedNode } from '../analyze/utils';
+import type { TypedNode } from '../analyze/utils';
+import { NodeType } from '../analyze/utils';
 
 /**
  * Filter out nodes that have no indegree.
@@ -8,11 +9,11 @@ export function noIndegreeFilter(
 ) {
   const nodes = Array.from(graph.keys());
   const indegree = new Map<TypedNode, number>();
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     indegree.set(node, 0);
   });
   graph.forEach((targets, node) => {
-    targets.forEach(target => {
+    targets.forEach((target) => {
       indegree.set(target, (indegree.get(target) || 0) + 1);
     });
   });
@@ -27,7 +28,7 @@ export function noOutdegreeFilter(
 ) {
   const zeroOutdegreeNodes = [];
 
-  for (let [node, edges] of graph.entries()) {
+  for (const [node, edges] of graph.entries()) {
     if (edges.size === 0) {
       zeroOutdegreeNodes.push(node);
     }
@@ -36,21 +37,21 @@ export function noOutdegreeFilter(
   return zeroOutdegreeNodes;
 }
 
-// --- 
+// ---
 
 function removeVariable(
   graph: Map<TypedNode, Set<TypedNode>>,
-  targets: Set<TypedNode>
+  targets: Set<TypedNode>,
 ) {
   const newTarget = new Set<TypedNode>();
-  targets.forEach(target => {
-    if(target.type === NodeType.var) {
+  targets.forEach((target) => {
+    if (target.type === NodeType.var) {
       const nodes = graph.get(target);
-      nodes?.forEach(node => {
+      nodes?.forEach((node) => {
         newTarget.add(node);
       });
     }
-    if(target.type === NodeType.fun) {
+    if (target.type === NodeType.fun) {
       newTarget.add(target);
     }
   });
@@ -65,7 +66,7 @@ export function onlyFunctions(
 ): Map<TypedNode, Set<TypedNode>> {
   const result = new Map<TypedNode, Set<TypedNode>>();
   graph.forEach((targets, node) => {
-    if(node.type === NodeType.fun) {
+    if (node.type === NodeType.fun) {
       const nodes = removeVariable(graph, targets);
       result.set(node, nodes);
     }
@@ -73,23 +74,22 @@ export function onlyFunctions(
   return result;
 }
 
-
 // ---
 
 export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
-  let linearPaths = [];
+  const linearPaths = [];
 
-  let visitedNodes = new Set();
+  const visitedNodes = new Set();
 
-  for (let [node, edges] of graph.entries()) {
+  for (const [node, edges] of graph.entries()) {
     if (edges.size === 1 && !visitedNodes.has(node) && node.type === NodeType.fun) {
-      let path = [node];
+      const path = [node];
       let nextNode = Array.from(edges)[0];
-      
+
       visitedNodes.add(node);
 
       while (graph.get(nextNode)?.size === 1) {
-        if(visitedNodes.has(nextNode)) {
+        if (visitedNodes.has(nextNode)) {
           break;
         }
         path.push(nextNode);
@@ -124,7 +124,7 @@ export function findArticulationPoints(graph: Map<TypedNode, Set<TypedNode>>) {
     time++;
     visited.add(node);
 
-    for (let neighbor of graph.get(node) || []) {
+    for (const neighbor of graph.get(node) || []) {
       if (!visited.has(neighbor)) {
         children++;
         parent.set(neighbor, node);
@@ -136,13 +136,14 @@ export function findArticulationPoints(graph: Map<TypedNode, Set<TypedNode>>) {
         if (parent.get(node) !== null && low.get(neighbor)! >= disc.get(node)!) {
           ap.add(node);
         }
-      } else if (neighbor !== parent.get(node)) {
+      }
+      else if (neighbor !== parent.get(node)) {
         low.set(node, Math.min(low.get(node)!, disc.get(neighbor)!));
       }
     }
   }
 
-  for (let node of graph.keys()) {
+  for (const node of graph.keys()) {
     if (!visited.has(node) && !noIndegreeNodes.includes(node)) {
       APUtil(graph, node);
     }

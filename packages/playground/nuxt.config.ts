@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@unocss/nuxt',
   ],
-  alias:{
+  alias: {
     'vue-hook-optimizer': path.resolve(__dirname, '../../src'),
   },
 });

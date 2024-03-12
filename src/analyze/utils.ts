@@ -1,84 +1,94 @@
-import * as t from '@babel/types';
+import type * as t from '@babel/types';
 
-export type TypedNode = {
+export interface TypedNode {
   label: string
   type: NodeType
   info?: Partial<{
-    line: number,
-    column: number,
+    line: number
+    column: number
     comment: string
   }>
-}
+};
 
 export enum NodeType {
-	var='var',
-	fun='fun',
+  var = 'var',
+  fun = 'fun',
 }
 
-type Options = {
+interface Options {
   isComputed: boolean
   isMethod: boolean
   comment: string
-}
+};
 
 export class NodeCollection {
   lineOffset = 0;
   addInfo = true;
-  constructor(_lineOffset=0, _addInfo=true) {
+  constructor(_lineOffset = 0, _addInfo = true) {
     this.lineOffset = _lineOffset;
     this.addInfo = _addInfo;
   }
+
   nodes = new Map<string, TypedNode>();
 
   addNode(
-    label: string, 
-    node: t.Node, 
-    options: Partial<Options> = {isComputed: false, isMethod: false, comment: ''}
+    label: string,
+    node: t.Node,
+    options: Partial<Options> = { isComputed: false, isMethod: false, comment: '' },
   ) {
-    if(this.nodes.has(label)) {
+    if (this.nodes.has(label)) {
       return;
     }
-    if(
-      !options.isComputed && (
+    if (
+      (!options.isComputed && (
         (node.type === 'VariableDeclarator' && [
-          'ArrowFunctionExpression', 
+          'ArrowFunctionExpression',
           'FunctionDeclaration',
           'FunctionExpression',
-        ].includes(node.init?.type || '')) 
+        ].includes(node.init?.type || ''))
         || (node.type === 'ObjectProperty' && [
-          'ArrowFunctionExpression', 
+          'ArrowFunctionExpression',
           'FunctionDeclaration',
           'FunctionExpression',
-        ].includes(node.value?.type || '')) 
+        ].includes(node.value?.type || ''))
         || node.type === 'FunctionDeclaration'
         || node.type === 'ObjectMethod'
         || node.type === 'ArrowFunctionExpression'
         || node.type === 'FunctionExpression'
-      )
+      ))
       || options.isMethod
     ) {
       this.nodes.set(label, {
         label,
         type: NodeType.fun,
-        ...(this.addInfo ? {
-          info: {
-            line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
-            column: node.loc?.start.column || 0,
-            ...options.comment ? {comment: options.comment} : {},
-          },
-        } : {}),
+        ...(this.addInfo
+          ? {
+            info: {
+              line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
+              column: node.loc?.start.column || 0,
+              ...options.comment
+                ? { comment: options.comment }
+                : {},
+            },
+          }
+          : {}),
       });
-    } else {
+    }
+    else {
       this.nodes.set(label, {
         label,
         type: NodeType.var,
-        ...(this.addInfo ? {
-          info: {
-            line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
-            column: node.loc?.start.column || 0,
-            ...options.comment ? {comment: options.comment} : {},
-          },
-        } : {}),
+        ...(this.addInfo
+          ? {
+            info: {
+              line: (node.loc?.start.line || 1) - 1 + this.lineOffset,
+              column: node.loc?.start.column || 0,
+              ...options.comment
+                ? { comment: options.comment }
+                : {},
+            },
+          }
+          : {}),
       });
     }
   }
@@ -87,19 +97,20 @@ export class NodeCollection {
     this.nodes.set(label, {
       label,
       type: node.type,
-      ...(this.addInfo ? {
-        info: {
-          ...(node.info || {}),
-        },
-      } : {}),
+      ...(this.addInfo
+        ? {
+          info: {
+            ...(node.info || {}),
+          },
+        }
+        : {}),
     });
   }
 
   map(graph: {
-    nodes: Set<string>;
-    edges: Map<string, Set<string>>;
+    nodes: Set<string>
+    edges: Map<string, Set<string>>
   }) {
-
     const nodes = new Set(Array.from(graph.nodes).map((node) => {
       return this.nodes.get(node)!;
     }).filter(node => !!node));
@@ -109,7 +120,7 @@ export class NodeCollection {
         return this.nodes.get(node)!;
       }).filter(node => !!node))];
     }));
-    
+
     return {
       nodes,
       edges,
@@ -117,20 +128,20 @@ export class NodeCollection {
   }
 }
 
-
 export function getComment(node: t.Node) {
   let comment = '';
-  
-  node.leadingComments?.map(_comment => {
-    if(_comment.value.trim().startsWith('*')) {
+
+  node.leadingComments?.forEach((_comment) => {
+    if (_comment.value.trim().startsWith('*')) {
       comment += `${_comment.value.trim().replace(/^[\s]*\*+[\s]*\**/gm, '').trim()}\n`;
     }
   });
-  
-  node.trailingComments?.map(_comment => {
-    if(_comment.value.trim().startsWith('*')) {
+
+  node.trailingComments?.forEach((_comment) => {
+    if (_comment.value.trim().startsWith('*')) {
       comment += `${_comment.value.trim().replace(/^[\s]*\*+[\s]*\**/gm, '').trim()}\n`;
-    } else {
+    }
+    else {
       comment += `${_comment.value.trim()}\n`;
     }
   });

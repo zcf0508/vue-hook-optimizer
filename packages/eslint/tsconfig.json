@@ -4,6 +4,11 @@
     "lib": ["esnext"],
     "module": "esnext",
     "moduleResolution": "Bundler",
+    "paths": {
+      "vue-hook-optimizer": [
+        "../../src"
+      ]
+    },
     "resolveJsonModule": true,
     "types": [
       "vitest/globals"
@@ -12,11 +17,6 @@
     "strictNullChecks": true,
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "paths": {
-      "vue-hook-optimizer": [
-        "../../src"
-      ]
-    }
-  },
+    "skipLibCheck": true
+  }
 }

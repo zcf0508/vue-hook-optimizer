@@ -10,7 +10,6 @@ const normal_highlight_bg = '#ddd';
 const normal_highlight_border = '#ccc';
 const normal_font_color = '#c8c9cc';
 
-
 const options = {
   vis: {
     groups: {

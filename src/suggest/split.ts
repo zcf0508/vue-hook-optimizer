@@ -1,23 +1,23 @@
-import { TypedNode } from '../analyze/utils';
+import type { TypedNode } from '../analyze/utils';
 
 function dfs(
   graph: Map<TypedNode, Set<TypedNode>>,
   node: TypedNode,
   targets: Set<TypedNode>,
   visited: Set<TypedNode>,
-  component: Set<TypedNode>
+  component: Set<TypedNode>,
 ) {
   component.add(node);
   visited.add(node);
-  targets.forEach((target)=>{
-    if(!visited.has(target)) {
+  targets.forEach((target) => {
+    if (!visited.has(target)) {
       dfs(graph, target, graph.get(target) || new Set(), visited, component);
     }
   });
 }
 
 function haveIntersection(setA: Set<TypedNode>, setB: Set<TypedNode>): boolean {
-  for (let item of setA) {
+  for (const item of setA) {
     if (setB.has(item)) {
       return true;
     }
@@ -46,22 +46,22 @@ export function splitGraph(
 ) {
   const components = [] as Set<TypedNode>[];
 
-  const sorted = Array.from(graph).sort((a,b) => b[1].size - a[1].size);
+  const sorted = Array.from(graph).sort((a, b) => b[1].size - a[1].size);
 
-  (new Map(sorted)).forEach((targets, node)=>{
+  (new Map(sorted)).forEach((targets, node) => {
     const visited = new Set<TypedNode>();
-    if(!visited.has(node)) {
-      let component = new Set<TypedNode>();
+    if (!visited.has(node)) {
+      const component = new Set<TypedNode>();
       dfs(graph, node, targets, visited, component);
       components.push(component);
     }
   });
 
-  return mergeSets(components).map(component => {
+  return mergeSets(components).map((component) => {
     const subGraph = new Map<TypedNode, Set<TypedNode>>();
-    component.forEach(node => {
+    component.forEach((node) => {
       const targets = graph.get(node);
-      if(targets) {
+      if (targets) {
         subGraph.set(node, targets);
       }
     });

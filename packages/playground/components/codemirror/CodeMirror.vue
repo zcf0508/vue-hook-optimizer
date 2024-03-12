@@ -1,10 +1,6 @@
-<template>
-  <div ref="el" class="editor"></div>
-</template>
-
 <script setup lang="ts">
 import type { ModeSpec, ModeSpecOptions } from 'codemirror';
-import { ref, onMounted, watchEffect, inject } from 'vue';
+import { inject, onMounted, ref, watchEffect } from 'vue';
 import { debounce } from 'lodash-es';
 import CodeMirror from './codemirror';
 
@@ -75,6 +71,10 @@ onMounted(() => {
   }
 });
 </script>
+
+<template>
+  <div ref="el" class="editor" />
+</template>
 
 <style>
 .editor {

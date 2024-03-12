@@ -16,7 +16,6 @@ pnpm run play
 
 Open the browser and visit `http://localhost:3000/`.
 
-
 ## How To Use
 
 1. paste your component code into the editor
@@ -29,9 +28,11 @@ The tool will analyze the code, and show the relations between the variables and
 
 ## Motive
 
-Sometime we have to refactor the code, maybe there are thousands of lines of code in one file. And it is too complex and hard to understand.
+Sometime we have to refactor the code, maybe there are thousands of lines of code in one file.
+And it is too complex and hard to understand.
 
-So I want to build a tool to help us analyze the code, and find the relations between the variables and the methods. We can find out some variables are isolated, and some methods are over-association, and then we can refactor them.
+So I want to build a tool to help us analyze the code, and find the relations between the variables and the methods.
+We can find out some variables are isolated, and some methods are over-association, and then we can refactor them.
 
 ## Development Plan
 
@@ -43,7 +44,7 @@ So I want to build a tool to help us analyze the code, and find the relations be
 
 ## Contribution
 
-Any contributions are welcome. 
+Any contributions are welcome.
 
 ## Sponsor Me
 

@@ -6,7 +6,11 @@ export function useResize(containerRef: Ref<HTMLElement | null>) {
 
   const boundSplit = computed(() => {
     const { split } = state;
-    return split < 10 ? 10 : split > 50 ? 50 : split;
+    return split < 10
+      ? 10
+      : split > 50
+        ? 50
+        : split;
   });
 
   let startPosition = 0;

@@ -1,10 +1,9 @@
 {
-	"recommendations": [
-		"vue.volar",
-		"vue.vscode-typescript-vue-plugin",
-		"bradlc.vscode-tailwindcss",
-		"antfu.unocss",
-		"yoavbls.pretty-ts-errors",
-		"amodio.tsl-problem-matcher",
-	]
+  "recommendations": [
+    "vue.volar",
+    "bradlc.vscode-tailwindcss",
+    "antfu.unocss",
+    "yoavbls.pretty-ts-errors",
+    "amodio.tsl-problem-matcher"
+  ]
 }

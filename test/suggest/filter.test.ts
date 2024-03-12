@@ -1,10 +1,11 @@
-import { NodeType, TypedNode } from '@/analyze/utils';
-import { 
-  findArticulationPoints, 
-  findLinearPaths, 
-  noIndegreeFilter, 
-  noOutdegreeFilter, 
-  onlyFunctions, 
+import type { TypedNode } from '@/analyze/utils';
+import { NodeType } from '@/analyze/utils';
+import {
+  findArticulationPoints,
+  findLinearPaths,
+  noIndegreeFilter,
+  noOutdegreeFilter,
+  onlyFunctions,
 } from '@/suggest/filter';
 
 describe('suggest tests', () => {
@@ -196,7 +197,7 @@ describe('suggest tests', () => {
     graph.set(node5, new Set([node5]));
 
     expect(findLinearPaths(graph)).toEqual([
-      [node2,node3],
+      [node2, node3],
     ]);
   });
   it('graph linear paths 2', () => {

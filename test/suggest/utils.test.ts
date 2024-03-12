@@ -1,4 +1,5 @@
-import { NodeType, TypedNode } from '@/analyze/utils';
+import type { TypedNode } from '@/analyze/utils';
+import { NodeType } from '@/analyze/utils';
 import { hasCycle } from '@/suggest/utils';
 
 describe('utils tests', () => {

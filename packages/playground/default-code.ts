@@ -91,7 +91,6 @@ code {
 }
 </style>`;
 
-
 export const tsx = `<script lang="tsx">
 export default defineComponent({
   name: 'BaseInfoModal',

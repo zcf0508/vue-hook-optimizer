@@ -2,30 +2,30 @@
   "ts-node": {
     "compilerOptions": {
       "module": "NodeNext",
-      "moduleResolution": "NodeNext",
+      "moduleResolution": "NodeNext"
     }
   },
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     "jsx": "preserve",
     "baseUrl": "./",
+    "module": "esnext",
+    "moduleResolution": "node",
     "paths": {
       "@/*": [
         "src/*"
       ]
     },
+    "resolveJsonModule": true,
     "types": [
       "vitest/globals"
-    ]
+    ],
+    "strict": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["src", "test", ".eslintrc.js", "vitest.config.ts", "tsup.config.ts", "unocss.config.ts"],
+  "include": ["src", "test", "eslint.config.mjs", "vitest.config.ts", "tsup.config.ts", "unocss.config.ts"],
   "exclude": ["node_modules", "dist", "packages"]
 }

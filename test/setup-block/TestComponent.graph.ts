@@ -1,22 +1,22 @@
-import { NodeType,TypedNode } from '@/analyze/utils';
+import type { TypedNode } from '@/analyze/utils';
+import { NodeType } from '@/analyze/utils';
 
 const edges = new Map<TypedNode, Set<TypedNode>>();
 
-const route: TypedNode = {label: 'route', type: NodeType.var, info: {line: 7, column: 6}};
-const path: TypedNode = {label: 'path', type: NodeType.var, info: {line: 9, column: 6}};
-const lmsg: TypedNode = {label: 'lmsg', type: NodeType.var, info: {line: 11, column: 6}};
-const data: TypedNode = {label: 'data', type: NodeType.var, info: {line: 19, column: 6, comment: '这是注释11'}};
-const age: TypedNode = {label: 'age', type: NodeType.var, info: {line: 23, column: 6}};
-const addAge: TypedNode = {label: 'addAge', type: NodeType.fun, info: {line: 28, column: 9}};
-const updateName: TypedNode = {label: 'updateName', type: NodeType.fun, info: {line: 32, column: 6}};
-const funA: TypedNode = {label: 'funA', type: NodeType.fun, info: {line: 36, column: 9}};
-const varB: TypedNode = {label: 'varB', type: NodeType.var, info: {line:43, column: 8}};
-const funC: TypedNode = {label: 'funC', type: NodeType.fun, info: {line: 45, column: 9, comment: '这是注释'}};
-const varD: TypedNode = {label: 'varD', type: NodeType.var,info: {line: 52, column: 8}};
-const varE: TypedNode = {label: 'varE', type: NodeType.var, info: {line: 52, column: 14}};
-const restArr: TypedNode = {label: 'restArr', type: NodeType.var, info: {line: 25, column: 10}};
-const restObj: TypedNode = {label: 'restObj', type: NodeType.var, info: {line: 26, column: 11}};
-
+const route: TypedNode = { label: 'route', type: NodeType.var, info: { line: 7, column: 6 } };
+const path: TypedNode = { label: 'path', type: NodeType.var, info: { line: 9, column: 6 } };
+const lmsg: TypedNode = { label: 'lmsg', type: NodeType.var, info: { line: 11, column: 6 } };
+const data: TypedNode = { label: 'data', type: NodeType.var, info: { line: 19, column: 6, comment: '这是注释11' } };
+const age: TypedNode = { label: 'age', type: NodeType.var, info: { line: 23, column: 6 } };
+const addAge: TypedNode = { label: 'addAge', type: NodeType.fun, info: { line: 28, column: 9 } };
+const updateName: TypedNode = { label: 'updateName', type: NodeType.fun, info: { line: 32, column: 6 } };
+const funA: TypedNode = { label: 'funA', type: NodeType.fun, info: { line: 36, column: 9 } };
+const varB: TypedNode = { label: 'varB', type: NodeType.var, info: { line: 43, column: 8 } };
+const funC: TypedNode = { label: 'funC', type: NodeType.fun, info: { line: 45, column: 9, comment: '这是注释' } };
+const varD: TypedNode = { label: 'varD', type: NodeType.var, info: { line: 52, column: 8 } };
+const varE: TypedNode = { label: 'varE', type: NodeType.var, info: { line: 52, column: 14 } };
+const restArr: TypedNode = { label: 'restArr', type: NodeType.var, info: { line: 25, column: 10 } };
+const restObj: TypedNode = { label: 'restObj', type: NodeType.var, info: { line: 26, column: 11 } };
 
 edges.set(route, new Set([]));
 edges.set(route, new Set([]));

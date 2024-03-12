@@ -1,46 +1,53 @@
 import { babelParse } from '@vue/compiler-sfc';
-import _traverse, { Scope } from '@babel/traverse';
-import * as t from '@babel/types';
+import type { Scope } from '@babel/traverse';
+import _traverse from '@babel/traverse';
+import type * as t from '@babel/types';
 import { NodeCollection, NodeType, getComment } from './utils';
-const traverse: typeof _traverse =
-  //@ts-ignore
-  _traverse.default?.default || _traverse.default || _traverse;
+const traverse: typeof _traverse
+  // @ts-expect-error unwarp default
+  = _traverse.default?.default || _traverse.default || _traverse;
 
-export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.Node, _spread?: string[], _lineOffset=0) {
+export function processSetup(
+  ast: t.Node,
+  parentScope?: Scope,
+  parentPath?: t.Node,
+  _spread?: string[],
+  _lineOffset = 0,
+) {
   const spread = _spread || [];
-  
+
   const nodeCollection = new NodeCollection(_lineOffset);
 
-  const graph = { 
-    nodes: new Set<string>(), 
-    edges: new Map<string, Set<string>>(), 
+  const graph = {
+    nodes: new Set<string>(),
+    edges: new Map<string, Set<string>>(),
     spread: new Map<string, Set<string>>(),
   };
 
   traverse(ast, {
-    VariableDeclaration(path){
+    VariableDeclaration(path) {
       path.node.declarations.forEach((declaration) => {
-        if(declaration.id.type === 'ArrayPattern') {
+        if (declaration.id.type === 'ArrayPattern') {
           declaration.id.elements.forEach((element) => {
-            if(element?.type === 'Identifier') {
+            if (element?.type === 'Identifier') {
               const name = element.name;
               const binding = path.scope.getBinding(name);
-              
-              if(
-                binding 
+
+              if (
+                binding
                 && (path.parent.type === 'Program'
                 || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                  && declaration.init?.callee.type === 'Identifier'
-                  && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && declaration.init?.callee.type === 'Identifier'
+                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
                 nodeCollection.addNode(name, element, {
                   comment: getComment(path.node),
                 });
-                if(!graph.edges.get(name)) {
+                if (!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
               }
@@ -48,103 +55,102 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             if (element?.type === 'RestElement' && element.argument.type === 'Identifier') {
               const name = element.argument.name;
               const binding = path.scope.getBinding(name);
-              
-              if(
-                binding 
+
+              if (
+                binding
                 && (path.parent.type === 'Program'
                 || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                  && declaration.init?.callee.type === 'Identifier'
-                  && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && declaration.init?.callee.type === 'Identifier'
+                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
                 nodeCollection.addNode(name, element.argument, {
                   comment: getComment(path.node),
                 });
-                if(!graph.edges.get(name)) {
+                if (!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
               }
             }
           });
         }
-        if(declaration.id.type === 'ObjectPattern') {
+        if (declaration.id.type === 'ObjectPattern') {
           declaration.id.properties.forEach((property) => {
-            if(property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
+            if (property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
               const name = property.value.name;
               const binding = path.scope.getBinding(name);
-              if(
-                binding 
+              if (
+                binding
                 && (path.parent.type === 'Program'
                 || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                  && declaration.init?.callee.type === 'Identifier'
-                  && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && declaration.init?.callee.type === 'Identifier'
+                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
                 nodeCollection.addNode(name, property.value, {
                   comment: getComment(property),
                 });
-                if(!graph.edges.get(name)) {
+                if (!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
               }
             }
 
-            if(property.type === 'RestElement' && property.argument.type === 'Identifier') {
+            if (property.type === 'RestElement' && property.argument.type === 'Identifier') {
               const name = property.argument.name;
               const binding = path.scope.getBinding(name);
-              if(
-                binding 
+              if (
+                binding
                 && (path.parent.type === 'Program'
                 || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                  && declaration.init?.callee.type === 'Identifier'
-                  && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && declaration.init?.callee.type === 'Identifier'
+                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
                 nodeCollection.addNode(name, property.argument, {
                   comment: getComment(property),
                 });
-                if(!graph.edges.get(name)) {
+                if (!graph.edges.get(name)) {
                   graph.edges.set(name, new Set());
                 }
               }
             }
           });
         }
-        if(declaration.id?.type === 'Identifier') {
+        if (declaration.id?.type === 'Identifier') {
           const name = declaration.id.name;
           const binding = path.scope.getBinding(name);
-          if(
-            binding 
+          if (
+            binding
             && (path.parent.type === 'Program'
-              || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+            || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
             )
             && !(declaration.init?.type === 'CallExpression'
-              && declaration.init?.callee.type === 'Identifier'
-              && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+            && declaration.init?.callee.type === 'Identifier'
+            && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
             )
           ) {
             graph.nodes.add(name);
             nodeCollection.addNode(name, declaration, {
               comment: getComment(path.node),
             });
-            if(!graph.edges.get(name)) {
+            if (!graph.edges.get(name)) {
               graph.edges.set(name, new Set());
             }
 
-
-            if(spread.includes(name)) {
-              if(declaration.init?.type === 'ObjectExpression') {
-                declaration.init?.properties.forEach(prop => {
-                  if(
+            if (spread.includes(name)) {
+              if (declaration.init?.type === 'ObjectExpression') {
+                declaration.init?.properties.forEach((prop) => {
+                  if (
                     (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
                     && prop.key.type === 'Identifier'
                   ) {
@@ -153,28 +159,30 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                     nodeCollection.addNode(keyName, prop, {
                       comment: getComment(prop),
                     });
-                    if(!graph.edges.get(keyName)) {
+                    if (!graph.edges.get(keyName)) {
                       graph.edges.set(keyName, new Set());
                     }
-                    if(graph.spread.has(name)) {
+                    if (graph.spread.has(name)) {
                       graph.spread.get(name)?.add(keyName);
-                    } else {
+                    }
+                    else {
                       graph.spread.set(name, new Set([keyName]));
                     }
-                  } else if(prop.type === 'SpreadElement') {
+                  }
+                  else if (prop.type === 'SpreadElement') {
                     console.warn('not support spread in spread');
                   }
                 });
               }
-              if(
+              if (
                 declaration.init?.type === 'CallExpression'
                 && declaration.init?.callee.type === 'Identifier'
                 && declaration.init?.callee.name === 'reactive'
               ) {
                 const arg = declaration.init?.arguments[0];
-                if(arg.type === 'ObjectExpression') {
-                  arg.properties.forEach(prop => {
-                    if(
+                if (arg.type === 'ObjectExpression') {
+                  arg.properties.forEach((prop) => {
+                    if (
                       (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod')
                       && prop.key.type === 'Identifier'
                     ) {
@@ -183,15 +191,17 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
                       nodeCollection.addNode(keyName, prop, {
                         comment: getComment(prop),
                       });
-                      if(!graph.edges.get(keyName)) {
+                      if (!graph.edges.get(keyName)) {
                         graph.edges.set(keyName, new Set());
                       }
-                      if(graph.spread.has(name)) {
+                      if (graph.spread.has(name)) {
                         graph.spread.get(name)?.add(keyName);
-                      } else {
+                      }
+                      else {
                         graph.spread.set(name, new Set([keyName]));
                       }
-                    } else if(prop.type === 'SpreadElement') {
+                    }
+                    else if (prop.type === 'SpreadElement') {
                       console.warn('not support spread in spread');
                     }
                   });
@@ -204,17 +214,17 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
     },
     FunctionDeclaration(path) {
       const name = path.node.id?.name;
-      if(name) {
+      if (name) {
         const binding = path.scope.getBinding(name);
-        if(binding && (path.parent.type === 'Program'
-        || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+        if (binding && (path.parent.type === 'Program'
+          || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
         )) {
           graph.nodes.add(name);
           nodeCollection.addNode(name, path.node.id!, {
             isMethod: true,
             comment: getComment(path.node),
           });
-          if(!graph.edges.get(name)) {
+          if (!graph.edges.get(name)) {
             graph.edges.set(name, new Set());
           }
         }
@@ -227,35 +237,35 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
   traverse(ast, {
     FunctionDeclaration(path) {
       const name = path.node.id?.name;
-      if(name && graph.nodes.has(name)) {
+      if (name && graph.nodes.has(name)) {
         traverse(path.node.body, {
           Identifier(path1) {
             const binding = path1.scope.getBinding(path1.node.name);
-            if(
-              graph.nodes.has(path1.node.name) 
+            if (
+              graph.nodes.has(path1.node.name)
               && (
                 (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
+                && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
-                || (parentScope === binding?.scope)
+              || (parentScope === binding?.scope)
               )
             ) {
               graph.edges.get(name)?.add(path1.node.name);
             }
           },
           MemberExpression(path1) {
-            if(
-              path1.node.object.type === 'Identifier' 
+            if (
+              path1.node.object.type === 'Identifier'
               && spread.includes(path1.node.object.name)
             ) {
               const binding = path1.scope.getBinding(path1.node.object.name);
-              if(
+              if (
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
                 && (binding?.scope.block.type === 'Program'
-                  || (parentScope === binding?.scope)
+                || (parentScope === binding?.scope)
                 )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);
@@ -267,40 +277,40 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
     },
 
     VariableDeclarator(path) {
-      if(path.node.init) {
-        if(path.node.id.type === 'ArrayPattern'){
+      if (path.node.init) {
+        if (path.node.id.type === 'ArrayPattern') {
           path.node.id.elements.forEach((element) => {
-            if(element?.type === 'Identifier') {
+            if (element?.type === 'Identifier') {
               const name = element.name;
-              if(name && graph.nodes.has(name) && path.node.init?.type === 'CallExpression') {
+              if (name && graph.nodes.has(name) && path.node.init?.type === 'CallExpression') {
                 traverse(path.node.init, {
                   Identifier(path1) {
                     const binding = path1.scope.getBinding(path1.node.name);
-                    if(
-                      graph.nodes.has(path1.node.name) 
+                    if (
+                      graph.nodes.has(path1.node.name)
                       && (
                         (path1.parent.type !== 'MemberExpression'
-                          && path1.parent.type !== 'OptionalMemberExpression')
+                        && path1.parent.type !== 'OptionalMemberExpression')
                         || path1.parent.object === path1.node
                       )
                       && (binding?.scope.block.type === 'Program'
-                        || (parentScope === binding?.scope)
+                      || (parentScope === binding?.scope)
                       )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
                     }
                   },
                   MemberExpression(path1) {
-                    if(
-                      path1.node.object.type === 'Identifier' 
+                    if (
+                      path1.node.object.type === 'Identifier'
                       && spread.includes(path1.node.object.name)
                     ) {
                       const binding = path1.scope.getBinding(path1.node.object.name);
-                      if(
+                      if (
                         spread.includes(path1.node.object.name)
                         && path1.node.property.type === 'Identifier'
                         && (binding?.scope.block.type === 'Program'
-                          || (parentScope === binding?.scope)
+                        || (parentScope === binding?.scope)
                         )
                       ) {
                         graph.edges.get(name)?.add(path1.node.property.name);
@@ -312,39 +322,39 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             }
           });
         }
-        else if(path.node.id.type === 'ObjectPattern'){
+        else if (path.node.id.type === 'ObjectPattern') {
           path.node.id.properties.forEach((property) => {
-            if(property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
+            if (property.type === 'ObjectProperty' && property.value.type === 'Identifier') {
               const name = property.value.name;
-              if(name && graph.nodes.has(name) && path.node.init) {
+              if (name && graph.nodes.has(name) && path.node.init) {
                 traverse(path.node.init, {
                   Identifier(path1) {
                     const binding = path1.scope.getBinding(path1.node.name);
-                    if(
-                      graph.nodes.has(path1.node.name) 
+                    if (
+                      graph.nodes.has(path1.node.name)
                       && (
                         (path1.parent.type !== 'MemberExpression'
-                          && path1.parent.type !== 'OptionalMemberExpression')
+                        && path1.parent.type !== 'OptionalMemberExpression')
                         || path1.parent.object === path1.node
                       )
                       && (binding?.scope.block.type === 'Program'
-                        || (parentScope === binding?.scope)
+                      || (parentScope === binding?.scope)
                       )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
                     }
                   },
                   MemberExpression(path1) {
-                    if(
-                      path1.node.object.type === 'Identifier' 
+                    if (
+                      path1.node.object.type === 'Identifier'
                       && spread.includes(path1.node.object.name)
                     ) {
                       const binding = path1.scope.getBinding(path1.node.object.name);
-                      if(
+                      if (
                         spread.includes(path1.node.object.name)
                         && path1.node.property.type === 'Identifier'
                         && (binding?.scope.block.type === 'Program'
-                          || (parentScope === binding?.scope)
+                        || (parentScope === binding?.scope)
                         )
                       ) {
                         graph.edges.get(name)?.add(path1.node.property.name);
@@ -356,44 +366,43 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             }
           });
         }
-        else if([
-          'CallExpression', 
-          'ArrowFunctionExpression', 
+        else if ([
+          'CallExpression',
+          'ArrowFunctionExpression',
           'FunctionDeclaration',
-        ].includes(path.node.init.type) 
-          && path.node.id.type === 'Identifier'
+        ].includes(path.node.init.type)
+        && path.node.id.type === 'Identifier'
         ) {
-
           const name = path.node.id?.name;
-          if(name && graph.nodes.has(name)) {
+          if (name && graph.nodes.has(name)) {
             traverse(path.node.init, {
               Identifier(path1) {
                 const binding = path1.scope.getBinding(path1.node.name);
-                if(
-                  graph.nodes.has(path1.node.name) 
+                if (
+                  graph.nodes.has(path1.node.name)
                   && (
                     (path1.parent.type !== 'MemberExpression'
-                      && path1.parent.type !== 'OptionalMemberExpression')
+                    && path1.parent.type !== 'OptionalMemberExpression')
                     || path1.parent.object === path1.node
                   )
                   && (binding?.scope.block.type === 'Program'
-                    || (parentScope === binding?.scope)
+                  || (parentScope === binding?.scope)
                   )
                 ) {
                   graph.edges.get(name)?.add(path1.node.name);
                 }
               },
               MemberExpression(path1) {
-                if(
-                  path1.node.object.type === 'Identifier' 
+                if (
+                  path1.node.object.type === 'Identifier'
                   && spread.includes(path1.node.object.name)
                 ) {
                   const binding = path1.scope.getBinding(path1.node.object.name);
-                  if(
+                  if (
                     spread.includes(path1.node.object.name)
                     && path1.node.property.type === 'Identifier'
                     && (binding?.scope.block.type === 'Program'
-                      || (parentScope === binding?.scope)
+                    || (parentScope === binding?.scope)
                     )
                   ) {
                     graph.edges.get(name)?.add(path1.node.property.name);
@@ -403,31 +412,32 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
             }, path.scope, path);
           }
         }
-        else if(path.node.id.type === 'Identifier') {
+        else if (path.node.id.type === 'Identifier') {
           const name = path.node.id.name;
-          if(path.node.init.type === 'Identifier') {
+          if (path.node.init.type === 'Identifier') {
             const binding = path.scope.getBinding(path.node.init.name);
-            if(
-              graph.nodes.has(path.node.init.name) 
+            if (
+              graph.nodes.has(path.node.init.name)
               && (binding?.scope.block.type === 'Program'
-                || (parentScope === binding?.scope)
+              || (parentScope === binding?.scope)
               )
             ) {
               graph.edges.get(name)?.add(path.node.init.name);
             }
-          } else {
+          }
+          else {
             traverse(path.node.init, {
               Identifier(path1) {
                 const binding = path1.scope.getBinding(path1.node.name);
-                if(
-                  graph.nodes.has(path1.node.name) 
+                if (
+                  graph.nodes.has(path1.node.name)
                   && (
                     (path1.parent.type !== 'MemberExpression'
-                      && path1.parent.type !== 'OptionalMemberExpression')
+                    && path1.parent.type !== 'OptionalMemberExpression')
                     || path1.parent.object === path1.node
                   )
                   && (binding?.scope.block.type === 'Program'
-                    || (parentScope === binding?.scope)
+                  || (parentScope === binding?.scope)
                   )
                 ) {
                   graph.edges.get(name)?.add(path1.node.name);
@@ -440,37 +450,37 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
     },
 
     ObjectMethod(path) {
-      if(path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
+      if (path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
         const name = path.node.key.name;
-        
+
         traverse(path.node.body, {
           Identifier(path1) {
             const binding = path1.scope.getBinding(path1.node.name);
-            if(
+            if (
               graph.nodes.has(path1.node.name)
               && (
                 (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
+                && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
-                || (parentScope === binding?.scope)
+              || (parentScope === binding?.scope)
               )
             ) {
               graph.edges.get(name)?.add(path1.node.name);
             }
           },
           MemberExpression(path1) {
-            if(
-              path1.node.object.type === 'Identifier' 
+            if (
+              path1.node.object.type === 'Identifier'
               && spread.includes(path1.node.object.name)
             ) {
               const binding = path1.scope.getBinding(path1.node.object.name);
-              if(
+              if (
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
                 && (binding?.scope.block.type === 'Program'
-                  || (parentScope === binding?.scope)
+                || (parentScope === binding?.scope)
                 )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);
@@ -482,21 +492,21 @@ export function processSetup(ast: t.Node, parentScope?: Scope, parentPath?: t.No
     },
 
     ObjectProperty(path) {
-      if(path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
+      if (path.node.key.type === 'Identifier' && graph.nodes.has(path.node.key.name)) {
         const name = path.node.key.name;
-        
+
         traverse(path.node.value, {
           MemberExpression(path1) {
-            if(
-              path1.node.object.type === 'Identifier' 
+            if (
+              path1.node.object.type === 'Identifier'
               && spread.includes(path1.node.object.name)
             ) {
               const binding = path1.scope.getBinding(path1.node.object.name);
-              if(
+              if (
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
                 && (binding?.scope.block.type === 'Program'
-                  || (parentScope === binding?.scope)
+                || (parentScope === binding?.scope)
                 )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);
@@ -520,12 +530,12 @@ export function analyze(
   jsx = false,
 ) {
   // console.log(content);
-  const ast = babelParse(content, { sourceType: 'module',
-    plugins: [
-      'typescript',
-      ...jsx ? ['jsx' as const] : [],
-    ],
-  });
+  const ast = babelParse(content, { sourceType: 'module', plugins: [
+    'typescript',
+    ...jsx
+      ? ['jsx' as const]
+      : [],
+  ] });
 
   // ---
   const { graph, nodeCollection } = processSetup(ast, undefined, undefined, undefined, lineOffset);

@@ -1,12 +1,14 @@
-import { 
-  parse, 
-  analyzeSetupScript, 
-  analyzeOptions, 
+import type {
+  TypedNode,
+} from '../../../src';
+import {
+  analyzeOptions,
+  analyzeSetupScript,
   analyzeTemplate,
   analyzeTsx,
-  getVisData,
   gen,
-  TypedNode,
+  getVisData,
+  parse,
 } from '../../../src';
 
 export async function analyze(code: string, language: 'vue' | 'react') {
@@ -16,34 +18,36 @@ export async function analyze(code: string, language: 'vue' | 'react') {
   };
   let nodes = new Set<string>();
 
-  if(language === 'vue') {
+  if (language === 'vue') {
     const sfc = parse(code);
-    
-    if(sfc.descriptor.scriptSetup?.content) {
+
+    if (sfc.descriptor.scriptSetup?.content) {
       graph = analyzeSetupScript(
-        sfc.descriptor.scriptSetup?.content!,
+        sfc.descriptor.scriptSetup?.content || '',
         (sfc.descriptor.scriptSetup.loc.start.line || 1) - 1,
-        (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx')
+        (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx'),
       );
     }
-    else if(sfc.descriptor.script?.content) {
+    else if (sfc.descriptor.script?.content) {
       const res = analyzeOptions(
-        sfc.descriptor.script?.content!,
+        sfc.descriptor.script?.content || '',
         (sfc.descriptor.script.loc.start.line || 1) - 1,
-        (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
+        (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
       );
       graph = res.graph;
       nodes = res.nodesUsedInTemplate;
-    }  else {
+    }
+    else {
       try {
         const res = analyzeOptions(
           code,
-          0, 
-          true
+          0,
+          true,
         );
         graph = res.graph;
         nodes = res.nodesUsedInTemplate;
-      } catch(e) {
+      }
+      catch (e) {
         console.log(e);
       }
     }
@@ -52,13 +56,14 @@ export async function analyze(code: string, language: 'vue' | 'react') {
       if (sfc.descriptor.template?.content) {
         nodes = analyzeTemplate(sfc.descriptor.template!.content);
       }
-    } catch(e) {
+    }
+    catch (e) {
       console.log(e);
     }
   }
-  if(language === 'react') {
+  if (language === 'react') {
     const res = await analyzeTsx(
-      code, 
+      code,
       'react',
       0,
     );
@@ -69,5 +74,5 @@ export async function analyze(code: string, language: 'vue' | 'react') {
   return { code: 0, data: {
     vis: getVisData(graph, nodes),
     suggests: gen(graph, nodes),
-  }, msg: 'ok'};
+  }, msg: 'ok' };
 }

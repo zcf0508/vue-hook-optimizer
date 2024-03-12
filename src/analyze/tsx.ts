@@ -1,83 +1,86 @@
-import _traverse, { NodePath, Scope } from '@babel/traverse';
-import * as t from '@babel/types';
-import { NodeCollection, getComment } from './utils';
-import { 
-  traverse, 
+import type { NodePath, Scope } from '@babel/traverse';
+import _traverse from '@babel/traverse';
+import type * as t from '@babel/types';
+import { babelParse } from '@vue/compiler-sfc';
+import type {
+  IAddEdge,
   IAddNode,
-  IAddEdge, 
   IReturnData,
-  parseNodeIdentifierPattern, 
-  parseNodeObjectPattern,
-  parseNodeArrayPattern,
-  parseNodeFunctionPattern,
-  parseEdgeLeftIdentifierPattern,
-  parseEdgeLeftObjectPattern,
-  parseEdgeLeftArrayPattern,
-  parseEdgeFunctionPattern,
-  parseReturnJsxPattern,
   IUsedNode,
-  traverseSetup,
-  collectionSpread,
+} from '../utils/traverse';
+import {
+  addGraphBySpreadIdentifier,
   addIdentifiesToGraphByScanReturn,
   addSpreadToGraphByScanReturn,
-  addGraphBySpreadIdentifier,
+  collectionSpread,
+  parseEdgeFunctionPattern,
+  parseEdgeLeftArrayPattern,
+  parseEdgeLeftIdentifierPattern,
+  parseEdgeLeftObjectPattern,
+  parseNodeArrayPattern,
+  parseNodeFunctionPattern,
+  parseNodeIdentifierPattern,
+  parseNodeObjectPattern,
+  parseReturnJsxPattern,
+  traverse,
+  traverseSetup,
 } from '../utils/traverse';
-import { babelParse } from '@vue/compiler-sfc';
+import { NodeCollection, getComment } from './utils';
 
 interface IProcessMain {
-  node: t.Node, 
-  type: 'vue' | 'react',
-  lineOffset?: number, 
-  addInfo?: boolean,
+  node: t.Node
+  type: 'vue' | 'react'
+  lineOffset?: number
+  addInfo?: boolean
 }
 
 interface IProcessBranch {
-  node: t.ObjectExpression, 
-  lineOffset?: number, 
-  addInfo?: boolean, 
-  parentScope?: Scope, 
-  parentNode?: t.ExportDefaultDeclaration,
+  node: t.ObjectExpression
+  lineOffset?: number
+  addInfo?: boolean
+  parentScope?: Scope
+  parentNode?: t.ExportDefaultDeclaration
   parentPath: NodePath<t.ExportDefaultDeclaration>
   spread?: string[]
 }
 
 type IProcessReact = {
-  node: t.BlockStatement, 
-  lineOffset?: number, 
-  addInfo?: boolean, 
-  parentScope: Scope, 
-  parentNode: t.FunctionDeclaration,
+  node: t.BlockStatement
+  lineOffset?: number
+  addInfo?: boolean
+  parentScope: Scope
+  parentNode: t.FunctionDeclaration
   parentPath: NodePath<t.FunctionDeclaration>
 } | {
-  node: t.BlockStatement, 
-  lineOffset?: number, 
-  addInfo?: boolean, 
-  parentScope: Scope, 
-  parentNode: t.ClassMethod,
+  node: t.BlockStatement
+  lineOffset?: number
+  addInfo?: boolean
+  parentScope: Scope
+  parentNode: t.ClassMethod
   parentPath: NodePath<t.ClassMethod>
-}
+};
 
 // deal when setup return object
 function processByReturnNotJSX(params: IProcessBranch) {
-  const {node, parentPath, lineOffset, addInfo} = params;
+  const { node, parentPath, lineOffset, addInfo } = params;
   const spread: string[] = [];
 
   const nodeCollection = new NodeCollection(lineOffset, addInfo);
 
-  const graph = { 
-    nodes: new Set<string>(), 
-    edges: new Map<string, Set<string>>(), 
+  const graph = {
+    nodes: new Set<string>(),
+    edges: new Map<string, Set<string>>(),
   };
 
   // 解析return, 收集spread
-  const setupPath = traverseSetup({node, parentScope: parentPath.scope, parentPath});
-    
+  const setupPath = traverseSetup({ node, parentScope: parentPath.scope, parentPath });
+
   // setup return
-  collectionSpread({path: setupPath, spread});
-    
+  collectionSpread({ path: setupPath, spread });
+
   // 收集除return之外的所有节点和边
   const {
-    graph : {
+    graph: {
       nodes: tempNodes,
       edges: tempEdges,
       spread: tempSpread,
@@ -85,7 +88,6 @@ function processByReturnNotJSX(params: IProcessBranch) {
     nodeCollection: tempNodeCollection,
     nodesUsedInTemplate,
   } = processByReturnJSX({ node, parentPath, spread, lineOffset, addInfo });
-
 
   // 根据return信息添加必要节点
   addIdentifiesToGraphByScanReturn({
@@ -115,58 +117,61 @@ function processByReturnNotJSX(params: IProcessBranch) {
 
 // deal when setup return jsx
 function processByReturnJSX(params: IProcessBranch) {
-  const {node, parentPath, spread = [], lineOffset, addInfo } = params;
+  const { node, parentPath, spread = [], lineOffset, addInfo } = params;
 
   const nodeCollection = new NodeCollection(lineOffset, addInfo);
   const nodesUsedInTemplate = new Set<string>();
 
-  const graph = { 
-    nodes: new Set<string>(), 
+  const graph = {
+    nodes: new Set<string>(),
     edges: new Map<string, Set<string>>(),
     spread: new Map<string, Set<string>>(),
   };
 
-  function addNode ({ name, node, path, scope}: IAddNode, commentParentNode?: t.Node) {
+  function addNode({ name, node, path, scope }: IAddNode, commentParentNode?: t.Node) {
     const binding = path.scope.getBinding(name);
     if (scope === binding?.scope) {
       graph.nodes.add(name);
       nodeCollection.addNode(name, node, {
-        comment: commentParentNode ? getComment(commentParentNode) : '',
+        comment: commentParentNode
+          ? getComment(commentParentNode)
+          : '',
       });
-      if(!graph.edges.get(name)) {
+      if (!graph.edges.get(name)) {
         graph.edges.set(name, new Set());
       }
     }
   }
 
-  function addEdge ({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
+  function addEdge({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
     const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
     if (scope === bindingScope && collectionNodes.has(toName)) {
       graph.edges.get(fromName)?.add(toName);
     }
   }
 
-  function addUsed ({name, path, parentPath} : IUsedNode) {
+  function addUsed({ name, path, parentPath }: IUsedNode) {
     const binding = path.scope.getBinding(name);
     if (binding?.scope === parentPath.scope) {
       nodesUsedInTemplate.add(name);
     }
   }
-  
-  const setupPath = traverseSetup({node, parentScope: parentPath.scope, parentPath});
+
+  const setupPath = traverseSetup({ node, parentScope: parentPath.scope, parentPath });
   const setupScope = setupPath.scope;
   const setupNode = setupPath.node;
-  
+
   // 收集节点, 并收集spread依赖
   traverse(setupNode, {
     VariableDeclarator(path1) {
       parseNodeIdentifierPattern({
-        path: path1, 
+        path: path1,
         rootScope: setupScope,
         cb: (params) => {
           if (!spread.includes(params.name)) {
             addNode(params, path1.node);
-          } else {
+          }
+          else {
             addGraphBySpreadIdentifier({
               path: path1,
               graph,
@@ -220,7 +225,7 @@ function processByReturnJSX(params: IProcessBranch) {
         cb: addEdge,
         spread,
       });
-      
+
       parseEdgeLeftObjectPattern({
         path: path1,
         rootScope: setupScope,
@@ -250,53 +255,54 @@ function processByReturnJSX(params: IProcessBranch) {
     nodeCollection,
     nodesUsedInTemplate,
   };
-  
 }
 
 function processByReact(params: IProcessReact) {
-  const {node, parentScope, parentPath, lineOffset, addInfo } = params;
+  const { node, parentScope, parentPath, lineOffset, addInfo } = params;
 
   const nodeCollection = new NodeCollection(lineOffset, addInfo);
   const nodesUsedInTemplate = new Set<string>();
 
-  const graph = { 
-    nodes: new Set<string>(), 
+  const graph = {
+    nodes: new Set<string>(),
     edges: new Map<string, Set<string>>(),
     spread: new Map<string, Set<string>>(),
   };
 
-  function addNode ({ name, node, path, scope}: IAddNode, commentParentNode?: t.Node) {
+  function addNode({ name, node, path, scope }: IAddNode, commentParentNode?: t.Node) {
     const binding = path.scope.getBinding(name);
     if (scope === binding?.scope) {
       graph.nodes.add(name);
       nodeCollection.addNode(name, node, {
-        comment: commentParentNode ? getComment(commentParentNode) : '',
+        comment: commentParentNode
+          ? getComment(commentParentNode)
+          : '',
       });
-      if(!graph.edges.get(name)) {
+      if (!graph.edges.get(name)) {
         graph.edges.set(name, new Set());
       }
     }
   }
 
-  function addEdge ({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
+  function addEdge({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
     const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
     if (scope === bindingScope && collectionNodes.has(toName)) {
       graph.edges.get(fromName)?.add(toName);
     }
   }
 
-  function addUsed ({name, path, parentPath} : IUsedNode) {
+  function addUsed({ name, path, parentPath }: IUsedNode) {
     const binding = path.scope.getBinding(name);
     if (binding?.scope === parentPath.scope) {
       nodesUsedInTemplate.add(name);
     }
   }
-  
+
   // 收集节点依赖
   traverse(node, {
     VariableDeclarator(path1) {
       parseNodeIdentifierPattern({
-        path: path1, 
+        path: path1,
         rootScope: parentScope!,
         cb: (params) => {
           addNode(params, path1.node);
@@ -330,7 +336,7 @@ function processByReact(params: IProcessReact) {
       // setup return jsx
       parseReturnJsxPattern({
         path: path2,
-        parentPath: parentPath,
+        parentPath,
         cb: addUsed,
       });
     },
@@ -345,7 +351,7 @@ function processByReact(params: IProcessReact) {
         collectionNodes: graph.nodes,
         cb: addEdge,
       });
-      
+
       parseEdgeLeftObjectPattern({
         path: path1,
         rootScope: parentScope!,
@@ -375,27 +381,27 @@ function processByReact(params: IProcessReact) {
     nodeCollection,
     nodesUsedInTemplate,
   };
-  
 }
 
-export function processTsx(params : IProcessMain) {
+export function processTsx(params: IProcessMain) {
   let result: IReturnData | undefined;
-  
+
   function process(params: IProcessBranch) {
     const { node, parentPath } = params;
     // resolve `return` then determine use processByReturnJSX or processByReturnNotJSX
-    const setupPath = traverseSetup({node, parentScope: parentPath.scope, parentPath});
+    const setupPath = traverseSetup({ node, parentScope: parentPath.scope, parentPath });
 
     setupPath.traverse({
       ReturnStatement(path) {
-        if (path.node.argument 
+        if (path.node.argument
           && (path.node.argument.type === 'ArrowFunctionExpression'
           || path.node.argument.type === 'FunctionExpression')
-          && (path.node.argument.body.type === 'JSXElement' 
+          && (path.node.argument.body.type === 'JSXElement'
           || path.node.argument.body.type === 'JSXFragment')
         ) {
           result = processByReturnJSX(params);
-        } else {
+        }
+        else {
           result = processByReturnNotJSX(params);
         }
       },
@@ -404,17 +410,18 @@ export function processTsx(params : IProcessMain) {
 
   traverse(params.node, {
     ExportDefaultDeclaration(path) {
-      if(params.type === 'vue') {
-        if(path.node.declaration.type === 'ObjectExpression') {
+      if (params.type === 'vue') {
+        if (path.node.declaration.type === 'ObjectExpression') {
           // export default {}
           process({
             ...params,
-            node: path.node.declaration, 
+            node: path.node.declaration,
             parentNode: path.node,
             parentPath: path,
           });
-        } else if(
-          path.node.declaration.type === 'CallExpression' 
+        }
+        else if (
+          path.node.declaration.type === 'CallExpression'
           && path.node.declaration.callee.type === 'Identifier'
           && path.node.declaration.callee.name === 'defineComponent'
           && path.node.declaration.arguments[0].type === 'ObjectExpression'
@@ -422,14 +429,14 @@ export function processTsx(params : IProcessMain) {
           // export default defineComponent({})
           process({
             ...params,
-            node: path.node.declaration.arguments[0], 
+            node: path.node.declaration.arguments[0],
             parentNode: path.node,
             parentPath: path,
           });
         }
       }
-      if(params.type === 'react') {
-        if(
+      if (params.type === 'react') {
+        if (
           (path.node.declaration.type === 'FunctionDeclaration'
           || path.node.declaration.type === 'ArrowFunctionExpression')
           && path.node.declaration.body.type === 'BlockStatement'
@@ -440,21 +447,24 @@ export function processTsx(params : IProcessMain) {
 
           result = processByReact({
             ...params,
-            node: path.node.declaration.body, 
+            node: path.node.declaration.body,
             parentNode: functionPath.node,
             parentPath: functionPath,
             parentScope: functionPath.scope,
           });
         }
-        if(path.node.declaration.type === 'ClassDeclaration') {
+        if (path.node.declaration.type === 'ClassDeclaration') {
           // export default class Index {}
 
-          const renderFunction = path.node.declaration.body.body.find(node => {
+          const renderFunction = path.node.declaration.body.body.find((node) => {
             if (node.type === 'ClassMethod' && node.key.type === 'Identifier' && node.key.name === 'render') {
               return node;
             }
+            return undefined;
           }) as t.ClassMethod;
-          if(!renderFunction) return;
+          if (!renderFunction) {
+            return;
+          }
 
           const renderPath = path.get(`declaration.body.body.${
             path.node.declaration.body.body.indexOf(renderFunction)
@@ -462,7 +472,7 @@ export function processTsx(params : IProcessMain) {
 
           result = processByReact({
             ...params,
-            node: renderFunction.body, 
+            node: renderFunction.body,
             parentNode: renderFunction,
             parentPath: renderPath,
             parentScope: renderPath.scope,
@@ -471,10 +481,9 @@ export function processTsx(params : IProcessMain) {
       }
     },
   });
-  
+
   return result!;
 }
-
 
 export function analyze(
   content: string,
@@ -482,13 +491,10 @@ export function analyze(
   lineOffset = 0,
   addInfo = true,
 ) {
-
-  const ast = babelParse(content, { sourceType: 'module',
-    plugins: [
-      'typescript',
-      'jsx',
-    ],
-  });
+  const ast = babelParse(content, { sourceType: 'module', plugins: [
+    'typescript',
+    'jsx',
+  ] });
 
   const { graph, nodeCollection, nodesUsedInTemplate } = processTsx({
     node: ast,

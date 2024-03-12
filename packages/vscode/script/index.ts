@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error vscode
 const vscode = acquireVsCodeApi();
 
 let network: any;
@@ -19,12 +19,11 @@ function init(dataString: string, theme: string) {
   }, JSON.parse(theme));
 
   // 初始化关系图
-  // @ts-ignore
+  // @ts-expect-error window.vis
   network = new vis.Network(container, data, options);
 
   // 监听节点点击事件
   network.on('click', (event: any) => {
-    
     const { nodes } = event;
     if (nodes.length) {
       onNodeClick(data.nodes.find((node: any) => node.id === nodes[0])?.info);
@@ -40,13 +39,13 @@ function findSearchInput() {
   return document.getElementById('searchInput') as HTMLInputElement | null;
 }
 
-function onNodeClick(info?: {line: number, column: number}) {
+function onNodeClick(info?: { line: number, column: number }) {
   console.log(info);
-  if(!info) return;
+  if (!info) {
+    return;
+  }
   vscode.postMessage({
     command: 'nodeClick',
     info,
   });
 }
-
-

@@ -1,20 +1,22 @@
-import { 
-  parse, 
-  analyzeSetupScript, 
-  analyzeOptions, 
-  analyzeTemplate, 
+import type {
+  TypedNode,
+} from 'vue-hook-optimizer';
+import {
+  analyzeOptions,
+  analyzeSetupScript,
+  analyzeTemplate,
   analyzeTsx,
   gen,
-  TypedNode,
+  parse,
 } from 'vue-hook-optimizer';
 
 import { createEslintRule } from '../utils';
 
 export const RULE_NAME = 'not-used-in-template';
-export type MessageIds = 'maybeMyRemove'
+export type MessageIds = 'maybeMyRemove';
 export type Options = [{
   framework: 'vue' | 'react'
-}]
+}];
 
 export default createEslintRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -30,21 +32,20 @@ export default createEslintRule<Options, MessageIds>({
         framework: {
           type: 'string',
           enum: [
-            'vue', 
+            'vue',
             'react',
           ],
         },
-      } ,
+      },
     }],
     messages: {
       maybeMyRemove: 'Node [{{name}}] not used, perhaps you can remove it.',
     },
   },
   defaultOptions: [
-    {framework: 'vue'},
+    { framework: 'vue' },
   ],
   create: (context) => {
-
     function analyze() {
       const code = context.sourceCode.text;
       const framework = context.options[0]?.framework || 'vue';
@@ -56,76 +57,78 @@ export default createEslintRule<Options, MessageIds>({
       let nodes = new Set<string>();
 
       try {
-
-        if(framework === 'vue') {
-          
+        if (framework === 'vue') {
           const sfc = parse(code);
-    
-          if(sfc.descriptor.scriptSetup?.content) {
+
+          if (sfc.descriptor.scriptSetup?.content) {
             graph = analyzeSetupScript(
-              sfc.descriptor.scriptSetup?.content!,
+              sfc.descriptor.scriptSetup?.content || '',
               sfc.descriptor.scriptSetup?.loc.start.line || 0,
-              (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx')
+              (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx'),
             );
           }
-          else if(sfc.descriptor.script?.content) {
+          else if (sfc.descriptor.script?.content) {
             const res = analyzeOptions(
-              sfc.descriptor.script?.content!, 
+              sfc.descriptor.script?.content || '',
               sfc.descriptor.script?.loc.start.line || 0,
-              (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx')
+              (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
             );
             graph = res.graph;
             nodes = res.nodesUsedInTemplate;
-          } else {
+          }
+          else {
             try {
               const res = analyzeOptions(
                 code,
-                0, 
-                true
+                0,
+                true,
               );
               graph = res.graph;
               nodes = res.nodesUsedInTemplate;
-            } catch(e) {
-              console.log(e);
+            }
+            catch (e) {
+              // console.log(e);
             }
           }
-    
+
           try {
             if (sfc.descriptor.template?.content) {
               nodes = analyzeTemplate(sfc.descriptor.template!.content);
             }
-          } catch(e) {
-            console.log(e);
+          }
+          catch (e) {
+            // console.log(e);
           }
         }
-        
-        if(framework === 'react') {
+
+        if (framework === 'react') {
           const res = analyzeTsx(
-            code, 
+            code,
             'react',
             0,
           );
           graph = res.graph;
           nodes = res.nodesUsedInTemplate;
         }
-    
+
         return gen(graph, nodes);
-      } catch (e) {
-        console.log(e);
+      }
+      catch (e) {
+        // console.log(e);
         return null;
       }
     }
 
     const analysisResult = analyze();
-    
+
     return {
       Identifier(node) {
-        if(analysisResult) {
-          analysisResult.map(s => {
-            if(s.message.includes('not used, perhaps you can remove')) {
-              if(!Array.isArray(s.nodeInfo)) {
-                if(
-                  node.loc.start.line === s.nodeInfo?.info?.line 
+        if (analysisResult) {
+          analysisResult.forEach((s) => {
+            if (s.message.includes('not used, perhaps you can remove')) {
+              if (!Array.isArray(s.nodeInfo)) {
+                if (
+                  node.loc.start.line === s.nodeInfo?.info?.line
                   && node.loc.start.column === s.nodeInfo?.info?.column
                 ) {
                   context.report({
@@ -144,8 +147,6 @@ export default createEslintRule<Options, MessageIds>({
             }
           });
         }
-
-        return;
       },
     };
   },

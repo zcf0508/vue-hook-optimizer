@@ -1,9 +1,9 @@
+import path from 'node:path';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
-import { analyze } from './analyze';
 import { template } from 'lodash-es';
-import { light, dark } from './themes';
-import path from 'path';
+import { analyze } from './analyze';
+import { dark, light } from './themes';
 
 const visTemplate = template(`<html>
 <head>
@@ -139,12 +139,11 @@ if(inputEle) {
 
 function getWebviewUri(webview: vscode.Webview, extensionPath: string, filename: string, dir: string = 'script') {
   const jsFilePath = vscode.Uri.file(path.resolve(
-    extensionPath, 
-    `./${dir}/${filename}`
+    extensionPath,
+    `./${dir}/${filename}`,
   ));
   return webview.asWebviewUri(jsFilePath);
 }
-
 
 const outputChannel = window.createOutputChannel('Vue Hook Optimizer');
 
@@ -163,7 +162,7 @@ export function activate(context: vscode.ExtensionContext) {
     const code = document.getText();
     const res = await analyze(code, getLauguageConfig());
 
-    if(res.code !== 0) {
+    if (res.code !== 0) {
       window.showErrorMessage(res.msg);
       return;
     }
@@ -179,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
           vscode.Uri.file(path.resolve(context.extensionPath)),
         ],
         retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
-      }
+      },
     );
 
     panel.webview.html = visTemplate({
@@ -199,6 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
       async (message) => {
         switch (message.command) {
           case 'nodeClick':
+          {
             const { line, column } = message.info;
             const position = new vscode.Position(line, column);
             const document = await vscode.workspace.openTextDocument(filePath);
@@ -206,14 +206,15 @@ export function activate(context: vscode.ExtensionContext) {
             editor.selection = new vscode.Selection(position, position);
             editor.revealRange(new vscode.Range(position, position));
             break;
+          }
         }
       },
       undefined,
-      context.subscriptions
+      context.subscriptions,
     );
 
     outputChannel.append(`${fileName}: \n`);
-    res.data.suggests.forEach(suggest => {
+    res.data.suggests.forEach((suggest) => {
       outputChannel.append(`[${
         suggest.type === 'info'
           ? 'Info'
@@ -226,7 +227,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
     outputChannel.append('\n');
 
-    if(!alerted) {
+    if (!alerted) {
       window.showInformationMessage(
         'Vue Hook Optimizer: Analyze Done! Please check the output channel for suggestions.',
       );
@@ -234,11 +235,10 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannel.show();
       alerted = true;
     }
-
   }));
 }
 
-function getVisConfigByTheme () {
+function getVisConfigByTheme() {
   const config = vscode.workspace.getConfiguration('vho');
   const theme = config.get('theme');
 
@@ -246,15 +246,19 @@ function getVisConfigByTheme () {
     const themeKind = vscode.window.activeColorTheme.kind;
     if (themeKind === 2 || themeKind === 3) {
       return dark;
-    } else if (themeKind === 1 || themeKind === 4) {
+    }
+    else if (themeKind === 1 || themeKind === 4) {
       return light;
-    } else {
+    }
+    else {
       outputChannel.append('The current theme is not supported at the moment, so it will be set as light theme.');
       return light;
     }
-  } else if (theme === 'light') {
+  }
+  else if (theme === 'light') {
     return light;
-  } else if (theme === 'dark') {
+  }
+  else if (theme === 'dark') {
     return dark;
   }
 }

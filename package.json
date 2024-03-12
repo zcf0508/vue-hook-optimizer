@@ -1,19 +1,25 @@
 {
   "name": "vue-hook-optimizer",
   "version": "0.0.44",
-  "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
   "packageManager": "pnpm@8.12.1",
+  "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
+  "author": "zcf0508 <zcf0508@live.com>",
+  "license": "MIT",
   "homepage": "https://github.com/zcf0508/vue-hook-optimizer",
   "repository": {
     "type": "git",
     "url": "https://github.com/zcf0508/vue-hook-optimizer.git"
   },
+  "keywords": [
+    "vue",
+    "hooks"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -37,20 +43,22 @@
     "build:ext": "npm -C packages/vscode run build",
     "build:eslint": "npm -C packages/eslint run build",
     "play": "npm -C packages/playground run dev",
-    "lint": "eslint . --ext .ts,.tsx,.vue",
+    "lint": "eslint .",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "release": "bumpp -r",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [
-    "vue",
-    "hooks"
-  ],
-  "author": "zcf0508 <zcf0508@live.com>",
-  "license": "MIT",
+  "peerDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/parser": "^7.22.5",
+    "@babel/traverse": "^7.22.5",
+    "@babel/types": "^7.22.5",
+    "@vue/compiler-sfc": "^3.3.4"
+  },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.8.0",
     "@babel/preset-typescript": "^7.23.3",
     "@types/babel__core": "^7.20.5",
     "@types/babel__traverse": "^7.20.4",
@@ -62,8 +70,8 @@
     "@vitest/coverage-istanbul": "^0.34.6",
     "bumpp": "^9.2.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.56.0",
-    "eslint-plugin-vue": "^9.19.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-security": "^2.1.1",
     "eslint-plugin-vue-hook-optimizer": "workspace:*",
     "lodash-es": "^4.17.21",
     "nodemon": "^3.0.2",
@@ -73,13 +81,6 @@
     "vis-network": "^9.1.9",
     "vitest": "^0.34.6",
     "vue-eslint-parser": "^9.3.2"
-  },
-  "peerDependencies": {
-    "@babel/core": "^7.22.5",
-    "@babel/parser": "^7.22.5",
-    "@babel/traverse": "^7.22.5",
-    "@babel/types": "^7.22.5",
-    "@vue/compiler-sfc": "^3.3.4"
   },
   "pnpm": {
     "overrides": {

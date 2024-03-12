@@ -1,6 +1,6 @@
-import { NodeType, TypedNode } from '@/analyze/utils';
+import type { TypedNode } from '@/analyze/utils';
+import { NodeType } from '@/analyze/utils';
 import { splitGraph } from '@/suggest/split';
-
 
 describe('suggest tests', () => {
   it('split graph 1', () => {

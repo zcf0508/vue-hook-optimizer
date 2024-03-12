@@ -1,11 +1,12 @@
 import { babelParse } from '@vue/compiler-sfc';
-import _traverse, { NodePath } from '@babel/traverse';
-import * as t from '@babel/types';
+import type { NodePath } from '@babel/traverse';
+import _traverse from '@babel/traverse';
+import type * as t from '@babel/types';
 import { processSetup } from './setupScript';
 import { NodeCollection, getComment } from './utils';
-const traverse: typeof _traverse =
-  //@ts-ignore
-  _traverse.default?.default || _traverse.default || _traverse;
+const traverse: typeof _traverse
+  // @ts-expect-error unwarp default
+  = _traverse.default?.default || _traverse.default || _traverse;
 
 export function analyze(
   content: string,
@@ -14,20 +15,20 @@ export function analyze(
 ) {
   // console.log({lineOffset});
   // console.log(content);
-  const ast = babelParse(content, { sourceType: 'module',
-    plugins: [
-      'typescript',
-      ...jsx ? ['jsx' as const] : [],
-    ],
-  });
+  const ast = babelParse(content, { sourceType: 'module', plugins: [
+    'typescript',
+    ...jsx
+      ? ['jsx' as const]
+      : [],
+  ] });
 
   // ---
 
   let nodeCollection = new NodeCollection(lineOffset);
 
-  const graph = { 
-    nodes: new Set<string>(), 
-    edges: new Map<string, Set<string>>(), 
+  const graph = {
+    nodes: new Set<string>(),
+    edges: new Map<string, Set<string>>(),
   };
 
   /** used in render block or setup return */
@@ -36,18 +37,18 @@ export function analyze(
   function process(node: t.ObjectExpression, path: NodePath<t.ExportDefaultDeclaration>) {
     traverse(node, {
       ObjectProperty(path1) {
-        if(
+        if (
           (
-            path.node.declaration.type === 'ObjectExpression' 
+            path.node.declaration.type === 'ObjectExpression'
             && path1.parent === path.node.declaration
           ) || (
-            path.node.declaration.type === 'CallExpression' 
+            path.node.declaration.type === 'CallExpression'
             && path1.parent === path.node.declaration.arguments[0]
           )
         ) {
           // data
-          if(
-            path1.node.key.type === 'Identifier' 
+          if (
+            path1.node.key.type === 'Identifier'
             && path1.node.key.name === 'data'
             && (
               path1.node.value.type === 'ArrowFunctionExpression'
@@ -55,20 +56,20 @@ export function analyze(
             )
           ) {
             const dataNode = path1.node.value;
-            
+
             traverse(dataNode, {
-              ReturnStatement(path2){
-                if(path2.parent == dataNode.body) {
-                  if(path2.node.argument?.type === 'ObjectExpression') {
-                    path2.node.argument.properties.forEach(prop => {
-                      if(prop.type === 'ObjectProperty') {
-                        if(prop.key.type === 'Identifier') {
+              ReturnStatement(path2) {
+                if (path2.parent === dataNode.body) {
+                  if (path2.node.argument?.type === 'ObjectExpression') {
+                    path2.node.argument.properties.forEach((prop) => {
+                      if (prop.type === 'ObjectProperty') {
+                        if (prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
                           nodeCollection.addNode(name, prop, {
                             comment: getComment(prop),
                           });
-                          if(!graph.edges.get(name)) {
+                          if (!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                           }
                         }
@@ -78,22 +79,22 @@ export function analyze(
                 }
               },
             }, path1.scope, path1);
-          }   
-          
+          }
+
           // computed
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'computed') {
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'computed') {
             const computedNode = path1.node;
-            if(computedNode.value.type === 'ObjectExpression') {
-              computedNode.value.properties.forEach(prop => {
-                if(prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') {
-                  if(prop.key.type === 'Identifier') {
+            if (computedNode.value.type === 'ObjectExpression') {
+              computedNode.value.properties.forEach((prop) => {
+                if (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') {
+                  if (prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
                     nodeCollection.addNode(name, prop, {
                       isComputed: true,
                       comment: getComment(prop),
                     });
-                    if(!graph.edges.get(name)) {
+                    if (!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
                   }
@@ -103,19 +104,19 @@ export function analyze(
           }
 
           // methods
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'methods') {
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'methods') {
             const methodsNode = path1.node;
-            if(methodsNode.value.type === 'ObjectExpression') {
-              methodsNode.value.properties.forEach(prop => {
-                if(prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') {
-                  if(prop.key.type === 'Identifier') {
+            if (methodsNode.value.type === 'ObjectExpression') {
+              methodsNode.value.properties.forEach((prop) => {
+                if (prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') {
+                  if (prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
                     nodeCollection.addNode(name, prop, {
                       isMethod: true,
                       comment: getComment(prop),
                     });
-                    if(!graph.edges.get(name)) {
+                    if (!graph.edges.get(name)) {
                       graph.edges.set(name, new Set());
                     }
                   }
@@ -124,8 +125,8 @@ export function analyze(
             }
           }
 
-          if(
-            path1.node.key.type === 'Identifier' 
+          if (
+            path1.node.key.type === 'Identifier'
             && path1.node.key.name === 'render'
             && (
               path1.node.value.type === 'ArrowFunctionExpression'
@@ -137,8 +138,8 @@ export function analyze(
                 const templateNode = path2.node;
                 traverse(templateNode, {
                   MemberExpression(path3) {
-                    if(path3.node.object && path3.node.object.type === 'ThisExpression') {
-                      if(path3.node.property && path3.node.property.type === 'Identifier') {
+                    if (path3.node.object && path3.node.object.type === 'ThisExpression') {
+                      if (path3.node.property && path3.node.property.type === 'Identifier') {
                         nodesUsedInTemplate.add(path3.node.property.name);
                       }
                     }
@@ -150,46 +151,46 @@ export function analyze(
         }
       },
       ObjectMethod(path1) {
-        if(
+        if (
           (
-            path.node.declaration.type === 'ObjectExpression' 
+            path.node.declaration.type === 'ObjectExpression'
             && path1.parent === path.node.declaration
           ) || (
-            path.node.declaration.type === 'CallExpression' 
+            path.node.declaration.type === 'CallExpression'
             && path1.parent === path.node.declaration.arguments[0]
           )
         ) {
           // setup
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'setup') {
             const setupNode = path1.node;
 
             const spread: string[] = [];
 
             traverse(setupNode, {
               ReturnStatement(path2) {
-                if(path2.node.argument?.type === 'ObjectExpression') {
+                if (path2.node.argument?.type === 'ObjectExpression') {
                   const returnNode = path2.node.argument;
                   traverse(returnNode, {
                     SpreadElement(path3) {
                       // ...toRefs(xxx)
-                      if(
-                        path3.node.argument.type === 'CallExpression' 
-                        && path3.node.argument.callee.type === 'Identifier' 
+                      if (
+                        path3.node.argument.type === 'CallExpression'
+                        && path3.node.argument.callee.type === 'Identifier'
                         && path3.node.argument.callee.name === 'toRefs'
                         && path3.node.argument.arguments[0].type === 'Identifier'
                       ) {
                         spread.push(path3.node.argument.arguments[0].name);
                       }
                       // ...xxx
-                      else if(
-                        path3.node.argument.type === 'Identifier' 
+                      else if (
+                        path3.node.argument.type === 'Identifier'
                       ) {
                         spread.push(path3.node.argument.name);
                       }
                     },
                   }, path2.scope, path2);
                 }
-                if(
+                if (
                   path2.node.argument?.type === 'FunctionExpression'
                   || path2.node.argument?.type === 'ArrowFunctionExpression'
                 ) {
@@ -197,13 +198,13 @@ export function analyze(
                   traverse(templateNode, {
                     Identifier(path3) {
                       const binding = path3.scope.getBinding(path3.node.name);
-                      if(binding?.scope === path1.scope) {
+                      if (binding?.scope === path1.scope) {
                         nodesUsedInTemplate.add(path3.node.name);
                       }
                     },
                     JSXIdentifier(path3) {
                       const binding = path3.scope.getBinding(path3.node.name);
-                      if(binding?.scope === path1.scope) {
+                      if (binding?.scope === path1.scope) {
                         nodesUsedInTemplate.add(path3.node.name);
                       }
                     },
@@ -211,50 +212,50 @@ export function analyze(
                 }
               },
             }, path1.scope, path1);
-            
+
             const {
-              graph : {
+              graph: {
                 nodes: tempNodes,
                 edges: tempEdges,
                 spread: tempSpread,
               },
               nodeCollection: tempNodeCollection,
             } = processSetup(setupNode, path1.scope, setupNode, spread, lineOffset);
-            
+
             // 3 filter data by return
             traverse(setupNode, {
               ReturnStatement(path2) {
                 // only process return in setupNode scope
-                if(path2.scope !== path1.scope) {
-                  return; 
+                if (path2.scope !== path1.scope) {
+                  return;
                 }
 
-                if(path2.node.argument?.type === 'ObjectExpression') {
+                if (path2.node.argument?.type === 'ObjectExpression') {
                   const returnNode = path2.node.argument;
                   traverse(returnNode, {
                     ObjectProperty(path3) {
-                      if(path3.parent === returnNode) {
-                        if(
-                          path3.node.key.type === 'Identifier' 
+                      if (path3.parent === returnNode) {
+                        if (
+                          path3.node.key.type === 'Identifier'
                           && path3.node.value.type === 'Identifier'
                           && tempNodes.has(path3.node.value.name)
                         ) {
                           const valName = path3.node.value.name;
-                          if(!graph.nodes.has(valName)) {
+                          if (!graph.nodes.has(valName)) {
                             graph.nodes.add(valName);
                             nodeCollection.addTypedNode(
-                              valName, 
-                              tempNodeCollection.nodes.get(valName)!
+                              valName,
+                              tempNodeCollection.nodes.get(valName)!,
                             );
                           }
-                          if(!graph.edges.has(valName)) {
+                          if (!graph.edges.has(valName)) {
                             graph.edges.set(valName, new Set([...Array.from(
-                              tempEdges.get(valName) || new Set<string>()
+                              tempEdges.get(valName) || new Set<string>(),
                             )]));
                           }
 
                           const name = path3.node.key.name;
-                          if(name !== valName) {
+                          if (name !== valName) {
                             graph.nodes.add(name);
                             nodeCollection.addNode(name, path3.node.key, {
                               comment: getComment(path3.node),
@@ -266,9 +267,9 @@ export function analyze(
                     },
                     SpreadElement(path3) {
                       // ...toRefs(xxx)
-                      if(
-                        path3.node.argument.type === 'CallExpression' 
-                        && path3.node.argument.callee.type === 'Identifier' 
+                      if (
+                        path3.node.argument.type === 'CallExpression'
+                        && path3.node.argument.callee.type === 'Identifier'
                         && path3.node.argument.callee.name === 'toRefs'
                         && path3.node.argument.arguments[0].type === 'Identifier'
                         && tempSpread.get(path3.node.argument.arguments[0].name)
@@ -276,7 +277,7 @@ export function analyze(
                         tempSpread.get(path3.node.argument.arguments[0].name)?.forEach((name) => {
                           graph.nodes.add(name);
                           nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
-                          if(!graph.edges.get(name)) {
+                          if (!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                             tempEdges.get(name)?.forEach((edge) => {
                               graph.edges.get(name)?.add(edge);
@@ -285,14 +286,14 @@ export function analyze(
                         });
                       }
                       // ...xxx
-                      else if(
-                        path3.node.argument.type === 'Identifier' 
+                      else if (
+                        path3.node.argument.type === 'Identifier'
                         && tempSpread.get(path3.node.argument.name)
                       ) {
                         tempSpread.get(path3.node.argument.name)?.forEach((name) => {
                           graph.nodes.add(name);
                           nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
-                          if(!graph.edges.get(name)) {
+                          if (!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                             tempEdges.get(name)?.forEach((edge) => {
                               graph.edges.get(name)?.add(edge);
@@ -302,7 +303,8 @@ export function analyze(
                       }
                     },
                   }, path2.scope, path2);
-                } else {
+                }
+                else {
                   graph.edges = tempEdges;
                   graph.nodes = tempNodes;
                   nodeCollection = tempNodeCollection;
@@ -312,22 +314,22 @@ export function analyze(
           }
 
           // data
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'data') {
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'data') {
             const dataNode = path1.node;
-            
+
             traverse(dataNode, {
-              ReturnStatement(path2){
-                if(path2.parent == dataNode.body) {
-                  if(path2.node.argument?.type === 'ObjectExpression') {
-                    path2.node.argument.properties.forEach(prop => {
-                      if(prop.type === 'ObjectProperty') {
-                        if(prop.key.type === 'Identifier') {
+              ReturnStatement(path2) {
+                if (path2.parent === dataNode.body) {
+                  if (path2.node.argument?.type === 'ObjectExpression') {
+                    path2.node.argument.properties.forEach((prop) => {
+                      if (prop.type === 'ObjectProperty') {
+                        if (prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
                           nodeCollection.addNode(name, prop, {
                             comment: getComment(prop),
                           });
-                          if(!graph.edges.get(name)) {
+                          if (!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
                           }
                         }
@@ -337,17 +339,17 @@ export function analyze(
                 }
               },
             }, path1.scope, path1);
-          }   
-          
+          }
+
           // render
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'render') {
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'render') {
             traverse(path1.node, {
               ReturnStatement(path2) {
                 const templateNode = path2.node;
                 traverse(templateNode, {
                   MemberExpression(path3) {
-                    if(path3.node.object && path3.node.object.type === 'ThisExpression') {
-                      if(path3.node.property && path3.node.property.type === 'Identifier') {
+                    if (path3.node.object && path3.node.object.type === 'ThisExpression') {
+                      if (path3.node.property && path3.node.property.type === 'Identifier') {
                         nodesUsedInTemplate.add(path3.node.property.name);
                       }
                     }
@@ -359,44 +361,51 @@ export function analyze(
         }
       },
     }, path.scope, path);
-    
+
     traverse(node, {
       ObjectProperty(path1) {
-        if(
+        if (
           (
-            path.node.declaration.type === 'ObjectExpression' 
+            path.node.declaration.type === 'ObjectExpression'
             && path1.parent === path.node.declaration
           ) || (
-            path.node.declaration.type === 'CallExpression' 
+            path.node.declaration.type === 'CallExpression'
             && path1.parent === path.node.declaration.arguments[0]
           )
         ) {
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'computed') {
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'computed') {
             const computedNode = path1.node;
-            if(computedNode.value.type === 'ObjectExpression') {
-              computedNode.value.properties.forEach(prop => {
-                if(prop.type === 'ObjectMethod' && prop.key.type === 'Identifier') {
+            if (computedNode.value.type === 'ObjectExpression') {
+              computedNode.value.properties.forEach((prop) => {
+                if (prop.type === 'ObjectMethod' && prop.key.type === 'Identifier') {
                   const name = prop.key.name;
                   traverse(prop, {
                     MemberExpression(path2) {
-                      if(path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
+                      if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
                         graph.edges.get(name)?.add(path2.node.property.name);
                       }
                     },
                   }, path1.scope, path1);
                 }
 
-                if(
-                  prop.type === 'ObjectProperty' 
-                  && prop.key.type === 'Identifier' 
+                if (
+                  prop.type === 'ObjectProperty'
+                  && prop.key.type === 'Identifier'
                   && prop.value.type === 'ObjectExpression'
                 ) {
                   const name = prop.key.name;
-                  prop.value.properties.forEach(prop1 => {
-                    if(prop1.type === 'ObjectProperty' && prop1.key.type === 'Identifier' && prop1.key.name === 'get') {
+                  prop.value.properties.forEach((prop1) => {
+                    if (
+                      prop1.type === 'ObjectProperty'
+                      && prop1.key.type === 'Identifier'
+                      && prop1.key.name === 'get'
+                    ) {
                       traverse(prop1, {
                         MemberExpression(path2) {
-                          if(path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
+                          if (
+                            path2.node.object.type === 'ThisExpression'
+                            && path2.node.property.type === 'Identifier'
+                          ) {
                             graph.edges.get(name)?.add(path2.node.property.name);
                           }
                         },
@@ -406,18 +415,21 @@ export function analyze(
                 }
               });
             }
-            
           }
-  
-          if(path1.node.key.type === 'Identifier' && path1.node.key.name === 'methods') {
+
+          if (path1.node.key.type === 'Identifier' && path1.node.key.name === 'methods') {
             const methodsNode = path1.node;
-            if(methodsNode.value.type === 'ObjectExpression') {
-              methodsNode.value.properties.forEach(prop => {
-                if((prop.type === 'ObjectMethod' || prop.type === 'ObjectProperty') && prop.key.type === 'Identifier') {
+            if (methodsNode.value.type === 'ObjectExpression') {
+              methodsNode.value.properties.forEach((prop) => {
+                if (
+                  (prop.type === 'ObjectMethod'
+                  || prop.type === 'ObjectProperty')
+                  && prop.key.type === 'Identifier'
+                ) {
                   const name = prop.key.name;
                   traverse(prop, {
                     MemberExpression(path2) {
-                      if(path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
+                      if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
                         graph.edges.get(name)?.add(path2.node.property.name);
                       }
                     },
@@ -427,7 +439,6 @@ export function analyze(
             }
           }
         }
-        
       },
     }, path.scope, path);
   }
@@ -435,11 +446,11 @@ export function analyze(
   traverse(ast, {
     ExportDefaultDeclaration(path) {
       // export default {}
-      if(path.node.declaration.type === 'ObjectExpression') {
+      if (path.node.declaration.type === 'ObjectExpression') {
         process(path.node.declaration, path);
       }
       // export default defineComponent({})
-      else if(path.node.declaration.type === 'CallExpression' 
+      else if (path.node.declaration.type === 'CallExpression'
         && path.node.declaration.callee.type === 'Identifier'
         && path.node.declaration.callee.name === 'defineComponent'
         && path.node.declaration.arguments[0].type === 'ObjectExpression'
@@ -448,7 +459,6 @@ export function analyze(
       }
     },
   });
-
 
   return {
     graph: nodeCollection.map(graph),
