@@ -17,8 +17,8 @@ describe('test vue analyze', () => {
   const sfc = parse(source);
   const sfc2 = parse(source2);
   
-  it('test analyze tsx setup', async () => {
-    const { graph, nodesUsedInTemplate } = await analyzeTsx(
+  it('test analyze tsx setup', () => {
+    const { graph, nodesUsedInTemplate } = analyzeTsx(
       sfc.descriptor.script?.content!, 
       'vue',
       (sfc.descriptor.script?.loc.start.line || 1) - 1,
@@ -29,8 +29,8 @@ describe('test vue analyze', () => {
     expect(nodesUsedInTemplate).toEqual(nodesRes);  
   });
 
-  it('test analyze tsx setup not jsx', async () => {
-    const { graph } = await analyzeTsx(
+  it('test analyze tsx setup not jsx', () => {
+    const { graph } = analyzeTsx(
       sfc2.descriptor.script?.content!, 
       'vue',
       (sfc2.descriptor.script?.loc.start.line || 1) - 1,
@@ -45,8 +45,8 @@ describe('test react analyze', () => {
   const source = fs.readFileSync(path.resolve(__dirname, './TestComponent3.jsx'), 'utf-8');
   const source2 = fs.readFileSync(path.resolve(__dirname, './TestComponent4.jsx'), 'utf-8');
 
-  it('test analyze react jsx class', async () => {
-    const { graph, nodesUsedInTemplate } = await analyzeTsx(
+  it('test analyze react jsx class', () => {
+    const { graph, nodesUsedInTemplate } = analyzeTsx(
       source, 
       'react',
       0,
@@ -55,8 +55,8 @@ describe('test react analyze', () => {
     expect(graph).toEqual(graphRes3);
     expect(nodesUsedInTemplate).toEqual(nodesRes3);  
   });
-  it('test analyze react jsx function', async () => {
-    const { graph, nodesUsedInTemplate } = await analyzeTsx(
+  it('test analyze react jsx function', () => {
+    const { graph, nodesUsedInTemplate } = analyzeTsx(
       source2, 
       'react',
       0,
