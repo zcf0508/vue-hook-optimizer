@@ -509,7 +509,7 @@ export function analyze(
                   const keyName = prop.key.type === 'Identifier'
                     ? prop.key.name
                     : prop.key.type === 'StringLiteral'
-                      ? prop.key.value
+                      ? prop.key.value.split('.')[0]
                       : '';
                   const watchArg = tNodes.get(keyName);
 
