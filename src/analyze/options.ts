@@ -527,7 +527,7 @@ export function analyze(
                   traverse(path1.node.value, {
                     MemberExpression(path2) {
                       if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
-                        if (watchArg) {
+                        if (watchArg && watchArg.name !== path2.node.property.name) {
                           graph.edges.get(watchArg.name)?.add(path2.node.property.name);
                         }
                       }

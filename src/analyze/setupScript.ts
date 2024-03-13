@@ -605,8 +605,11 @@ export function processSetup(
                 || parentScope === binding?.scope)
               ) {
                 if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
+                  const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
                   watchArgs.forEach((watchArg) => {
-                    graph.edges.get(watchArg.name)?.add(path1.node.name);
+                    if (!watchArgsNames.includes(path1.node.name)) {
+                      graph.edges.get(watchArg.name)?.add(path1.node.name);
+                    }
                   });
                 }
                 const _node = nodeCollection.getNode(path1.node.name);
