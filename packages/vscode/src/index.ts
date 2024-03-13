@@ -74,7 +74,7 @@ const visTemplate = template(`<html>
         w-[10px] h-[10px]
       "
     ></div>
-    <span>USED IN TEMPLATE</span>
+    <span>USED</span>
   </div>
   <div class="flex items-center align-baseline">
     <div
@@ -85,7 +85,7 @@ const visTemplate = template(`<html>
         w-[10px] h-[10px]
       "
     ></div>
-    <span>NOT USED IN TEMPLATE</span>
+    <span>NOT USED</span>
   </div>
   <div class="flex items-center align-baseline">
     <div

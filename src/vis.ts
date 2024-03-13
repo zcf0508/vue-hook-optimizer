@@ -22,10 +22,18 @@ export function getVisData(
       shape: node.type === 'var'
         ? 'dot'
         : 'diamond',
-      group: usedNodes.has(node.label)
+      group: usedNodes.has(node.label) || node.info?.used?.size
         ? 'used'
         : 'normal',
-      title: node.info?.comment,
+      title: `${
+        node.info?.used?.size
+          ? `used by ${Array.from(node.info?.used || [])?.map(i => `\`${i}\``).join(',')}\n\n`
+          : ''
+      }${
+        usedNodes.has(node.label)
+          ? 'used in template\n\n'
+          : ''
+      }${node.info?.comment || ''}`.trim() || undefined,
       info: node.info,
     });
   });

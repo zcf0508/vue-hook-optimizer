@@ -247,7 +247,7 @@ const {
                 w-[10px] h-[10px]
               "
             />
-            <span>USED IN TEMPLATE</span>
+            <span>USED</span>
           </div>
           <div class="flex items-center align-baseline">
             <div
@@ -258,7 +258,7 @@ const {
                 w-[10px] h-[10px]
               "
             />
-            <span>NOT USED IN TEMPLATE</span>
+            <span>NOT USED</span>
           </div>
           <div class="flex items-center align-baseline">
             <div

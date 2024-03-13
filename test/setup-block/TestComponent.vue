@@ -52,6 +52,10 @@ function funC(varB) { // 这是注释
 
 const [ varD, varE ] = funC(varB)
 
+onMounted(() => {
+	funC()
+})
+
 </script>
 
 <template>

@@ -7,6 +7,7 @@ export interface TypedNode {
     line: number
     column: number
     comment: string
+    used: Set<string>
   }>
 };
 
@@ -105,6 +106,10 @@ export class NodeCollection {
         }
         : {}),
     });
+  }
+
+  getNode(label: string) {
+    return this.nodes.get(label);
   }
 
   map(graph: {

@@ -8,6 +8,22 @@ const traverse: typeof _traverse
   // @ts-expect-error unwarp default
   = _traverse.default?.default || _traverse.default || _traverse;
 
+const vueLifeCycleHooks = [
+  'beforeCreate',
+  'created',
+  'beforeMount',
+  'mounted',
+  'beforeUpdate',
+  'updated',
+  'beforeDestroy',
+  'destroyed',
+  'activated',
+  'deactivated',
+  'errorCaptured',
+  'renderTracked',
+  'renderTriggered',
+];
+
 export function analyze(
   content: string,
   lineOffset = 0,
@@ -26,6 +42,7 @@ export function analyze(
 
   let nodeCollection = new NodeCollection(lineOffset);
 
+  const tNodes = new Map<string, t.Identifier>();
   const graph = {
     nodes: new Set<string>(),
     edges: new Map<string, Set<string>>(),
@@ -66,6 +83,7 @@ export function analyze(
                         if (prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
+                          tNodes.set(name, prop.key);
                           nodeCollection.addNode(name, prop, {
                             comment: getComment(prop),
                           });
@@ -90,6 +108,7 @@ export function analyze(
                   if (prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
+                    tNodes.set(name, prop.key);
                     nodeCollection.addNode(name, prop, {
                       isComputed: true,
                       comment: getComment(prop),
@@ -112,6 +131,7 @@ export function analyze(
                   if (prop.key.type === 'Identifier') {
                     const name = prop.key.name;
                     graph.nodes.add(name);
+                    tNodes.set(name, prop.key);
                     nodeCollection.addNode(name, prop, {
                       isMethod: true,
                       comment: getComment(prop),
@@ -243,6 +263,7 @@ export function analyze(
                           const valName = path3.node.value.name;
                           if (!graph.nodes.has(valName)) {
                             graph.nodes.add(valName);
+                            tNodes.set(valName, path3.node.value);
                             nodeCollection.addTypedNode(
                               valName,
                               tempNodeCollection.nodes.get(valName)!,
@@ -257,6 +278,7 @@ export function analyze(
                           const name = path3.node.key.name;
                           if (name !== valName) {
                             graph.nodes.add(name);
+                            tNodes.set(name, path3.node.key);
                             nodeCollection.addNode(name, path3.node.key, {
                               comment: getComment(path3.node),
                             });
@@ -276,6 +298,8 @@ export function analyze(
                       ) {
                         tempSpread.get(path3.node.argument.arguments[0].name)?.forEach((name) => {
                           graph.nodes.add(name);
+                          // @ts-expect-error Identifier
+                          tNodes.set(name, path3.node.argument.arguments[0]);
                           nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
                           if (!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
@@ -292,6 +316,8 @@ export function analyze(
                       ) {
                         tempSpread.get(path3.node.argument.name)?.forEach((name) => {
                           graph.nodes.add(name);
+                          // @ts-expect-error Identifier
+                          tNodes.set(name, path3.node.argument);
                           nodeCollection.addTypedNode(name, tempNodeCollection.nodes.get(name)!);
                           if (!graph.edges.get(name)) {
                             graph.edges.set(name, new Set());
@@ -326,6 +352,7 @@ export function analyze(
                         if (prop.key.type === 'Identifier') {
                           const name = prop.key.name;
                           graph.nodes.add(name);
+                          tNodes.set(name, prop.key);
                           nodeCollection.addNode(name, prop, {
                             comment: getComment(prop),
                           });
@@ -363,6 +390,38 @@ export function analyze(
     }, path.scope, path);
 
     traverse(node, {
+      ObjectMethod(path1) {
+        if (
+          (
+            path.node.declaration.type === 'ObjectExpression'
+            && path1.parent === path.node.declaration
+          ) || (
+            path.node.declaration.type === 'CallExpression'
+            && path1.parent === path.node.declaration.arguments[0]
+          )
+        ) {
+          if (path1.node.key.type === 'Identifier' && vueLifeCycleHooks.includes(path1.node.key.name)) {
+            const hookName = path1.node.key.name;
+
+            traverse(path1.node.body, {
+              MemberExpression(path2) {
+                if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
+                  const _node = nodeCollection.getNode(path2.node.property.name);
+                  if (_node?.info?.used) {
+                    _node?.info?.used?.add(hookName);
+                  }
+                  else if (_node) {
+                    _node.info = {
+                      ..._node?.info,
+                      used: new Set([hookName]),
+                    };
+                  }
+                }
+              },
+            }, path1.scope, path1);
+          }
+        }
+      },
       ObjectProperty(path1) {
         if (
           (
@@ -436,6 +495,64 @@ export function analyze(
                   }, path1.scope, path1);
                 }
               });
+            }
+          }
+
+          if (path1.node.key.type === 'Identifier' && ['watch', ...vueLifeCycleHooks].includes(path1.node.key.name)) {
+            const hookName = path1.node.key.name;
+
+            if (hookName === 'watch' && path1.node.value.type === 'ObjectExpression') {
+              path1.node.value.properties.forEach((prop) => {
+                if ((prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') && (
+                  prop.key.type === 'Identifier' || prop.key.type === 'StringLiteral'
+                )) {
+                  const keyName = prop.key.type === 'Identifier'
+                    ? prop.key.name
+                    : prop.key.type === 'StringLiteral'
+                      ? prop.key.value
+                      : '';
+                  const watchArg = tNodes.get(keyName);
+
+                  const _node = nodeCollection.getNode(keyName);
+                  if (_node?.info?.used) {
+                    _node?.info?.used?.add(hookName);
+                  }
+                  else if (_node) {
+                    _node.info = {
+                      ..._node?.info,
+                      used: new Set([hookName]),
+                    };
+                  }
+
+                  traverse(path1.node.value, {
+                    MemberExpression(path2) {
+                      if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
+                        if (watchArg) {
+                          graph.edges.get(watchArg.name)?.add(path2.node.property.name);
+                        }
+                      }
+                    },
+                  }, path1.scope, path1);
+                }
+              });
+            }
+            else {
+              traverse(path1.node.value, {
+                MemberExpression(path2) {
+                  if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
+                    const _node = nodeCollection.getNode(path2.node.property.name);
+                    if (_node?.info?.used) {
+                      _node?.info?.used?.add(hookName);
+                    }
+                    else if (_node) {
+                      _node.info = {
+                        ..._node?.info,
+                        used: new Set([hookName]),
+                      };
+                    }
+                  }
+                },
+              }, path1.scope, path1);
             }
           }
         }

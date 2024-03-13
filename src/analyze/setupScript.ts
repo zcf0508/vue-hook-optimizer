@@ -516,6 +516,115 @@ export function processSetup(
         }, path.scope, path);
       }
     },
+
+    ExpressionStatement(path) {
+      if (path.node.expression.type === 'CallExpression' && path.node.expression.callee.type === 'Identifier') {
+        const hookName = path.node.expression.callee.name;
+        const hookBinding = path.scope.getBinding(hookName);
+        if (!(hookBinding === undefined || hookBinding?.scope.block.type === 'Program'
+          || parentScope === hookBinding?.scope)) {
+          return;
+        }
+
+        const watchArgs = new Set<t.Identifier>();
+        if (hookName === 'watch') {
+          if (path.node.expression.arguments[0].type === 'Identifier') {
+            const binding = path.scope.getBinding(path.node.expression.arguments[0].name);
+            if (
+              graph.nodes.has(path.node.expression.arguments[0].name)
+              && (binding?.scope.block.type === 'Program'
+              || parentScope === binding?.scope)
+            ) {
+              watchArgs.add(path.node.expression.arguments[0]);
+            }
+          }
+          else {
+            traverse(path.node.expression.arguments[0], {
+              Identifier(path1) {
+                const binding = path1.scope.getBinding(path1.node.name);
+                if (
+                  graph.nodes.has(path1.node.name)
+                  && (
+                    (path1.parent.type !== 'MemberExpression'
+                    && path1.parent.type !== 'OptionalMemberExpression')
+                    || path1.parent.object === path1.node
+                  )
+                  && (binding?.scope.block.type === 'Program'
+                  || parentScope === binding?.scope)
+                ) {
+                  watchArgs.add(path1.node);
+                }
+              },
+            }, path.scope, path);
+          }
+        }
+        else if (hookName === 'useEffect' && path.node.expression.arguments[1].type === 'ArrayExpression') {
+          traverse(path.node.expression.arguments[1], {
+            Identifier(path1) {
+              const binding = path1.scope.getBinding(path1.node.name);
+              if (
+                graph.nodes.has(path1.node.name)
+                && (
+                  (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
+                  || path1.parent.object === path1.node
+                )
+                && (binding?.scope.block.type === 'Program'
+                || parentScope === binding?.scope)
+              ) {
+                watchArgs.add(path1.node);
+              }
+            },
+          }, path.scope, path);
+        }
+        path.node.expression.arguments.forEach((argNode, index) => {
+          if (hookName === 'watch' && index === 0 && argNode.type === 'Identifier') {
+            const _node = nodeCollection.getNode(argNode.name);
+            if (_node?.info?.used) {
+              _node?.info?.used?.add(hookName);
+            }
+            else if (_node) {
+              _node.info = {
+                ..._node?.info,
+                used: new Set([hookName]),
+              };
+            }
+            return;
+          }
+          traverse(argNode, {
+            Identifier(path1) {
+              const binding = path1.scope.getBinding(path1.node.name);
+              if (
+                graph.nodes.has(path1.node.name)
+                && (
+                  (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
+                  || path1.parent.object === path1.node
+                )
+                && (binding?.scope.block.type === 'Program'
+                || parentScope === binding?.scope)
+              ) {
+                if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
+                  watchArgs.forEach((watchArg) => {
+                    graph.edges.get(watchArg.name)?.add(path1.node.name);
+                  });
+                }
+                const _node = nodeCollection.getNode(path1.node.name);
+                if (_node?.info?.used) {
+                  _node?.info?.used?.add(hookName);
+                }
+                else if (_node) {
+                  _node.info = {
+                    ..._node?.info,
+                    used: new Set([hookName]),
+                  };
+                }
+              }
+            },
+          }, path.scope, path);
+        });
+      }
+    },
   }, parentScope, parentPath);
 
   return {

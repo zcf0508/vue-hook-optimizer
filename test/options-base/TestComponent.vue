@@ -80,6 +80,16 @@
         counterStore.add(Number(this.number));
         this.add();
       }
+    },
+    watch: {
+      'count': {
+        handler:()=> {
+          console.log(this.number)
+        },
+      }
+    },
+    created() {
+      console.log(this.count)
     }
   }
 </script>

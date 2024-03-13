@@ -44,7 +44,7 @@ export function gen(
       }
     }
 
-    if (nodes.length > 1 && nodes.every(node => !usedNodes.has(node.label))) {
+    if (nodes.length > 1 && nodes.every(node => !usedNodes.has(node.label) && !node.info?.used?.size)) {
       suggestions.push({
         type: SuggestionType.info,
         message: `Nodes [${
@@ -98,7 +98,7 @@ export function gen(
 
   const noIndegreeNodes = noIndegreeFilter(graph.edges);
   noIndegreeNodes.forEach((node) => {
-    if (!usedNodes.has(node.label)) {
+    if (!usedNodes.has(node.label) && !node.info?.used?.size) {
       suggestions.push({
         type: SuggestionType.info,
         message: `Node [${node.label}] is not used, perhaps you can remove it.`,
