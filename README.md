@@ -36,7 +36,7 @@ We can find out some variables are isolated, and some methods are over-associati
 
 ## Development Plan
 
-- [ ] add ~~node type~~ (has added `var` and `fun` types) and more info
+- [x] add more info, including the variable type, comment, whether has been used in template or hook methods
 - [x] provide some suggestions for optimization
 - [x] support `options api`
 - [x] [vscode extension](./packages/vscode)
