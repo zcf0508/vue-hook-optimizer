@@ -1,6 +1,8 @@
 import type { RuleListener, RuleWithMeta, RuleWithMetaAndName } from '@typescript-eslint/utils/eslint-utils';
 import type { RuleContext } from '@typescript-eslint/utils/ts-eslint';
 import type { Rule } from 'eslint';
+import type { TypedNode } from 'vue-hook-optimizer';
+import { analyzeOptions, analyzeSetupScript, analyzeTemplate, analyzeTsx, gen, parse } from 'vue-hook-optimizer';
 
 const hasDocs = [
   'not-used',
@@ -92,4 +94,77 @@ export function warnOnce(message: string) {
   }
   warned.add(message);
   console.warn(message);
+}
+
+export function analyze<TMessageIds extends string>(context: Readonly<RuleContext<TMessageIds, PluginOptions>>) {
+  const code = context.sourceCode.text;
+  const framework = context.options[0]?.framework || 'vue';
+
+  let graph = {
+    nodes: new Set<TypedNode>(),
+    edges: new Map<TypedNode, Set<TypedNode>>(),
+  };
+  let nodes = new Set<string>();
+
+  try {
+    if (framework === 'vue') {
+      const sfc = parse(code);
+
+      if (sfc.descriptor.scriptSetup?.content) {
+        graph = analyzeSetupScript(
+          sfc.descriptor.scriptSetup?.content || '',
+          sfc.descriptor.scriptSetup?.loc.start.line || 0,
+          (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx'),
+        );
+      }
+      else if (sfc.descriptor.script?.content) {
+        const res = analyzeOptions(
+          sfc.descriptor.script?.content || '',
+          sfc.descriptor.script?.loc.start.line || 0,
+          (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
+        );
+        graph = res.graph;
+        nodes = res.nodesUsedInTemplate;
+      }
+      else {
+        try {
+          const res = analyzeOptions(
+            code,
+            0,
+            true,
+          );
+          graph = res.graph;
+          nodes = res.nodesUsedInTemplate;
+        }
+        catch (e) {
+          // console.log(e);
+        }
+      }
+
+      try {
+        if (sfc.descriptor.template?.content) {
+          nodes = analyzeTemplate(sfc.descriptor.template!.content);
+        }
+      }
+      catch (e) {
+        // console.log(e);
+      }
+    }
+
+    if (framework === 'react') {
+      const res = analyzeTsx(
+        code,
+        'react',
+        0,
+      );
+      graph = res.graph;
+      nodes = res.nodesUsedInTemplate;
+    }
+
+    return gen(graph, nodes);
+  }
+  catch (e) {
+    // console.log(e);
+    return null;
+  }
 }

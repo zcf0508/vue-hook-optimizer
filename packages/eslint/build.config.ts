@@ -12,6 +12,9 @@ export default defineBuildConfig({
   },
   rollup: {
     emitCJS: true,
+    dts: {
+      respectExternal: false,
+    },
   },
   externals: [
     '@typescript-eslint/utils',

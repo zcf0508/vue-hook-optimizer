@@ -23,6 +23,9 @@ export default antfu({
       'vue-hook-optimizer/not-used': ['warn', {
         framework: 'vue',
       }],
+      'vue-hook-optimizer/loop-call': ['warn', {
+        framework: 'vue',
+      }],
     },
   },
   {

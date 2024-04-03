@@ -1,27 +1,12 @@
-import type {
-  TypedNode,
-} from 'vue-hook-optimizer';
-import {
-  analyzeOptions,
-  analyzeSetupScript,
-  analyzeTemplate,
-  analyzeTsx,
-  gen,
-  parse,
-} from 'vue-hook-optimizer';
-
-import { createEslintRule } from '../utils';
+import { analyze, createEslintRule } from '../utils';
 
 export const RULE_NAME = 'not-used';
-export type MessageIds = 'maybeMyRemove';
-export type Options = [{
-  framework: 'vue' | 'react'
-}];
+export type MessageIds = 'maybeCanRemove';
 
-export default createEslintRule<Options, MessageIds>({
+export default createEslintRule<PluginOptions, MessageIds>({
   name: RULE_NAME,
   meta: {
-    type: 'problem',
+    type: 'suggestion',
     docs: {
       description: 'This node may not be used in the template',
       recommended: 'recommended',
@@ -39,87 +24,14 @@ export default createEslintRule<Options, MessageIds>({
       },
     }],
     messages: {
-      maybeMyRemove: 'Node [{{name}}] not used, perhaps you can remove it.',
+      maybeCanRemove: 'Node [{{name}}] not used, perhaps you can remove it.',
     },
   },
   defaultOptions: [
     { framework: 'vue' },
   ],
   create: (context) => {
-    function analyze() {
-      const code = context.sourceCode.text;
-      const framework = context.options[0]?.framework || 'vue';
-
-      let graph = {
-        nodes: new Set<TypedNode>(),
-        edges: new Map<TypedNode, Set<TypedNode>>(),
-      };
-      let nodes = new Set<string>();
-
-      try {
-        if (framework === 'vue') {
-          const sfc = parse(code);
-
-          if (sfc.descriptor.scriptSetup?.content) {
-            graph = analyzeSetupScript(
-              sfc.descriptor.scriptSetup?.content || '',
-              sfc.descriptor.scriptSetup?.loc.start.line || 0,
-              (sfc.descriptor.scriptSetup.lang === 'tsx' || sfc.descriptor.scriptSetup.lang === 'jsx'),
-            );
-          }
-          else if (sfc.descriptor.script?.content) {
-            const res = analyzeOptions(
-              sfc.descriptor.script?.content || '',
-              sfc.descriptor.script?.loc.start.line || 0,
-              (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
-            );
-            graph = res.graph;
-            nodes = res.nodesUsedInTemplate;
-          }
-          else {
-            try {
-              const res = analyzeOptions(
-                code,
-                0,
-                true,
-              );
-              graph = res.graph;
-              nodes = res.nodesUsedInTemplate;
-            }
-            catch (e) {
-              // console.log(e);
-            }
-          }
-
-          try {
-            if (sfc.descriptor.template?.content) {
-              nodes = analyzeTemplate(sfc.descriptor.template!.content);
-            }
-          }
-          catch (e) {
-            // console.log(e);
-          }
-        }
-
-        if (framework === 'react') {
-          const res = analyzeTsx(
-            code,
-            'react',
-            0,
-          );
-          graph = res.graph;
-          nodes = res.nodesUsedInTemplate;
-        }
-
-        return gen(graph, nodes);
-      }
-      catch (e) {
-        // console.log(e);
-        return null;
-      }
-    }
-
-    const analysisResult = analyze();
+    const analysisResult = analyze(context);
 
     return {
       Identifier(node) {
@@ -133,7 +45,7 @@ export default createEslintRule<Options, MessageIds>({
                 ) {
                   context.report({
                     node,
-                    messageId: 'maybeMyRemove',
+                    messageId: 'maybeCanRemove',
                     loc: {
                       start: node.loc.end,
                       end: node.loc.start,

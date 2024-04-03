@@ -1,6 +1,7 @@
 import type { ESLint, Linter } from 'eslint';
 import { version } from '../package.json';
 import notUsed from './rules/not-used';
+import loopCall from './rules/loop-call';
 
 const plugin = {
   meta: {
@@ -9,6 +10,7 @@ const plugin = {
   },
   rules: {
     'not-used': notUsed,
+    'loop-call': loopCall,
   },
 } satisfies ESLint.Plugin;
 
