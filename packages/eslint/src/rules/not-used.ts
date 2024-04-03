@@ -1,3 +1,4 @@
+import type { TypedNode } from 'vue-hook-optimizer';
 import { analyze, createEslintRule } from '../utils';
 
 export const RULE_NAME = 'not-used';
@@ -8,7 +9,7 @@ export default createEslintRule<PluginOptions, MessageIds>({
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'This node may not be used in the template',
+      description: 'This node may not be used in the template.',
       recommended: 'recommended',
     },
     schema: [{
@@ -24,7 +25,7 @@ export default createEslintRule<PluginOptions, MessageIds>({
       },
     }],
     messages: {
-      maybeCanRemove: 'Node [{{name}}] not used, perhaps you can remove it.',
+      maybeCanRemove: 'Node [{{name}}] {{ be }} not used, perhaps you can remove {{ pronoun }}.',
     },
   },
   defaultOptions: [
@@ -38,7 +39,29 @@ export default createEslintRule<PluginOptions, MessageIds>({
         if (analysisResult) {
           analysisResult.forEach((s) => {
             if (s.message.includes('not used, perhaps you can remove')) {
-              if (!Array.isArray(s.nodeInfo)) {
+              if (Array.isArray(s.nodeInfo)) {
+                s.nodeInfo.forEach((nodeInfo) => {
+                  if (
+                    node.loc.start.line === nodeInfo?.info?.line
+                    && node.loc.start.column === nodeInfo?.info?.column
+                  ) {
+                    context.report({
+                      node,
+                      messageId: 'maybeCanRemove',
+                      loc: {
+                        start: node.loc.end,
+                        end: node.loc.start,
+                      },
+                      data: {
+                        name: (s.nodeInfo as TypedNode[] || []).map(n => n.label).join(',') || '',
+                        be: 'are',
+                        pronoun: 'them',
+                      },
+                    });
+                  }
+                });
+              }
+              else {
                 if (
                   node.loc.start.line === s.nodeInfo?.info?.line
                   && node.loc.start.column === s.nodeInfo?.info?.column
@@ -52,6 +75,8 @@ export default createEslintRule<PluginOptions, MessageIds>({
                     },
                     data: {
                       name: s.nodeInfo?.label || '',
+                      be: 'is',
+                      pronoun: 'it',
                     },
                   });
                 }
