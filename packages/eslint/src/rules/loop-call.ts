@@ -1,4 +1,4 @@
-import { TypedNode } from 'vue-hook-optimizer';
+import type { TypedNode } from 'vue-hook-optimizer';
 import { analyze, createEslintRule } from '../utils';
 
 export const RULE_NAME = 'loop-call';
@@ -57,7 +57,7 @@ export default createEslintRule<PluginOptions, MessageIds>({
                       },
                     });
                   }
-                })
+                });
               }
             }
           });

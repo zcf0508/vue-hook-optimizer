@@ -10,12 +10,11 @@ import { ref } from 'vue';
 
 const a = ref(0);
 
-function add(){
-  a.value++
+function add() {
+  a.value++;
 }
 
-watch(a, () => add())
-
+watch(a, () => add());
 </script>
 
 <template>
@@ -30,10 +29,9 @@ import { ref } from 'vue';
 
 const a = ref(0);
 
-function add(){
-  a.value++
+function add() {
+  a.value++;
 }
-
 </script>
 
 <template>
