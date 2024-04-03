@@ -6,6 +6,7 @@ import { analyzeOptions, analyzeSetupScript, analyzeTemplate, analyzeTsx, gen, p
 
 const hasDocs = [
   'not-used',
+  'loop-call',
 ];
 
 const blobUrl = 'https://github.com/zcf0508/vue-hook-optimizer/tree/master/packages/eslint/src/rules/';
