@@ -7,7 +7,7 @@
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/zcf0508/vue-hook-optimizer/eslint",
+  "homepage": "https://github.com/zcf0508/vue-hook-optimizer/tree/master/packages/eslint",
   "repository": {
     "type": "git",
     "url": "https://github.com/zcf0508/vue-hook-optimizer.git",
