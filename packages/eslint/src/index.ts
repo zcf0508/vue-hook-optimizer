@@ -1,6 +1,6 @@
 import type { ESLint, Linter } from 'eslint';
 import { version } from '../package.json';
-import notUsedInTemplate from './rules/not-used-in-template';
+import notUsed from './rules/not-used';
 
 const plugin = {
   meta: {
@@ -8,7 +8,7 @@ const plugin = {
     version,
   },
   rules: {
-    'not-used-in-template': notUsedInTemplate,
+    'not-used': notUsed,
   },
 } satisfies ESLint.Plugin;
 

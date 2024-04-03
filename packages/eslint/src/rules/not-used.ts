@@ -12,7 +12,7 @@ import {
 
 import { createEslintRule } from '../utils';
 
-export const RULE_NAME = 'not-used-in-template';
+export const RULE_NAME = 'not-used';
 export type MessageIds = 'maybeMyRemove';
 export type Options = [{
   framework: 'vue' | 'react'

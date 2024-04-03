@@ -3,7 +3,7 @@ import type { RuleContext } from '@typescript-eslint/utils/ts-eslint';
 import type { Rule } from 'eslint';
 
 const hasDocs = [
-  'not-used-in-template',
+  'not-used',
 ];
 
 const blobUrl = 'https://github.com/zcf0508/vue-hook-optimizer/tree/master/packages/eslint/src/rules/';

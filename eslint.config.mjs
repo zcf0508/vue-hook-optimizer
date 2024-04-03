@@ -20,7 +20,7 @@ export default antfu({
       'vue-hook-optimizer': pluginVueHookOptimizer,
     },
     rules: {
-      'vue-hook-optimizer/not-used-in-template': ['warn', {
+      'vue-hook-optimizer/not-used': ['warn', {
         framework: 'vue',
       }],
     },

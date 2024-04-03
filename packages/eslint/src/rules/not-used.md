@@ -1,4 +1,4 @@
-# not-used-in-template
+# not-used
 
 Powered by [`vue-hook-optimizer`](https://github.com/zcf0508/vue-hook-optimizer).
 
@@ -32,7 +32,7 @@ const b = ref(0);
 ## Rule Config
 ```
 {
-  "not-used-in-template": ['warn', {
+  "not-used": ['warn', {
     framework: 'vue', // vue or react
   }]
 }
