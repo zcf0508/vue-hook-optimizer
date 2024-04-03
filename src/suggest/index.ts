@@ -62,7 +62,7 @@ export function gen(
         message: `There is a loop call in nodes [${
           hasCycleResult.cycleNodes.map(node => node.label).join(',')
         }], perhaps you can refactor it.`,
-        nodeInfo: nodes,
+        nodeInfo: hasCycleResult.cycleNodes,
       });
     }
 
