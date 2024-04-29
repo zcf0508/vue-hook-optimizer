@@ -67,7 +67,7 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@vitest/coverage-istanbul": "^0.34.6",
+    "@vitest/coverage-istanbul": "^1.5.2",
     "bumpp": "^9.4.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
@@ -79,12 +79,7 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vis-network": "^9.1.9",
-    "vitest": "^0.34.6",
+    "vitest": "^1.5.2",
     "vue-eslint-parser": "^9.4.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "rollup": "3.28.1"
-    }
   }
 }
