@@ -1,3 +1,4 @@
+import * as path from 'node:path';
 import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => {
@@ -12,5 +13,10 @@ export default defineConfig((options) => {
     external: [
       'vscode',
     ],
+    esbuildOptions: (options) => {
+      options.alias = {
+        '@vue/compiler-sfc': path.resolve(__dirname, '../../node_modules/@vue/compiler-sfc/dist/compiler-sfc.esm-browser.js'),
+      };
+    },
   };
 });
