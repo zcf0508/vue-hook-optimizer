@@ -1,5 +1,6 @@
 import { babelParse, compileTemplate } from '@vue/compiler-sfc';
 import _traverse from '@babel/traverse';
+
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
   = _traverse.default?.default || _traverse.default || _traverse;

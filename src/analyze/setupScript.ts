@@ -3,6 +3,7 @@ import type { Scope } from '@babel/traverse';
 import _traverse from '@babel/traverse';
 import type * as t from '@babel/types';
 import { NodeCollection, NodeType, getComment } from './utils';
+
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
   = _traverse.default?.default || _traverse.default || _traverse;
