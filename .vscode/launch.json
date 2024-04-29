@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "dev-in-chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "runtimeArgs": ["--remote-debugging-port=9232"]
+    },
+    {
       "name": "Extension",
       "type": "extensionHost",
       "request": "launch",

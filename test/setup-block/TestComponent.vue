@@ -62,8 +62,8 @@ onMounted(() => {
   <div>
     <input v-model="lmsg" />
     <div>{{ `path: ${path}` }}</div>
-    {{ data.name }} / {{ age }}
-    <input :value="data.name" @input="updateName" />
+    {{ age }}
+    <input :value="data['name' as string]" @input="updateName" />
     <button @click="addAge"></button>
   </div>
 </template>
