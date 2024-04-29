@@ -2,7 +2,7 @@
   "name": "eslint-plugin-vue-hook-optimizer",
   "type": "module",
   "version": "0.0.51",
-  "packageManager": "pnpm@8.12.1",
+  "packageManager": "pnpm@8.15.7",
   "description": "vue-hook-optimizer eslint plugin",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
@@ -47,9 +47,9 @@
     "eslint": "*"
   },
   "devDependencies": {
-    "@types/eslint": "^8.56.5",
-    "@typescript-eslint/utils": "^6.15.0",
-    "eslint-define-config": "^2.0.0",
+    "@types/eslint": "^8.56.10",
+    "@typescript-eslint/utils": "^6.21.0",
+    "eslint-define-config": "^2.1.0",
     "unbuild": "^2.0.0"
   }
 }

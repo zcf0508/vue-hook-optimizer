@@ -11,17 +11,17 @@
     "start": "cross-env PORT=3003 node .output/server/index.mjs"
   },
   "dependencies": {
-    "@iconify/json": "^2.2.160",
+    "@iconify/json": "^2.2.205",
     "codemirror": "^5.65.16",
     "vis-network": "^9.1.9"
   },
   "devDependencies": {
-    "@types/codemirror": "^5.60.8",
-    "@types/node": "^18.17.1",
-    "@unocss/nuxt": "^0.54.2",
-    "@vueuse/core": "^10.4.1",
-    "@vueuse/nuxt": "^10.4.1",
-    "nuxt": "^3.6.5",
-    "unocss": "^0.54.2"
+    "@types/codemirror": "^5.60.15",
+    "@types/node": "^18.19.31",
+    "@unocss/nuxt": "^0.54.3",
+    "@vueuse/core": "^10.9.0",
+    "@vueuse/nuxt": "^10.9.0",
+    "nuxt": "^3.11.2",
+    "unocss": "^0.54.3"
   }
 }
