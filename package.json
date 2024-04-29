@@ -55,7 +55,7 @@
     "@babel/parser": "^7.22.5",
     "@babel/traverse": "^7.22.5",
     "@babel/types": "^7.22.5",
-    "@vue/compiler-sfc": "^3.3.4"
+    "@vue/compiler-sfc": "^3.4.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.8.0",
