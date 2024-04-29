@@ -9,5 +9,7 @@ export default defineNuxtConfig({
   ],
   alias: {
     'vue-hook-optimizer': path.resolve(__dirname, '../../src'),
+    // https://github.com/vuejs/core/issues/10278#issuecomment-1950783863
+    '@vue/compiler-sfc': path.resolve(__dirname, '../../node_modules/@vue/compiler-sfc/dist/compiler-sfc.esm-browser.js'),
   },
 });

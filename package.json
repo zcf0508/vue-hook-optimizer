@@ -55,7 +55,7 @@
     "@babel/parser": "^7.22.5",
     "@babel/traverse": "^7.22.5",
     "@babel/types": "^7.22.5",
-    "@vue/compiler-sfc": "^3.4.25"
+    "@vue/compiler-sfc": "^3.3.4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.8.0",
@@ -76,7 +76,7 @@
     "lodash-es": "^4.17.21",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
-    "tsup": "^7.3.0",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3",
     "vis-network": "^9.1.9",
     "vitest": "^0.34.6",

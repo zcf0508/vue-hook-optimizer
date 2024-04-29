@@ -116,7 +116,6 @@
   "devDependencies": {
     "@types/vscode": "^1.78.1",
     "@vscode/vsce": "^2.22.0",
-    "@vue/compiler-sfc": "^3.3.4",
     "rimraf": "^5.0.5",
     "vite": "^4.4.12"
   }
