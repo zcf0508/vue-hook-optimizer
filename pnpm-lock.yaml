@@ -150,8 +150,8 @@ importers:
   packages/vscode:
     devDependencies:
       '@types/vscode':
-        specifier: ^1.88.0
-        version: 1.88.0
+        specifier: ^1.78.1
+        version: 1.78.1
       '@vscode/vsce':
         specifier: ^2.26.0
         version: 2.26.0
@@ -3365,8 +3365,8 @@ packages:
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
     dev: true
 
-  /@types/vscode@1.88.0:
-    resolution: {integrity: sha512-rWY+Bs6j/f1lvr8jqZTyp5arRMfovdxolcqGi+//+cPDOh8SBvzXH90e7BiSXct5HJ9HGW6jATchbRTpTJpEkw==}
+  /@types/vscode@1.78.1:
+    resolution: {integrity: sha512-wEA+54axejHu7DhcUfnFBan1IqFD1gBDxAFz8LoX06NbNDMRJv/T6OGthOs52yZccasKfN588EyffHWABkR0fg==}
     dev: true
 
   /@types/web-bluetooth@0.0.20:
