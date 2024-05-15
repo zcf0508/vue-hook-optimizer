@@ -137,12 +137,18 @@ export function getComment(node: t.Node) {
   let comment = '';
 
   node.leadingComments?.forEach((_comment) => {
+    if (_comment.loc!.end.line > node.loc!.start.line) {
+      return;
+    }
     if (_comment.value.trim().startsWith('*')) {
       comment += `${_comment.value.trim().replace(/^[\s]*\*+[\s]*\**/gm, '').trim()}\n`;
     }
   });
 
   node.trailingComments?.forEach((_comment) => {
+    if (_comment.loc!.end.line > node.loc!.start.line) {
+      return;
+    }
     if (_comment.value.trim().startsWith('*')) {
       comment += `${_comment.value.trim().replace(/^[\s]*\*+[\s]*\**/gm, '').trim()}\n`;
     }

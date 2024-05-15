@@ -3,8 +3,8 @@ import { NodeType } from '@/analyze/utils';
 
 const edges = new Map<TypedNode, Set<TypedNode>>();
 
-const route: TypedNode = { label: 'route', type: NodeType.var, info: { line: 7, column: 6 } };
-const path: TypedNode = { label: 'path', type: NodeType.var, info: { line: 9, column: 6, used: new Set(['watch']) } };
+const route: TypedNode = { label: 'route', type: NodeType.var, info: { line: 7, column: 6, comment: 'route' } };
+const path: TypedNode = { label: 'path', type: NodeType.var, info: { line: 9, column: 6, used: new Set(['watch']), comment: 'path' } };
 const lmsg: TypedNode = { label: 'lmsg', type: NodeType.var, info: { line: 11, column: 6, used: new Set(['watch']) } };
 const data: TypedNode = { label: 'data', type: NodeType.var, info: { line: 19, column: 6, comment: '这是注释11' } };
 const age: TypedNode = { label: 'age', type: NodeType.var, info: { line: 23, column: 6 } };

@@ -4,9 +4,9 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['update:msg'])
-
+/** route */
 const route = useRoute();
-
+/** path */
 const path = computed(() => route.path?.age)
 
 const lmsg = ref(props.msg)
