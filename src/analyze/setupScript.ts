@@ -8,6 +8,8 @@ const traverse: typeof _traverse
   // @ts-expect-error unwarp default
   = _traverse.default?.default || _traverse.default || _traverse;
 
+const ignoreFunctionsName = ['defineProps', 'defineEmits', 'withDefaults'];
+
 export function processSetup(
   ast: t.Node,
   parentScope?: Scope,
@@ -41,7 +43,7 @@ export function processSetup(
                 )
                 && !(declaration.init?.type === 'CallExpression'
                 && declaration.init?.callee.type === 'Identifier'
-                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -64,7 +66,7 @@ export function processSetup(
                 )
                 && !(declaration.init?.type === 'CallExpression'
                 && declaration.init?.callee.type === 'Identifier'
-                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -90,7 +92,7 @@ export function processSetup(
                 )
                 && !(declaration.init?.type === 'CallExpression'
                 && declaration.init?.callee.type === 'Identifier'
-                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -113,7 +115,7 @@ export function processSetup(
                 )
                 && !(declaration.init?.type === 'CallExpression'
                 && declaration.init?.callee.type === 'Identifier'
-                && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+                && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -137,7 +139,7 @@ export function processSetup(
             )
             && !(declaration.init?.type === 'CallExpression'
             && declaration.init?.callee.type === 'Identifier'
-            && ['defineProps', 'defineEmits'].includes(declaration.init?.callee.name)
+            && ignoreFunctionsName.includes(declaration.init?.callee.name)
             )
           ) {
             graph.nodes.add(name);

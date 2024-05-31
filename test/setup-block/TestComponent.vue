@@ -56,6 +56,10 @@ onMounted(() => {
 	funC()
 })
 
+const props1 = withDefaults(defineProps<{test: number}>(), {
+  test: 1,
+})
+
 </script>
 
 <template>
