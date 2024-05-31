@@ -23,6 +23,7 @@ const vueLifeCycleHooks = [
   'errorCaptured',
   'renderTracked',
   'renderTriggered',
+  'provide',
 ];
 
 export function analyze(

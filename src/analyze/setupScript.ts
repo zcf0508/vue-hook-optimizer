@@ -530,7 +530,36 @@ export function processSetup(
         }
 
         const watchArgs = new Set<t.Identifier>();
-        if (hookName === 'watch') {
+
+        if (hookName === 'provide') {
+          traverse(path.node.expression, {
+            Identifier(path1) {
+              const binding = path1.scope.getBinding(path1.node.name);
+              if (
+                graph.nodes.has(path1.node.name)
+                && (
+                  (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
+                  || path1.parent.object === path1.node
+                )
+                && (binding?.scope.block.type === 'Program'
+                || parentScope === binding?.scope)
+              ) {
+                const _node = nodeCollection.getNode(path1.node.name);
+                if (_node?.info?.used) {
+                  _node?.info?.used?.add(hookName);
+                }
+                else if (_node) {
+                  _node.info = {
+                    ..._node?.info,
+                    used: new Set([hookName]),
+                  };
+                }
+              }
+            },
+          }, path.scope, path);
+        }
+        else if (hookName === 'watch') {
           if (path.node.expression.arguments[0].type === 'Identifier') {
             const binding = path.scope.getBinding(path.node.expression.arguments[0].name);
             if (

@@ -27,6 +27,11 @@
         this.add();
       }
     },
+    provide() {
+      return {
+        count: this.count,
+      }
+    },
     render: function(){
       return (<div>
         <div>{this.count}</div>

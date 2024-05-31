@@ -60,6 +60,8 @@ const props1 = withDefaults(defineProps<{test: number}>(), {
   test: 1,
 })
 
+provide('funC', funC)
+
 </script>
 
 <template>
