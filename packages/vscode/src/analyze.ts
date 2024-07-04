@@ -4,6 +4,7 @@ import type {
 import {
   analyzeOptions,
   analyzeSetupScript,
+  analyzeStyle,
   analyzeTemplate,
   analyzeTsx,
   gen,
@@ -16,7 +17,8 @@ export async function analyze(code: string, language: 'vue' | 'react') {
     nodes: new Set<TypedNode>(),
     edges: new Map<TypedNode, Set<TypedNode>>(),
   };
-  let nodes = new Set<string>();
+  let nodesUsedInTemplate = new Set<string>();
+  let nodesUsedInStyle = new Set<string>();
 
   if (language === 'vue') {
     const sfc = parse(code);
@@ -35,7 +37,7 @@ export async function analyze(code: string, language: 'vue' | 'react') {
         (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
       );
       graph = res.graph;
-      nodes = res.nodesUsedInTemplate;
+      nodesUsedInTemplate = res.nodesUsedInTemplate;
     }
     else {
       try {
@@ -45,7 +47,7 @@ export async function analyze(code: string, language: 'vue' | 'react') {
           true,
         );
         graph = res.graph;
-        nodes = res.nodesUsedInTemplate;
+        nodesUsedInTemplate = res.nodesUsedInTemplate;
       }
       catch (e) {
         console.log(e);
@@ -54,13 +56,21 @@ export async function analyze(code: string, language: 'vue' | 'react') {
 
     try {
       if (sfc.descriptor.template?.content) {
-        nodes = analyzeTemplate(sfc.descriptor.template!.content);
+        nodesUsedInTemplate = analyzeTemplate(sfc.descriptor.template!.content);
       }
     }
     catch (e) {
       console.log(e);
     }
+
+    try {
+      nodesUsedInStyle = analyzeStyle(sfc.descriptor.styles);
+    }
+    catch (e) {
+      // console.log(e);
+    }
   }
+
   if (language === 'react') {
     const res = await analyzeTsx(
       code,
@@ -68,11 +78,11 @@ export async function analyze(code: string, language: 'vue' | 'react') {
       0,
     );
     graph = res.graph;
-    nodes = res.nodesUsedInTemplate;
+    nodesUsedInTemplate = res.nodesUsedInTemplate;
   }
 
   return { code: 0, data: {
-    vis: getVisData(graph, nodes),
-    suggests: gen(graph, nodes),
+    vis: getVisData(graph, nodesUsedInTemplate, nodesUsedInStyle),
+    suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle),
   }, msg: 'ok' };
 }

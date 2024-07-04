@@ -2,7 +2,15 @@ import type { RuleListener, RuleWithMeta, RuleWithMetaAndName } from '@typescrip
 import type { RuleContext } from '@typescript-eslint/utils/ts-eslint';
 import type { Rule } from 'eslint';
 import type { TypedNode } from 'vue-hook-optimizer';
-import { analyzeOptions, analyzeSetupScript, analyzeTemplate, analyzeTsx, gen, parse } from 'vue-hook-optimizer';
+import {
+  analyzeOptions,
+  analyzeSetupScript,
+  analyzeStyle,
+  analyzeTemplate,
+  analyzeTsx,
+  gen,
+  parse,
+} from 'vue-hook-optimizer';
 
 const hasDocs = [
   'not-used',
@@ -105,7 +113,8 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
     nodes: new Set<TypedNode>(),
     edges: new Map<TypedNode, Set<TypedNode>>(),
   };
-  let nodes = new Set<string>();
+  let nodesUsedInTemplate = new Set<string>();
+  let nodesUsedInStyle = new Set<string>();
 
   try {
     if (framework === 'vue') {
@@ -125,7 +134,7 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
           (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
         );
         graph = res.graph;
-        nodes = res.nodesUsedInTemplate;
+        nodesUsedInTemplate = res.nodesUsedInTemplate;
       }
       else {
         try {
@@ -135,7 +144,7 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
             true,
           );
           graph = res.graph;
-          nodes = res.nodesUsedInTemplate;
+          nodesUsedInTemplate = res.nodesUsedInTemplate;
         }
         catch (e) {
           // console.log(e);
@@ -144,8 +153,15 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
 
       try {
         if (sfc.descriptor.template?.content) {
-          nodes = analyzeTemplate(sfc.descriptor.template!.content);
+          nodesUsedInTemplate = analyzeTemplate(sfc.descriptor.template!.content);
         }
+      }
+      catch (e) {
+        // console.log(e);
+      }
+
+      try {
+        nodesUsedInStyle = analyzeStyle(sfc.descriptor.styles);
       }
       catch (e) {
         // console.log(e);
@@ -159,10 +175,10 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
         0,
       );
       graph = res.graph;
-      nodes = res.nodesUsedInTemplate;
+      nodesUsedInTemplate = res.nodesUsedInTemplate;
     }
 
-    return gen(graph, nodes);
+    return gen(graph, nodesUsedInTemplate, nodesUsedInStyle);
   }
   catch (e) {
     // console.log(e);

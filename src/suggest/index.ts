@@ -22,8 +22,11 @@ export function gen(
     nodes: Set<TypedNode>
     edges: Map<TypedNode, Set<TypedNode>>
   },
-  usedNodes: Set<string>,
+  nodesUsedInTemplate: Set<string>,
+  nodesUsedInStyle: Set<string> = new Set(),
 ) {
+  const usedNodes = new Set([...nodesUsedInTemplate, ...nodesUsedInStyle]);
+
   const suggestions: Suggestion[] = [];
   const splitedGraph = splitGraph(graph.edges);
   // console.log(splitedGraph);

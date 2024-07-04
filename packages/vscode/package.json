@@ -4,7 +4,6 @@
   "displayName": "vue-hook-optimizer",
   "version": "0.0.55",
   "private": true,
-  "packageManager": "pnpm@8.15.7",
   "description": "",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",

@@ -10,8 +10,11 @@ export function getVisData(
     nodes: Set<TypedNode>
     edges: Map<TypedNode, Set<TypedNode>>
   },
-  usedNodes: Set<string>,
+  nodesUsedInTemplate: Set<string>,
+  nodesUsedInStyle: Set<string> = new Set(),
 ) {
+  const usedNodes = new Set([...nodesUsedInTemplate, ...nodesUsedInStyle]);
+
   const nodes: CustomNode[] = [];
   const edges: Edge[] = [];
 
@@ -31,7 +34,16 @@ export function getVisData(
           : ''
       }${
         usedNodes.has(node.label)
-          ? 'used in template\n\n'
+          ? `used in ${
+            [
+              nodesUsedInStyle.has(node.label)
+                ? 'style'
+                : '',
+              nodesUsedInTemplate.has(node.label)
+                ? 'template'
+                : '',
+            ].filter(Boolean).join(' and ')
+          }\n\n`
           : ''
       }${node.info?.comment || ''}`.trim() || undefined,
       info: node.info,

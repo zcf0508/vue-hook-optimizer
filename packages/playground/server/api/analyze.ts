@@ -4,6 +4,7 @@ import type {
 import {
   analyzeOptions,
   analyzeSetupScript,
+  analyzeStyle,
   analyzeTemplate,
   analyzeTsx,
   gen,
@@ -17,7 +18,8 @@ export default defineEventHandler(async (ctx) => {
     nodes: new Set<TypedNode>(),
     edges: new Map<TypedNode, Set<TypedNode>>(),
   };
-  let nodes = new Set<string>();
+  let nodesUsedInTemplate = new Set<string>();
+  let nodesUsedInStyle = new Set<string>();
 
   try {
     if (framework === 'vue') {
@@ -37,7 +39,7 @@ export default defineEventHandler(async (ctx) => {
           (sfc.descriptor.script.lang === 'tsx' || sfc.descriptor.script.lang === 'jsx'),
         );
         graph = res.graph;
-        nodes = res.nodesUsedInTemplate;
+        nodesUsedInTemplate = res.nodesUsedInTemplate;
       }
       else {
         try {
@@ -47,7 +49,7 @@ export default defineEventHandler(async (ctx) => {
             true,
           );
           graph = res.graph;
-          nodes = res.nodesUsedInTemplate;
+          nodesUsedInTemplate = res.nodesUsedInTemplate;
         }
         catch (e) {
           console.log(e);
@@ -56,11 +58,18 @@ export default defineEventHandler(async (ctx) => {
 
       try {
         if (sfc.descriptor.template?.content) {
-          nodes = analyzeTemplate(sfc.descriptor.template!.content);
+          nodesUsedInTemplate = analyzeTemplate(sfc.descriptor.template!.content);
         }
       }
       catch (e) {
         console.log(e);
+      }
+
+      try {
+        nodesUsedInStyle = analyzeStyle(sfc.descriptor.styles);
+      }
+      catch (e) {
+        // console.log(e);
       }
     }
 
@@ -71,13 +80,13 @@ export default defineEventHandler(async (ctx) => {
         0,
       );
       graph = res.graph;
-      nodes = res.nodesUsedInTemplate;
+      nodesUsedInTemplate = res.nodesUsedInTemplate;
     }
 
     return {
       msg: '',
-      data: getVisData(graph, nodes),
-      suggests: gen(graph, nodes),
+      data: getVisData(graph, nodesUsedInTemplate, nodesUsedInStyle),
+      suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle),
     };
   }
   catch (e) {

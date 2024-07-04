@@ -10,3 +10,6 @@ export {
 export {
   analyze as analyzeTsx,
 } from './tsx';
+export {
+  analyze as analyzeStyle,
+} from './style';
