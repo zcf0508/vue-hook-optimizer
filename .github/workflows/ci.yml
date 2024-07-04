@@ -16,15 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
       - name: Set node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-          cache: pnpm
+          node-version: 18.x
+
+      - name: Setup
+        run: npm i -g pnpm@8
 
       - name: Install
         run: pnpm i
@@ -59,17 +57,13 @@ jobs:
           git config --global core.eol lf
 
       - uses: actions/checkout@v3
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Set node ${{ matrix.node_version }}
+      - name: Set node ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node_version }}
-          cache: pnpm
+          node-version: ${{ matrix.node }}
 
-      - run: corepack enable
+      - name: Setup
+        run: npm i -g pnpm@8
 
       - name: Install
         run: pnpm i
