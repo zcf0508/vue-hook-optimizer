@@ -1,9 +1,12 @@
-import process from 'node:process';
+// @ts-check
+/// <reference path="./eslint-typegen.d.ts" />
+
 import antfu from '@antfu/eslint-config';
+import typegen from 'eslint-typegen';
 import pluginSecurity from 'eslint-plugin-security';
 import pluginVueHookOptimizer from 'eslint-plugin-vue-hook-optimizer';
 
-export default antfu({
+export default typegen(antfu({
   typescript: true,
 }, [
   {
@@ -49,10 +52,11 @@ export default antfu({
           ignoreRegExpLiterals: true,
           ignoreStrings: true,
           ignoreUrls: true,
+          ignoreComments: true,
         },
       ],
       'comma-dangle': ['error', 'always-multiline'],
       'style/quotes': ['error', 'single'],
     },
   },
-]);
+]));

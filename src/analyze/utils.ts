@@ -141,7 +141,7 @@ export function getComment(node: t.Node) {
       return;
     }
     if (_comment.value.trim().startsWith('*')) {
-      comment += `${_comment.value.trim().replace(/^[\s]*\*+[\s]*\**/gm, '').trim()}\n`;
+      comment += `${_comment.value.trim().replace(/^\s*\*+\s*\**/gm, '').trim()}\n`;
     }
   });
 
@@ -150,7 +150,7 @@ export function getComment(node: t.Node) {
       return;
     }
     if (_comment.value.trim().startsWith('*')) {
-      comment += `${_comment.value.trim().replace(/^[\s]*\*+[\s]*\**/gm, '').trim()}\n`;
+      comment += `${_comment.value.trim().replace(/^\s*\*+\s*\**/gm, '').trim()}\n`;
     }
     else {
       comment += `${_comment.value.trim()}\n`;

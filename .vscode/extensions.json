@@ -4,6 +4,7 @@
     "bradlc.vscode-tailwindcss",
     "antfu.unocss",
     "yoavbls.pretty-ts-errors",
-    "amodio.tsl-problem-matcher"
+    "amodio.tsl-problem-matcher",
+    "emeraldwalk.runonsave"
   ]
 }

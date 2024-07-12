@@ -74,7 +74,7 @@
       {
         "match": "packages/vscode/package.json",
         "isAsync": true,
-        "cmd": "npm -C packages/vscode run update"
+        "cmd": "npm -C packages/vscode run update & npx eslint packages/vscode/src/generated-meta.ts --fix"
       }
     ]
   }

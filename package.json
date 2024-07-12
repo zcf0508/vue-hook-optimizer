@@ -18,10 +18,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "typesVersions": {
@@ -57,7 +57,7 @@
     "@vue/compiler-sfc": "^3.4.1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.16.0",
+    "@antfu/eslint-config": "^2.22.0",
     "@babel/preset-typescript": "^7.24.1",
     "@types/babel__core": "^7.20.5",
     "@types/babel__traverse": "^7.20.5",
@@ -69,9 +69,10 @@
     "@vitest/coverage-istanbul": "^1.5.2",
     "bumpp": "^9.4.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.57.0",
-    "eslint-plugin-security": "^2.1.1",
+    "eslint": "^9.1.0",
+    "eslint-plugin-security": "^3.0.1",
     "eslint-plugin-vue-hook-optimizer": "workspace:*",
+    "eslint-typegen": "^0.2.4",
     "lodash-es": "^4.17.21",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",

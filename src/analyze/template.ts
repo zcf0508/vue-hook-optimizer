@@ -38,7 +38,9 @@ export function analyze(
       if (path.node.key.type === 'Identifier' && path.node.key.name === 'ref') {
         if (path.node.value.type === 'StringLiteral') {
           const name = path.node.value.value;
-          name && nodes.add(name);
+          if (name) {
+            nodes.add(name);
+          }
         }
       }
     },
@@ -47,7 +49,9 @@ export function analyze(
       if (path.node.callee.type === 'Identifier' && path.node.callee.name === '_resolveComponent') {
         if (path.node.arguments[0].type === 'StringLiteral') {
           const name = path.node.arguments[0].value;
-          name && nodes.add(name);
+          if (name) {
+            nodes.add(name);
+          }
         }
       }
     },

@@ -26,6 +26,6 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
-  "include": ["src", "test", "eslint.config.mjs", "vitest.config.ts", "tsup.config.ts", "unocss.config.ts"],
+  "include": ["src", "test", "vitest.config.ts", "tsup.config.ts", "unocss.config.ts"],
   "exclude": ["node_modules", "dist", "packages"]
 }
