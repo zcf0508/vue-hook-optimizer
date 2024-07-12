@@ -17,8 +17,8 @@
         "column": 6,
         "line": 69,
         "used": Set {
-          "watch",
           "provide",
+          "watch",
         },
       },
       "label": "count",
@@ -108,8 +108,8 @@
         "column": 6,
         "line": 69,
         "used": Set {
-          "watch",
           "provide",
+          "watch",
         },
       },
       "label": "count",

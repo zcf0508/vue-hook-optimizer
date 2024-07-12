@@ -24,7 +24,7 @@
       },
       add() {
         counterStore.add(Number(this.number));
-        this.plus();
+        this.add();
       }
     },
     provide() {
@@ -32,7 +32,7 @@
         count: this.count,
       }
     },
-    render: function(){
+    render(){
       return (<div>
         <div>{this.count}</div>
         <button onClick={this.plus}></button>

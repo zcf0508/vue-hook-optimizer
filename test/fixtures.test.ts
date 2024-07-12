@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
+import { inspect } from 'node:util';
 import fg from 'fast-glob';
 import { analyzeOptions, analyzeSetupScript, analyzeStyle, analyzeTemplate, analyzeTsx, parse } from '@/index';
 
@@ -13,7 +14,6 @@ describe('fixtures', async () => {
         const source = readFileSync(test, 'utf-8');
         if (framework === 'vue') {
           const sfc = parse(source);
-
           const nodesUsedInStyle = analyzeStyle(sfc.descriptor.styles || []);
 
           if (test.includes('tsx')) {

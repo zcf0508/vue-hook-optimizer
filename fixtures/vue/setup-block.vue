@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { add } from 'lodash-es';
+
 const props = defineProps({
   msg: String
 })
@@ -42,6 +44,13 @@ function funA() {
 }
 
 const { varB } = funA()
+
+const varB2 = varB
+
+const ddd = {
+  getDdd: () => varB.value
+}
+
 /** 这是注释 */
 function funC(varB) { // 这是注释
   const varD = 1
@@ -62,6 +71,38 @@ const props1 = withDefaults(defineProps<{test: number}>(), {
 
 provide('funC', funC)
 
+const [userinfo, setUserinfo] = useUserinfo(a, b.count)
+
+
+const aaa1 = ref(0)
+
+const bbb2 = computed(() => aaa1.value + 2)
+
+const cc333 = computed(() => bbb2.value + 2)
+
+const updateBBB = () => {
+  if(cc333.value< 20) {
+    aaa1.value = aaa1.value + ddd.getDdd()
+  }
+}
+
+const ddd4 = ref(1)
+const eee5 = computed(() => ddd4.value * 2)
+
+const add1111 = ref(1111)
+
+function add2222(){
+  add1111.value = add1111 ++ 
+}
+
+const add333 =() => {
+  add2222()
+} 
+
+const add4444 =() => {
+  add333()
+} 
+
 </script>
 
 <template>
@@ -69,8 +110,10 @@ provide('funC', funC)
     <input v-model="lmsg" />
     <div>{{ `path: ${path}` }}</div>
     {{ age }}
+    {{ userinfo }}
     <input :value="data['name' as string]" @input="updateName" />
     <button @click="addAge"></button>
+    <button @click="add4444"></button>
   </div>
 </template>
 

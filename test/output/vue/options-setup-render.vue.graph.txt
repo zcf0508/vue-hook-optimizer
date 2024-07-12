@@ -1,0 +1,195 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 10,
+        "line": 10,
+      },
+      "label": "data",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 13,
+        },
+        "label": "number",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 13,
+      },
+      "label": "number",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 10,
+        },
+        "label": "data",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 14,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 16,
+      },
+      "label": "methods",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 16,
+        },
+        "label": "methods",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 10,
+        },
+        "label": "data",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 14,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 29,
+      },
+      "label": "a",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 14,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 30,
+      },
+      "label": "b",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 14,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 31,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 33,
+      },
+      "label": "msgRef",
+      "type": "var",
+    } => Set {},
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 10,
+        "line": 10,
+      },
+      "label": "data",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 13,
+      },
+      "label": "number",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 14,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 16,
+      },
+      "label": "methods",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 29,
+      },
+      "label": "a",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 30,
+      },
+      "label": "b",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 31,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 33,
+      },
+      "label": "msgRef",
+      "type": "var",
+    },
+  },
+}

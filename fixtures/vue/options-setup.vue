@@ -64,35 +64,59 @@ export default {
   },
   setup() {
     const data = reactive({
+      ...{
+        a: 1
+      },
+      a: 2,
       /** 这是注释 */number: 0,
     });
     const count = computed(() => counterStore.count);
 
+    const dataNumber = computed(() => data.number);
+    
+    const number = count.value
+
     const methods = {
+      ...{
+        a: 1
+      },
+      a: 2,
       plus: ()=> {
         counterStore.increment();
         methods.plus();
       },
-      add() {
-        counterStore.add(Number(data.number));
-        methods.add();
-        console.log(count)
-      }
     };
+
+    function add() {
+      counterStore.add(Number(data.number));
+      methods.plus();
+      console.log(count)
+      return count;
+    }
+
 
     const a = {count};
     const b = {count: count.value};
+
+    const [userinfo, setUserinfo] = useUserinfo(a, b.count, data.number)
+
+    const { userinfo2 } = useUserinfo2(a, b.count, data.number)
     const ComponentD = () => (<>hello d</>);
 
     const msgRef = ref();
 
     return {
       ...toRefs(data),
+      number,
       b,
       c: count,
+      dataNumber,
       ...methods,
       ComponentD,
       msgRef,
+      add,
+      userinfo,
+      userinfo2,
     }
     
   }

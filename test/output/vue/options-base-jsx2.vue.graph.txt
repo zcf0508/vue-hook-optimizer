@@ -3,11 +3,7 @@
     {
       "info": {
         "column": 8,
-        "line": 65,
-        "used": Set {
-          "provide",
-          "created",
-        },
+        "line": 11,
       },
       "label": "number",
       "type": "var",
@@ -15,32 +11,18 @@
     {
       "info": {
         "column": 6,
-        "line": 69,
+        "line": 15,
         "used": Set {
-          "watch",
           "provide",
         },
       },
       "label": "count",
       "type": "var",
-    } => Set {
-      {
-        "info": {
-          "column": 8,
-          "line": 65,
-          "used": Set {
-            "provide",
-            "created",
-          },
-        },
-        "label": "number",
-        "type": "var",
-      },
-    },
+    } => Set {},
     {
       "info": {
         "column": 6,
-        "line": 74,
+        "line": 20,
       },
       "label": "plus",
       "type": "fun",
@@ -48,7 +30,7 @@
       {
         "info": {
           "column": 6,
-          "line": 74,
+          "line": 20,
         },
         "label": "plus",
         "type": "fun",
@@ -57,10 +39,7 @@
     {
       "info": {
         "column": 6,
-        "line": 78,
-        "used": Set {
-          "created",
-        },
+        "line": 24,
       },
       "label": "add",
       "type": "fun",
@@ -68,11 +47,7 @@
       {
         "info": {
           "column": 8,
-          "line": 65,
-          "used": Set {
-            "provide",
-            "created",
-          },
+          "line": 11,
         },
         "label": "number",
         "type": "var",
@@ -80,10 +55,7 @@
       {
         "info": {
           "column": 6,
-          "line": 78,
-          "used": Set {
-            "created",
-          },
+          "line": 24,
         },
         "label": "add",
         "type": "fun",
@@ -94,11 +66,7 @@
     {
       "info": {
         "column": 8,
-        "line": 65,
-        "used": Set {
-          "provide",
-          "created",
-        },
+        "line": 11,
       },
       "label": "number",
       "type": "var",
@@ -106,9 +74,8 @@
     {
       "info": {
         "column": 6,
-        "line": 69,
+        "line": 15,
         "used": Set {
-          "watch",
           "provide",
         },
       },
@@ -118,7 +85,7 @@
     {
       "info": {
         "column": 6,
-        "line": 74,
+        "line": 20,
       },
       "label": "plus",
       "type": "fun",
@@ -126,10 +93,7 @@
     {
       "info": {
         "column": 6,
-        "line": 78,
-        "used": Set {
-          "created",
-        },
+        "line": 24,
       },
       "label": "add",
       "type": "fun",

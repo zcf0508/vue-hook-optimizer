@@ -2,17 +2,43 @@
   "edges": Map {
     {
       "info": {
+        "column": 6,
+        "line": 69,
+      },
+      "label": "a",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 72,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
         "column": 17,
         "comment": "这是注释",
-        "line": 66,
+        "line": 70,
       },
       "label": "number",
       "type": "var",
-    } => Set {},
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 72,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
     {
       "info": {
         "column": 10,
-        "line": 83,
+        "line": 98,
       },
       "label": "b",
       "type": "var",
@@ -20,7 +46,7 @@
       {
         "info": {
           "column": 10,
-          "line": 68,
+          "line": 72,
         },
         "label": "count",
         "type": "var",
@@ -29,7 +55,7 @@
     {
       "info": {
         "column": 10,
-        "line": 68,
+        "line": 72,
       },
       "label": "count",
       "type": "var",
@@ -37,7 +63,7 @@
     {
       "info": {
         "column": 6,
-        "line": 91,
+        "line": 111,
       },
       "label": "c",
       "type": "var",
@@ -45,7 +71,7 @@
       {
         "info": {
           "column": 10,
-          "line": 68,
+          "line": 72,
         },
         "label": "count",
         "type": "var",
@@ -53,8 +79,26 @@
     },
     {
       "info": {
+        "column": 10,
+        "line": 74,
+      },
+      "label": "dataNumber",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 17,
+          "comment": "这是注释",
+          "line": 70,
+        },
+        "label": "number",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
         "column": 6,
-        "line": 71,
+        "line": 83,
       },
       "label": "plus",
       "type": "fun",
@@ -62,7 +106,7 @@
       {
         "info": {
           "column": 6,
-          "line": 71,
+          "line": 83,
         },
         "label": "plus",
         "type": "fun",
@@ -70,8 +114,24 @@
     },
     {
       "info": {
-        "column": 6,
-        "line": 75,
+        "column": 10,
+        "line": 103,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 105,
+      },
+      "label": "msgRef",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 13,
+        "line": 89,
       },
       "label": "add",
       "type": "fun",
@@ -80,7 +140,7 @@
         "info": {
           "column": 17,
           "comment": "这是注释",
-          "line": 66,
+          "line": 70,
         },
         "label": "number",
         "type": "var",
@@ -88,15 +148,15 @@
       {
         "info": {
           "column": 6,
-          "line": 75,
+          "line": 83,
         },
-        "label": "add",
+        "label": "plus",
         "type": "fun",
       },
       {
         "info": {
           "column": 10,
-          "line": 68,
+          "line": 72,
         },
         "label": "count",
         "type": "var",
@@ -104,27 +164,87 @@
     },
     {
       "info": {
-        "column": 10,
-        "line": 84,
+        "column": 11,
+        "line": 100,
       },
-      "label": "ComponentD",
-      "type": "fun",
-    } => Set {},
+      "label": "userinfo",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 69,
+        },
+        "label": "a",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 98,
+        },
+        "label": "b",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 17,
+          "comment": "这是注释",
+          "line": 70,
+        },
+        "label": "number",
+        "type": "var",
+      },
+    },
     {
       "info": {
-        "column": 10,
-        "line": 86,
+        "column": 12,
+        "line": 102,
       },
-      "label": "msgRef",
+      "label": "userinfo2",
       "type": "var",
-    } => Set {},
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 69,
+        },
+        "label": "a",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 98,
+        },
+        "label": "b",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 17,
+          "comment": "这是注释",
+          "line": 70,
+        },
+        "label": "number",
+        "type": "var",
+      },
+    },
   },
   "nodes": Set {
     {
       "info": {
+        "column": 6,
+        "line": 69,
+      },
+      "label": "a",
+      "type": "var",
+    },
+    {
+      "info": {
         "column": 17,
         "comment": "这是注释",
-        "line": 66,
+        "line": 70,
       },
       "label": "number",
       "type": "var",
@@ -132,7 +252,7 @@
     {
       "info": {
         "column": 10,
-        "line": 83,
+        "line": 98,
       },
       "label": "b",
       "type": "var",
@@ -140,7 +260,7 @@
     {
       "info": {
         "column": 10,
-        "line": 68,
+        "line": 72,
       },
       "label": "count",
       "type": "var",
@@ -148,31 +268,31 @@
     {
       "info": {
         "column": 6,
-        "line": 91,
+        "line": 111,
       },
       "label": "c",
       "type": "var",
     },
     {
       "info": {
+        "column": 10,
+        "line": 74,
+      },
+      "label": "dataNumber",
+      "type": "var",
+    },
+    {
+      "info": {
         "column": 6,
-        "line": 71,
+        "line": 83,
       },
       "label": "plus",
       "type": "fun",
     },
     {
       "info": {
-        "column": 6,
-        "line": 75,
-      },
-      "label": "add",
-      "type": "fun",
-    },
-    {
-      "info": {
         "column": 10,
-        "line": 84,
+        "line": 103,
       },
       "label": "ComponentD",
       "type": "fun",
@@ -180,9 +300,33 @@
     {
       "info": {
         "column": 10,
-        "line": 86,
+        "line": 105,
       },
       "label": "msgRef",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 13,
+        "line": 89,
+      },
+      "label": "add",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 100,
+      },
+      "label": "userinfo",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 12,
+        "line": 102,
+      },
+      "label": "userinfo2",
       "type": "var",
     },
   },

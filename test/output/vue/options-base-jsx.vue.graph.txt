@@ -55,9 +55,9 @@
       {
         "info": {
           "column": 6,
-          "line": 24,
+          "line": 20,
         },
-        "label": "add",
+        "label": "plus",
         "type": "fun",
       },
     },

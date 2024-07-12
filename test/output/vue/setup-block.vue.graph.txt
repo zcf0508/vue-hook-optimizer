@@ -4,7 +4,7 @@
       "info": {
         "column": 6,
         "comment": "route",
-        "line": 7,
+        "line": 9,
       },
       "label": "route",
       "type": "var",
@@ -13,7 +13,7 @@
       "info": {
         "column": 6,
         "comment": "path",
-        "line": 9,
+        "line": 11,
         "used": Set {
           "watch",
         },
@@ -25,7 +25,7 @@
         "info": {
           "column": 6,
           "comment": "route",
-          "line": 7,
+          "line": 9,
         },
         "label": "route",
         "type": "var",
@@ -34,7 +34,7 @@
     {
       "info": {
         "column": 6,
-        "line": 11,
+        "line": 13,
         "used": Set {
           "watch",
         },
@@ -46,7 +46,7 @@
         "info": {
           "column": 6,
           "comment": "path",
-          "line": 9,
+          "line": 11,
           "used": Set {
             "watch",
           },
@@ -59,7 +59,7 @@
       "info": {
         "column": 6,
         "comment": "这是注释11",
-        "line": 19,
+        "line": 21,
       },
       "label": "data",
       "type": "var",
@@ -67,7 +67,7 @@
     {
       "info": {
         "column": 6,
-        "line": 23,
+        "line": 25,
       },
       "label": "age",
       "type": "var",
@@ -75,7 +75,7 @@
     {
       "info": {
         "column": 10,
-        "line": 25,
+        "line": 27,
       },
       "label": "restArr",
       "type": "var",
@@ -83,7 +83,7 @@
     {
       "info": {
         "column": 11,
-        "line": 26,
+        "line": 28,
       },
       "label": "restObj",
       "type": "var",
@@ -91,7 +91,7 @@
     {
       "info": {
         "column": 9,
-        "line": 28,
+        "line": 30,
       },
       "label": "addAge",
       "type": "fun",
@@ -99,7 +99,7 @@
       {
         "info": {
           "column": 6,
-          "line": 23,
+          "line": 25,
         },
         "label": "age",
         "type": "var",
@@ -108,7 +108,7 @@
     {
       "info": {
         "column": 6,
-        "line": 32,
+        "line": 34,
       },
       "label": "updateName",
       "type": "fun",
@@ -117,7 +117,7 @@
         "info": {
           "column": 6,
           "comment": "这是注释11",
-          "line": 19,
+          "line": 21,
         },
         "label": "data",
         "type": "var",
@@ -126,7 +126,7 @@
     {
       "info": {
         "column": 9,
-        "line": 36,
+        "line": 38,
       },
       "label": "funA",
       "type": "fun",
@@ -134,7 +134,7 @@
     {
       "info": {
         "column": 8,
-        "line": 43,
+        "line": 45,
       },
       "label": "varB",
       "type": "var",
@@ -142,7 +142,7 @@
       {
         "info": {
           "column": 9,
-          "line": 36,
+          "line": 38,
         },
         "label": "funA",
         "type": "fun",
@@ -150,9 +150,43 @@
     },
     {
       "info": {
+        "column": 6,
+        "line": 47,
+      },
+      "label": "varB2",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 8,
+          "line": 45,
+        },
+        "label": "varB",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 49,
+      },
+      "label": "ddd",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 8,
+          "line": 45,
+        },
+        "label": "varB",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
         "column": 9,
         "comment": "这是注释",
-        "line": 45,
+        "line": 54,
         "used": Set {
           "onMounted",
           "provide",
@@ -165,7 +199,7 @@
         "info": {
           "column": 9,
           "comment": "这是注释",
-          "line": 45,
+          "line": 54,
           "used": Set {
             "onMounted",
             "provide",
@@ -178,7 +212,7 @@
     {
       "info": {
         "column": 8,
-        "line": 52,
+        "line": 61,
       },
       "label": "varD",
       "type": "var",
@@ -187,7 +221,7 @@
         "info": {
           "column": 9,
           "comment": "这是注释",
-          "line": 45,
+          "line": 54,
           "used": Set {
             "onMounted",
             "provide",
@@ -199,7 +233,7 @@
       {
         "info": {
           "column": 8,
-          "line": 43,
+          "line": 45,
         },
         "label": "varB",
         "type": "var",
@@ -208,7 +242,7 @@
     {
       "info": {
         "column": 14,
-        "line": 52,
+        "line": 61,
       },
       "label": "varE",
       "type": "var",
@@ -217,7 +251,7 @@
         "info": {
           "column": 9,
           "comment": "这是注释",
-          "line": 45,
+          "line": 54,
           "used": Set {
             "onMounted",
             "provide",
@@ -229,10 +263,185 @@
       {
         "info": {
           "column": 8,
-          "line": 43,
+          "line": 45,
         },
         "label": "varB",
         "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 7,
+        "line": 73,
+      },
+      "label": "userinfo",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 17,
+        "line": 73,
+      },
+      "label": "setUserinfo",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 76,
+      },
+      "label": "aaa1",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 78,
+      },
+      "label": "bbb2",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 76,
+        },
+        "label": "aaa1",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 80,
+      },
+      "label": "cc333",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 78,
+        },
+        "label": "bbb2",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 82,
+      },
+      "label": "updateBBB",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 80,
+        },
+        "label": "cc333",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 76,
+        },
+        "label": "aaa1",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 49,
+        },
+        "label": "ddd",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 88,
+      },
+      "label": "ddd4",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 89,
+      },
+      "label": "eee5",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 88,
+        },
+        "label": "ddd4",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 91,
+      },
+      "label": "add1111",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 9,
+        "line": 93,
+      },
+      "label": "add2222",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 91,
+        },
+        "label": "add1111",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 97,
+      },
+      "label": "add333",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "line": 93,
+        },
+        "label": "add2222",
+        "type": "fun",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 101,
+      },
+      "label": "add4444",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 97,
+        },
+        "label": "add333",
+        "type": "fun",
       },
     },
   },
@@ -241,7 +450,7 @@
       "info": {
         "column": 6,
         "comment": "route",
-        "line": 7,
+        "line": 9,
       },
       "label": "route",
       "type": "var",
@@ -250,7 +459,7 @@
       "info": {
         "column": 6,
         "comment": "path",
-        "line": 9,
+        "line": 11,
         "used": Set {
           "watch",
         },
@@ -261,7 +470,7 @@
     {
       "info": {
         "column": 6,
-        "line": 11,
+        "line": 13,
         "used": Set {
           "watch",
         },
@@ -273,7 +482,7 @@
       "info": {
         "column": 6,
         "comment": "这是注释11",
-        "line": 19,
+        "line": 21,
       },
       "label": "data",
       "type": "var",
@@ -281,7 +490,7 @@
     {
       "info": {
         "column": 6,
-        "line": 23,
+        "line": 25,
       },
       "label": "age",
       "type": "var",
@@ -289,7 +498,7 @@
     {
       "info": {
         "column": 10,
-        "line": 25,
+        "line": 27,
       },
       "label": "restArr",
       "type": "var",
@@ -297,7 +506,7 @@
     {
       "info": {
         "column": 11,
-        "line": 26,
+        "line": 28,
       },
       "label": "restObj",
       "type": "var",
@@ -305,7 +514,7 @@
     {
       "info": {
         "column": 9,
-        "line": 28,
+        "line": 30,
       },
       "label": "addAge",
       "type": "fun",
@@ -313,7 +522,7 @@
     {
       "info": {
         "column": 6,
-        "line": 32,
+        "line": 34,
       },
       "label": "updateName",
       "type": "fun",
@@ -321,7 +530,7 @@
     {
       "info": {
         "column": 9,
-        "line": 36,
+        "line": 38,
       },
       "label": "funA",
       "type": "fun",
@@ -329,16 +538,32 @@
     {
       "info": {
         "column": 8,
-        "line": 43,
+        "line": 45,
       },
       "label": "varB",
       "type": "var",
     },
     {
       "info": {
+        "column": 6,
+        "line": 47,
+      },
+      "label": "varB2",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 49,
+      },
+      "label": "ddd",
+      "type": "var",
+    },
+    {
+      "info": {
         "column": 9,
         "comment": "这是注释",
-        "line": 45,
+        "line": 54,
         "used": Set {
           "onMounted",
           "provide",
@@ -350,7 +575,7 @@
     {
       "info": {
         "column": 8,
-        "line": 52,
+        "line": 61,
       },
       "label": "varD",
       "type": "var",
@@ -358,10 +583,106 @@
     {
       "info": {
         "column": 14,
-        "line": 52,
+        "line": 61,
       },
       "label": "varE",
       "type": "var",
+    },
+    {
+      "info": {
+        "column": 7,
+        "line": 73,
+      },
+      "label": "userinfo",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 73,
+      },
+      "label": "setUserinfo",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 76,
+      },
+      "label": "aaa1",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 78,
+      },
+      "label": "bbb2",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 80,
+      },
+      "label": "cc333",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 82,
+      },
+      "label": "updateBBB",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 88,
+      },
+      "label": "ddd4",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 89,
+      },
+      "label": "eee5",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 91,
+      },
+      "label": "add1111",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 93,
+      },
+      "label": "add2222",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 97,
+      },
+      "label": "add333",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 101,
+      },
+      "label": "add4444",
+      "type": "fun",
     },
   },
 }

@@ -81,6 +81,12 @@
         this.add();
       }
     },
+    provide() {
+      return {
+        count: this.count,
+        number: this.number
+      }
+    },
     watch: {
       'count': {
         handler:()=> {
@@ -88,16 +94,10 @@
         },
       }
     },
-    provide() {
-      return {
-        count: this.count,
-        number: this.number
-      }
-    },
-    created() {
+    created: function() {
       this.add()
       console.log(this.number)
-    },
+    }
   }
 </script>
 

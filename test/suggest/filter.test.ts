@@ -176,15 +176,15 @@ describe('suggest tests', () => {
     };
     const node2: TypedNode = {
       label: 'node2',
-      type: NodeType.fun,
+      type: NodeType.var,
     };
     const node3: TypedNode = {
       label: 'node3',
-      type: NodeType.fun,
+      type: NodeType.var,
     };
     const node4: TypedNode = {
       label: 'node4',
-      type: NodeType.fun,
+      type: NodeType.var,
     };
     const node5: TypedNode = {
       label: 'node4',
@@ -197,7 +197,7 @@ describe('suggest tests', () => {
     graph.set(node5, new Set([node5]));
 
     expect(findLinearPaths(graph)).toEqual([
-      [node2, node3],
+      [node1, node2, node3],
     ]);
   });
   it('graph linear paths 2', () => {
