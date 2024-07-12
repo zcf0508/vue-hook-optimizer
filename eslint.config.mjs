@@ -52,6 +52,7 @@ export default typegen(antfu({
           ignoreRegExpLiterals: true,
           ignoreStrings: true,
           ignoreUrls: true,
+          ignoreTemplateLiterals: true,
           ignoreComments: true,
         },
       ],
