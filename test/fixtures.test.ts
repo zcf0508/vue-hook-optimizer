@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import fg from 'fast-glob';
-import { analyzeOptions, analyzeSetupScript, analyzeTemplate, analyzeTsx, parse } from '@/index';
+import { analyzeOptions, analyzeSetupScript, analyzeStyle, analyzeTemplate, analyzeTsx, parse } from '@/index';
 
 describe('fixtures', async () => {
   const frameworks = ['vue', 'react'] as const;
@@ -13,6 +13,9 @@ describe('fixtures', async () => {
         const source = readFileSync(test, 'utf-8');
         if (framework === 'vue') {
           const sfc = parse(source);
+
+          const nodesUsedInStyle = analyzeStyle(sfc.descriptor.styles || []);
+
           if (test.includes('tsx')) {
             const { graph, nodesUsedInTemplate } = analyzeTsx(
               sfc.descriptor.script?.content || '',
@@ -27,7 +30,7 @@ describe('fixtures', async () => {
               ? analyzeTemplate(sfc.descriptor.template!.content)
               : new Set<string>();
 
-            await expect(new Set([...nodesUsedInTemplate, ...nodes]))
+            await expect(new Set([...nodesUsedInStyle, ...nodesUsedInTemplate, ...nodes]))
               .toMatchFileSnapshot(`./output/${testName}.nodes.txt`);
           }
           else if (sfc.descriptor.scriptSetup?.content) {
@@ -41,7 +44,7 @@ describe('fixtures', async () => {
             const nodes = sfc.descriptor.template?.content
               ? analyzeTemplate(sfc.descriptor.template!.content)
               : new Set<string>();
-            await expect(nodes)
+            await expect(new Set([...nodesUsedInStyle, ...nodes]))
               .toMatchFileSnapshot(`./output/${testName}.nodes.txt`);
           }
           else {
@@ -57,7 +60,7 @@ describe('fixtures', async () => {
               ? analyzeTemplate(sfc.descriptor.template!.content)
               : new Set<string>();
 
-            await expect(new Set([...nodesUsedInTemplate, ...nodes]))
+            await expect(new Set([...nodesUsedInStyle, ...nodesUsedInTemplate, ...nodes]))
               .toMatchFileSnapshot(`./output/${testName}.nodes.txt`);
           }
         }
