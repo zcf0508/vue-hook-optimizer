@@ -4,6 +4,7 @@ import { window } from 'vscode';
 import { template } from 'lodash-es';
 import { analyze } from './analyze';
 import { dark, light } from './themes';
+import * as meta from './generated-meta';
 
 const visTemplate = template(`<html>
 <head>
@@ -150,7 +151,7 @@ const outputChannel = window.createOutputChannel('Vue Hook Optimizer');
 let alerted = false;
 
 export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(vscode.commands.registerCommand('vho.action.analyze', async () => {
+  context.subscriptions.push(vscode.commands.registerCommand(meta.commands.vhoActionAnalyze, async () => {
     // 根据主题获取vis config
     const config = getVisConfigByTheme();
     // 获取当前vue文件的内容
@@ -239,8 +240,8 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function getVisConfigByTheme() {
-  const config = vscode.workspace.getConfiguration('vho');
-  const theme = config.get('theme');
+  const config = vscode.workspace.getConfiguration();
+  const theme = config.get(meta.configs.vhoTheme.key, meta.configs.vhoTheme.default);
 
   if (theme === 'auto') {
     const themeKind = vscode.window.activeColorTheme.kind;
@@ -264,8 +265,8 @@ function getVisConfigByTheme() {
 }
 
 function getLauguageConfig() {
-  const config = vscode.workspace.getConfiguration('vho');
-  return config.get<'vue' | 'react'>('language') || 'vue';
+  const config = vscode.workspace.getConfiguration();
+  return config.get(meta.configs.vhoLanguage.key, meta.configs.vhoLanguage.default) || 'vue';
 }
 
 export function deactivate() {

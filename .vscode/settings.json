@@ -68,5 +68,14 @@
   ],
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
-  "editor.insertSpaces": true
+  "editor.insertSpaces": true,
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "packages/vscode/package.json",
+        "isAsync": true,
+        "cmd": "npm -C packages/vscode run update"
+      }
+    ]
+  }
 }
