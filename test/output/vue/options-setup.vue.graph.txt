@@ -1,0 +1,189 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 17,
+        "comment": "这是注释",
+        "line": 66,
+      },
+      "label": "number",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 83,
+      },
+      "label": "b",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 68,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 68,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 91,
+      },
+      "label": "c",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 68,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 71,
+      },
+      "label": "plus",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 71,
+        },
+        "label": "plus",
+        "type": "fun",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 75,
+      },
+      "label": "add",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 17,
+          "comment": "这是注释",
+          "line": 66,
+        },
+        "label": "number",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 75,
+        },
+        "label": "add",
+        "type": "fun",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 68,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 84,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 86,
+      },
+      "label": "msgRef",
+      "type": "var",
+    } => Set {},
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 17,
+        "comment": "这是注释",
+        "line": 66,
+      },
+      "label": "number",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 83,
+      },
+      "label": "b",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 68,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 91,
+      },
+      "label": "c",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 71,
+      },
+      "label": "plus",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 75,
+      },
+      "label": "add",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 84,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 86,
+      },
+      "label": "msgRef",
+      "type": "var",
+    },
+  },
+}

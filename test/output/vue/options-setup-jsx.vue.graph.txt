@@ -1,0 +1,161 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 10,
+        "line": 10,
+      },
+      "label": "data",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 13,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 15,
+      },
+      "label": "methods",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 15,
+        },
+        "label": "methods",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 10,
+        },
+        "label": "data",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 13,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 27,
+      },
+      "label": "a",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 13,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 28,
+      },
+      "label": "b",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 13,
+        },
+        "label": "count",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 29,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 31,
+      },
+      "label": "msgRef",
+      "type": "var",
+    } => Set {},
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 10,
+        "line": 10,
+      },
+      "label": "data",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 13,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 15,
+      },
+      "label": "methods",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 27,
+      },
+      "label": "a",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 28,
+      },
+      "label": "b",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 29,
+      },
+      "label": "ComponentD",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 31,
+      },
+      "label": "msgRef",
+      "type": "var",
+    },
+  },
+}

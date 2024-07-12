@@ -11,8 +11,8 @@ export default typegen(antfu({
 }, [
   {
     ignores: [
-      'test/**/*.vue',
-      'test/**/*.jsx',
+      'fixtures/**/*',
+      'test/output/**/*',
       'public/**/*',
       'components/ui/**/*',
     ],

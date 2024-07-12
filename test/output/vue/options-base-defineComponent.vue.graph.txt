@@ -1,0 +1,130 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 65,
+      },
+      "label": "number",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 69,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 8,
+          "line": 65,
+        },
+        "label": "number",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 72,
+      },
+      "label": "double",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 8,
+          "line": 65,
+        },
+        "label": "number",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 82,
+      },
+      "label": "plus",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 82,
+        },
+        "label": "plus",
+        "type": "fun",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 86,
+      },
+      "label": "add",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 8,
+          "line": 65,
+        },
+        "label": "number",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 86,
+        },
+        "label": "add",
+        "type": "fun",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 65,
+      },
+      "label": "number",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 69,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 72,
+      },
+      "label": "double",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 82,
+      },
+      "label": "plus",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 86,
+      },
+      "label": "add",
+      "type": "fun",
+    },
+  },
+}

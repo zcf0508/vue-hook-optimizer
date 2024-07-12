@@ -1,0 +1,9 @@
+Set {
+  "ComponentD",
+  "msgRef",
+  "msg",
+  "plus",
+  "count",
+  "number",
+  "add",
+}

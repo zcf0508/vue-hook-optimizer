@@ -1,0 +1,13 @@
+Set {
+  "uiThemeConfig",
+  "ext1",
+  "wsInited",
+  "terminalFullScreen",
+  "confsCss",
+  "themeProps",
+  "store",
+  "cpConf",
+  "upgradeInfo",
+  "installSrc",
+  "outerProps",
+}

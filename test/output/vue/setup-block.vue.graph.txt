@@ -1,0 +1,367 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 6,
+        "comment": "route",
+        "line": 7,
+      },
+      "label": "route",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "comment": "path",
+        "line": 9,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "path",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "comment": "route",
+          "line": 7,
+        },
+        "label": "route",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 11,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "lmsg",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "comment": "path",
+          "line": 9,
+          "used": Set {
+            "watch",
+          },
+        },
+        "label": "path",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "comment": "这是注释11",
+        "line": 19,
+      },
+      "label": "data",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 23,
+      },
+      "label": "age",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 25,
+      },
+      "label": "restArr",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 11,
+        "line": 26,
+      },
+      "label": "restObj",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 9,
+        "line": 28,
+      },
+      "label": "addAge",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 23,
+        },
+        "label": "age",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 32,
+      },
+      "label": "updateName",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "comment": "这是注释11",
+          "line": 19,
+        },
+        "label": "data",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 36,
+      },
+      "label": "funA",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 43,
+      },
+      "label": "varB",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "line": 36,
+        },
+        "label": "funA",
+        "type": "fun",
+      },
+    },
+    {
+      "info": {
+        "column": 9,
+        "comment": "这是注释",
+        "line": 45,
+        "used": Set {
+          "onMounted",
+          "provide",
+        },
+      },
+      "label": "funC",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "comment": "这是注释",
+          "line": 45,
+          "used": Set {
+            "onMounted",
+            "provide",
+          },
+        },
+        "label": "funC",
+        "type": "fun",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 52,
+      },
+      "label": "varD",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "comment": "这是注释",
+          "line": 45,
+          "used": Set {
+            "onMounted",
+            "provide",
+          },
+        },
+        "label": "funC",
+        "type": "fun",
+      },
+      {
+        "info": {
+          "column": 8,
+          "line": 43,
+        },
+        "label": "varB",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 14,
+        "line": 52,
+      },
+      "label": "varE",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "comment": "这是注释",
+          "line": 45,
+          "used": Set {
+            "onMounted",
+            "provide",
+          },
+        },
+        "label": "funC",
+        "type": "fun",
+      },
+      {
+        "info": {
+          "column": 8,
+          "line": 43,
+        },
+        "label": "varB",
+        "type": "var",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 6,
+        "comment": "route",
+        "line": 7,
+      },
+      "label": "route",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "comment": "path",
+        "line": 9,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "path",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 11,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "lmsg",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "comment": "这是注释11",
+        "line": 19,
+      },
+      "label": "data",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 23,
+      },
+      "label": "age",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 25,
+      },
+      "label": "restArr",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 26,
+      },
+      "label": "restObj",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 28,
+      },
+      "label": "addAge",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 32,
+      },
+      "label": "updateName",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 36,
+      },
+      "label": "funA",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 43,
+      },
+      "label": "varB",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 9,
+        "comment": "这是注释",
+        "line": 45,
+        "used": Set {
+          "onMounted",
+          "provide",
+        },
+      },
+      "label": "funC",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 52,
+      },
+      "label": "varD",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 14,
+        "line": 52,
+      },
+      "label": "varE",
+      "type": "var",
+    },
+  },
+}

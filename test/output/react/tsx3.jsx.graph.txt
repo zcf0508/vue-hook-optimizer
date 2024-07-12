@@ -1,0 +1,363 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 12,
+        "line": 59,
+      },
+      "label": "store",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 61,
+      },
+      "label": "configLoaded",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 62,
+      },
+      "label": "config",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 63,
+      },
+      "label": "terminalFullScreen",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 64,
+      },
+      "label": "pinned",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 65,
+      },
+      "label": "isSencondInstance",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 66,
+      },
+      "label": "pinnedQuickCommandBar",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 67,
+      },
+      "label": "wsInited",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 68,
+      },
+      "label": "upgradeInfo",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 69,
+      },
+      "label": "installSrc",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 70,
+      },
+      "label": "uiThemeConfig",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 72,
+      },
+      "label": "cls",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 61,
+        },
+        "label": "configLoaded",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 12,
+          "line": 59,
+        },
+        "label": "store",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 64,
+        },
+        "label": "pinned",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 66,
+        },
+        "label": "pinnedQuickCommandBar",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 63,
+        },
+        "label": "terminalFullScreen",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 65,
+        },
+        "label": "isSencondInstance",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 82,
+      },
+      "label": "ext1",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 72,
+        },
+        "label": "cls",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 85,
+      },
+      "label": "cpConf",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 86,
+      },
+      "label": "confsCss",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 85,
+        },
+        "label": "cpConf",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 95,
+      },
+      "label": "themeProps",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 12,
+          "line": 59,
+        },
+        "label": "store",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 98,
+      },
+      "label": "outerProps",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 6,
+          "line": 62,
+        },
+        "label": "config",
+        "type": "var",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 12,
+        "line": 59,
+      },
+      "label": "store",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 61,
+      },
+      "label": "configLoaded",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 62,
+      },
+      "label": "config",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 63,
+      },
+      "label": "terminalFullScreen",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 64,
+      },
+      "label": "pinned",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 65,
+      },
+      "label": "isSencondInstance",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 66,
+      },
+      "label": "pinnedQuickCommandBar",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 67,
+      },
+      "label": "wsInited",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 68,
+      },
+      "label": "upgradeInfo",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 69,
+      },
+      "label": "installSrc",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 70,
+      },
+      "label": "uiThemeConfig",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 72,
+      },
+      "label": "cls",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 82,
+      },
+      "label": "ext1",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 85,
+      },
+      "label": "cpConf",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 86,
+      },
+      "label": "confsCss",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 95,
+      },
+      "label": "themeProps",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 98,
+      },
+      "label": "outerProps",
+      "type": "var",
+    },
+  },
+}

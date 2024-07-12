@@ -1,0 +1,104 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 9,
+        "line": 1,
+      },
+      "label": "open",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 15,
+        "line": 1,
+      },
+      "label": "setOpen",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 9,
+        "line": 3,
+      },
+      "label": "xx",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 2,
+        "line": 5,
+      },
+      "label": "processInfo",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "line": 1,
+        },
+        "label": "open",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "writeBaseInfo",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 9,
+          "line": 3,
+        },
+        "label": "xx",
+        "type": "var",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 9,
+        "line": 1,
+      },
+      "label": "open",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 15,
+        "line": 1,
+      },
+      "label": "setOpen",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 3,
+      },
+      "label": "xx",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 2,
+        "line": 5,
+      },
+      "label": "processInfo",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "writeBaseInfo",
+      "type": "fun",
+    },
+  },
+}

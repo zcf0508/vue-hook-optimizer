@@ -53,7 +53,7 @@ function funC(varB) { // 这是注释
 const [ varD, varE ] = funC(varB)
 
 onMounted(() => {
-	funC()
+	funC?.()
 })
 
 const props1 = withDefaults(defineProps<{test: number}>(), {

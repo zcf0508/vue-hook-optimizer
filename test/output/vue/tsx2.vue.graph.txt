@@ -1,0 +1,128 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 10,
+        "line": 21,
+      },
+      "label": "focus",
+      "type": "fun",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 30,
+        },
+        "label": "aa",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 27,
+        },
+        "label": "x",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 30,
+      },
+      "label": "aa",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 33,
+      },
+      "label": "AA",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 10,
+          "line": 30,
+        },
+        "label": "aa",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 25,
+      },
+      "label": "open",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 27,
+      },
+      "label": "x",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 28,
+      },
+      "label": "y",
+      "type": "var",
+    } => Set {},
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 10,
+        "line": 21,
+      },
+      "label": "focus",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 30,
+      },
+      "label": "aa",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 33,
+      },
+      "label": "AA",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 25,
+      },
+      "label": "open",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 27,
+      },
+      "label": "x",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 28,
+      },
+      "label": "y",
+      "type": "var",
+    },
+  },
+}
