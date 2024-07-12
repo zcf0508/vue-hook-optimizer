@@ -83,6 +83,9 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
 
   // 计算每个节点的入度
   for (const [node, edges] of graph.entries()) {
+    if (!nodeInDegrees.has(node)) {
+      nodeInDegrees.set(node, 0); // 确保每个节点都在入度映射中
+    }
     for (const edge of edges) {
       const inDegree = nodeInDegrees.get(edge) || 0;
       nodeInDegrees.set(edge, inDegree + 1);

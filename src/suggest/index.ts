@@ -71,15 +71,23 @@ export function gen(
 
     const paths = findLinearPaths(g);
     paths.forEach((path) => {
-      suggestions.push({
-        type: SuggestionType.warning,
-        message: `Nodes [${
-          path.length > 10
-            ? `${path.slice(0, 10).map(node => node.label).join(',')}...(${path.length})`
-            : path.map(node => node.label).join(',')
-        }] are have function chain calls, perhaps you can refactor it.`,
-        nodeInfo: path,
-      });
+      const firstUsedNodeIndex = path.findIndex(node => usedNodes.has(node.label));
+      const reverseLastNotUsedNodeIndex = path.slice().reverse().findIndex(node => !usedNodes.has(node.label));
+      const lastNotUsedNodeIndex = reverseLastNotUsedNodeIndex !== -1
+        ? path.length - 1 - reverseLastNotUsedNodeIndex
+        : -1;
+
+      if (firstUsedNodeIndex > -1 && firstUsedNodeIndex < lastNotUsedNodeIndex) {
+        suggestions.push({
+          type: SuggestionType.warning,
+          message: `Nodes [${
+            path.length > 10
+              ? `${path.slice(0, 10).map(node => node.label).join(',')}...(${path.length})`
+              : path.map(node => node.label).join(',')
+          }] are have function chain calls, perhaps you can refactor it.`,
+          nodeInfo: path,
+        });
+      }
     });
 
     if (g.size > 5) {

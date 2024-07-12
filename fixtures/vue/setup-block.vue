@@ -99,9 +99,6 @@ const add333 =() => {
   add2222()
 } 
 
-const add4444 =() => {
-  add333()
-} 
 
 </script>
 
@@ -113,7 +110,9 @@ const add4444 =() => {
     {{ userinfo }}
     <input :value="data['name' as string]" @input="updateName" />
     <button @click="addAge"></button>
-    <button @click="add4444"></button>
+    {{ add1111 }}
+    <button @click="add2222"></button>
+    <button @click="add333"></button>
   </div>
 </template>
 

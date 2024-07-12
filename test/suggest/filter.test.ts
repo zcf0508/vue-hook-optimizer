@@ -248,9 +248,9 @@ describe('suggest tests', () => {
       type: NodeType.var,
     };
 
-    graph.set(node1, new Set([]));
     graph.set(node2, new Set([node1]));
     graph.set(node3, new Set([node2]));
+    graph.set(node1, new Set([]));
     graph.set(node4, new Set([node3]));
     graph.set(node5, new Set([]));
 

@@ -427,23 +427,6 @@
         "type": "fun",
       },
     },
-    {
-      "info": {
-        "column": 6,
-        "line": 101,
-      },
-      "label": "add4444",
-      "type": "fun",
-    } => Set {
-      {
-        "info": {
-          "column": 6,
-          "line": 97,
-        },
-        "label": "add333",
-        "type": "fun",
-      },
-    },
   },
   "nodes": Set {
     {
@@ -674,14 +657,6 @@
         "line": 97,
       },
       "label": "add333",
-      "type": "fun",
-    },
-    {
-      "info": {
-        "column": 6,
-        "line": 101,
-      },
-      "label": "add4444",
       "type": "fun",
     },
   },
