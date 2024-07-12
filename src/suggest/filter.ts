@@ -82,7 +82,7 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
   const visitedNodes = new Set();
 
   for (const [node, edges] of graph.entries()) {
-    if (edges.size === 1 && !visitedNodes.has(node) && node.type === NodeType.fun) {
+    if (edges.size === 1 && !visitedNodes.has(node)) {
       const path = [node];
       let nextNode = Array.from(edges)[0];
 
