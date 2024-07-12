@@ -77,30 +77,86 @@ export function onlyFunctions(
 // ---
 
 export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
-  const linearPaths = [];
+  const linearPaths = [] as TypedNode[][];
+  const visitedNodes = new Set<TypedNode>();
+  const nodeInDegrees = new Map<TypedNode, number>();
 
-  const visitedNodes = new Set();
-
+  // 计算每个节点的入度
   for (const [node, edges] of graph.entries()) {
-    if (edges.size === 1 && !visitedNodes.has(node)) {
-      const path = [node];
-      let nextNode = Array.from(edges)[0];
+    for (const edge of edges) {
+      const inDegree = nodeInDegrees.get(edge) || 0;
+      nodeInDegrees.set(edge, inDegree + 1);
+    }
+  }
 
-      visitedNodes.add(node);
+  function dfs(node: TypedNode, path: TypedNode[]) {
+    if (visitedNodes.has(node)) {
+      return;
+    }
 
-      while (graph.get(nextNode)?.size === 1) {
-        if (visitedNodes.has(nextNode)) {
-          break;
-        }
-        path.push(nextNode);
-        visitedNodes.add(nextNode);
-        nextNode = Array.from(graph.get(nextNode)!)[0];
-      }
+    path.push(node);
+    visitedNodes.add(node);
 
+    const edges = graph.get(node) || new Set();
+
+    if (edges.size === 0 || edges.size > 1) {
       if (path.length > 1) {
-        linearPaths.push(path);
+        addOrUpdatePath([...path]);
       }
     }
+    else {
+      const nextNode = Array.from(edges)[0];
+      const nextNodeInDegree = nodeInDegrees.get(nextNode) || 0;
+
+      // 确保下一个节点只有一个入度
+      if (nextNodeInDegree === 1) {
+        dfs(nextNode, path);
+      }
+    }
+
+    path.pop();
+    visitedNodes.delete(node);
+  }
+
+  function addOrUpdatePath(newPath: TypedNode[]) {
+    let shouldAddNewPath = true;
+
+    for (let i = linearPaths.length - 1; i >= 0; i--) {
+      const existingPath = linearPaths[i];
+      if (isSubpath(existingPath, newPath)) {
+        linearPaths.splice(i, 1); // remove the shorter path
+      }
+      else if (isSubpath(newPath, existingPath)) {
+        shouldAddNewPath = false;
+        break;
+      }
+    }
+
+    if (shouldAddNewPath && newPath.length > 2) {
+      linearPaths.push(newPath);
+    }
+  }
+
+  function isSubpath(shortPath: TypedNode[], longPath: TypedNode[]) {
+    if (shortPath.length >= longPath.length) { return false; }
+
+    for (let i = 0; i <= longPath.length - shortPath.length; i++) {
+      let isSub = true;
+      for (let j = 0; j < shortPath.length; j++) {
+        if (shortPath[j] !== longPath[i + j]) {
+          isSub = false;
+          break;
+        }
+      }
+      if (isSub) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  for (const node of graph.keys()) {
+    dfs(node, []);
   }
 
   return linearPaths;

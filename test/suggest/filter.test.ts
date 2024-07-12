@@ -187,7 +187,7 @@ describe('suggest tests', () => {
       type: NodeType.var,
     };
     const node5: TypedNode = {
-      label: 'node4',
+      label: 'node5',
       type: NodeType.fun,
     };
     graph.set(node1, new Set([node2]));
@@ -197,7 +197,7 @@ describe('suggest tests', () => {
     graph.set(node5, new Set([node5]));
 
     expect(findLinearPaths(graph)).toEqual([
-      [node1, node2, node3],
+      [node1, node2, node3, node4],
     ]);
   });
   it('graph linear paths 2', () => {
@@ -224,6 +224,39 @@ describe('suggest tests', () => {
     graph.set(node4, new Set([node3]));
 
     expect(findLinearPaths(graph)).toEqual([]);
+  });
+  it('graph linear paths 3', () => {
+    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const node1: TypedNode = {
+      label: 'node1',
+      type: NodeType.var,
+    };
+    const node2: TypedNode = {
+      label: 'node2',
+      type: NodeType.var,
+    };
+    const node3: TypedNode = {
+      label: 'node3',
+      type: NodeType.var,
+    };
+    const node4: TypedNode = {
+      label: 'node4',
+      type: NodeType.var,
+    };
+    const node5: TypedNode = {
+      label: 'node5',
+      type: NodeType.var,
+    };
+
+    graph.set(node1, new Set([]));
+    graph.set(node2, new Set([node1]));
+    graph.set(node3, new Set([node2]));
+    graph.set(node4, new Set([node3]));
+    graph.set(node5, new Set([]));
+
+    expect(findLinearPaths(graph)).toEqual([
+      [node4, node3, node2, node1],
+    ]);
   });
   it('graph articulation points 1', () => {
     const graph = new Map<TypedNode, Set<TypedNode>>();
