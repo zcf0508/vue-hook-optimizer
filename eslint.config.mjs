@@ -29,6 +29,9 @@ export default typegen(antfu({
       'vue-hook-optimizer/loop-call': ['warn', {
         framework: 'vue',
       }],
+      'vue-hook-optimizer/linear-path': ['warn', {
+        framework: 'vue',
+      }],
     },
   },
   {

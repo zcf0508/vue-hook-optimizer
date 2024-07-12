@@ -138,7 +138,9 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
   }
 
   function isSubpath(shortPath: TypedNode[], longPath: TypedNode[]) {
-    if (shortPath.length >= longPath.length) { return false; }
+    if (shortPath.length >= longPath.length) {
+      return false;
+    }
 
     for (let i = 0; i <= longPath.length - shortPath.length; i++) {
       let isSub = true;

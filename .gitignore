@@ -31,3 +31,4 @@ packages/vscode/dist
 
 !packages/vscode/script/*.min.js
 packages/vscode/script/*.js
+coverage
