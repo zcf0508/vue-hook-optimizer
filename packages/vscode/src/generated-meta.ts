@@ -4,7 +4,7 @@
 // Meta info
 export const publisher = 'zcf0508';
 export const name = 'vue-hook-optimizer-ext';
-export const version = '0.0.56';
+export const version = '0.0.61';
 export const displayName = 'vue-hook-optimizer';
 export const description = undefined;
 export const extensionId = `${publisher}.${name}`;

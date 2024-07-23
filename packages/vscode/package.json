@@ -25,10 +25,6 @@
   ],
   "main": "./dist/index.js",
   "icon": "images/analyze.png",
-  "files": [
-    "dist",
-    "script"
-  ],
   "engines": {
     "vscode": "^1.78.1"
   },

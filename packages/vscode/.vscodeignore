@@ -1,6 +1,7 @@
-src
-node_modules
-test
 .github
 .vscode
+images
+node_modules
 script/*.ts
+src
+test
