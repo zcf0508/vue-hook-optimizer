@@ -1,7 +1,7 @@
 {
   "name": "eslint-plugin-vue-hook-optimizer",
   "type": "module",
-  "version": "0.0.59",
+  "version": "0.0.60",
   "description": "vue-hook-optimizer eslint plugin",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
