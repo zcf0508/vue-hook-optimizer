@@ -311,4 +311,16 @@
     },
     "type": "info",
   },
+  {
+    "message": "Node [stop1] is not used, perhaps you can remove it.",
+    "nodeInfo": {
+      "info": {
+        "column": 6,
+        "line": 107,
+      },
+      "label": "stop1",
+      "type": "var",
+    },
+    "type": "info",
+  },
 ]

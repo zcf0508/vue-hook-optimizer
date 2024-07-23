@@ -455,6 +455,7 @@
           "line": 111,
           "used": Set {
             "watch",
+            "Assignment Expression",
           },
         },
         "label": "stop2",
@@ -465,6 +466,9 @@
       "info": {
         "column": 2,
         "line": 104,
+        "used": Set {
+          "Call Expression",
+        },
       },
       "label": "fun1c",
       "type": "var",
@@ -495,6 +499,7 @@
         "line": 111,
         "used": Set {
           "watch",
+          "Assignment Expression",
         },
       },
       "label": "stop2",
@@ -758,6 +763,9 @@
       "info": {
         "column": 2,
         "line": 104,
+        "used": Set {
+          "Call Expression",
+        },
       },
       "label": "fun1c",
       "type": "var",
@@ -776,6 +784,7 @@
         "line": 111,
         "used": Set {
           "watch",
+          "Assignment Expression",
         },
       },
       "label": "stop2",

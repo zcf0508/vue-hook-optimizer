@@ -5,6 +5,14 @@ type CustomNode = Node & {
   info: TypedNode['info']
 };
 
+function filterNodeUserd(used: Set<string> | undefined) {
+  const usedArray = Array.from(used || []);
+  return new Set(usedArray.filter(u => ![
+    'Assignment Expression',
+    'Call Expression',
+  ].includes(u)));
+}
+
 export function getVisData(
   graph: {
     nodes: Set<TypedNode>
@@ -29,8 +37,8 @@ export function getVisData(
         ? 'used'
         : 'normal',
       title: `${
-        node.info?.used?.size
-          ? `used by ${Array.from(node.info?.used || [])?.map(i => `\`${i}\``).join(',')}\n\n`
+        filterNodeUserd(node.info?.used).size
+          ? `used by ${Array.from(filterNodeUserd(node.info?.used))?.map(i => `\`${i}\``).join(',')}\n\n`
           : ''
       }${
         usedNodes.has(node.label)

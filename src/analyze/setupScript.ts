@@ -693,14 +693,51 @@ export function processSetup(
     ExpressionStatement(path) {
       if (path.type === 'ExpressionStatement'
         && path.node.expression.type === 'CallExpression'
-        && path.node.expression.callee.type === 'Identifier') {
-        traverseHooks(path.node.expression, path.scope);
+        && path.node.expression.callee.type === 'Identifier'
+      ) {
+        const name = path.node.expression.callee.name;
+        if (
+          graph.nodes.has(name)
+          && (path.scope.block.type === 'Program')
+        ) {
+          const _node = nodeCollection.getNode(name);
+          if (_node?.info?.used) {
+            _node?.info?.used?.add('Call Expression');
+          }
+          else if (_node) {
+            _node.info = {
+              ..._node?.info,
+              used: new Set(['Call Expression']),
+            };
+          }
+        }
+        else {
+          traverseHooks(path.node.expression, path.scope);
+        }
       }
       if (path.type === 'ExpressionStatement'
         && path.node.expression.type === 'AssignmentExpression'
         && path.node.expression.right.type === 'CallExpression'
-        && path.node.expression.right.callee.type === 'Identifier') {
+        && path.node.expression.right.callee.type === 'Identifier'
+      ) {
         traverseHooks(path.node.expression.right, path.scope);
+      }
+      if (path.type === 'ExpressionStatement'
+        && path.node.expression.type === 'AssignmentExpression'
+        && path.node.expression.left.type === 'Identifier'
+        && graph.nodes.has(path.node.expression.left.name)
+        && (path.scope.block.type === 'Program')
+      ) {
+        const _node = nodeCollection.getNode(path.node.expression.left.name);
+        if (_node?.info?.used) {
+          _node?.info?.used?.add('Assignment Expression');
+        }
+        else if (_node) {
+          _node.info = {
+            ..._node?.info,
+            used: new Set(['Assignment Expression']),
+          };
+        }
       }
     },
   }, parentScope, parentPath);
