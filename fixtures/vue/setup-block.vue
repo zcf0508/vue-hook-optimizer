@@ -99,6 +99,23 @@ const add333 =() => {
   add2222()
 } 
 
+const {
+  fun1a,
+  fun1b,
+  fun1c,
+} = useFun1()
+
+const stop1 = watchEffect(() => {
+  console.log(fun1a)
+})
+
+let stop2
+stop2 = watch(fun1b, (val) => {
+  console.log(val)
+  stop2?.()
+})
+
+fun1c()
 
 </script>
 

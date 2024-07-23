@@ -1,5 +1,5 @@
 import { babelParse } from '@vue/compiler-sfc';
-import type { Scope } from '@babel/traverse';
+import type { NodePath, Scope, VisitNode } from '@babel/traverse';
 import _traverse from '@babel/traverse';
 import type * as t from '@babel/types';
 import { NodeCollection, NodeType, getComment } from './utils';
@@ -235,8 +235,176 @@ export function processSetup(
     },
   }, parentScope, parentPath);
 
-  // get the relation between the variable and the function
+  function traverseHooks(node: t.ExpressionStatement | t.CallExpression, patentScope: Scope) {
+    if (
+      (
+        node.type === 'ExpressionStatement'
+        && node.expression.type === 'CallExpression'
+        && node.expression.callee.type === 'Identifier'
+      ) || (
+        node.type === 'CallExpression'
+        && node.callee.type === 'Identifier'
+      )
+    ) {
+      const hookName = (() => {
+        if (node.type === 'ExpressionStatement'
+          && node.expression.type === 'CallExpression'
+          && node.expression.callee.type === 'Identifier') {
+          return node.expression.callee.name;
+        }
+        if (node.type === 'CallExpression'
+          && node.callee.type === 'Identifier') {
+          return node.callee.name;
+        }
+      })() || '';
 
+      if (!hookName) {
+        return;
+      }
+
+      const hookBinding = patentScope.getBinding(hookName);
+      if (!(hookBinding === undefined || hookBinding?.scope.block.type === 'Program'
+        || parentScope === hookBinding?.scope)) {
+        return;
+      }
+
+      const expression = (node.type === 'ExpressionStatement'
+        ? node.expression
+        : node) as t.CallExpression;
+
+      const watchArgs = new Set<t.Identifier>();
+
+      if (hookName === 'provide') {
+        traverse(expression, {
+          Identifier(path1) {
+            const binding = path1.scope.getBinding(path1.node.name);
+            if (
+              graph.nodes.has(path1.node.name)
+              && (
+                (path1.parent.type !== 'MemberExpression'
+                && path1.parent.type !== 'OptionalMemberExpression')
+                || path1.parent.object === path1.node
+              )
+              && (binding?.scope.block.type === 'Program'
+              || parentScope === binding?.scope)
+            ) {
+              const _node = nodeCollection.getNode(path1.node.name);
+              if (_node?.info?.used) {
+                _node?.info?.used?.add(hookName);
+              }
+              else if (_node) {
+                _node.info = {
+                  ..._node?.info,
+                  used: new Set([hookName]),
+                };
+              }
+            }
+          },
+        }, patentScope, node);
+      }
+      else if (hookName === 'watch') {
+        if (expression.arguments[0].type === 'Identifier') {
+          const binding = patentScope.getBinding(expression.arguments[0].name);
+          if (
+            graph.nodes.has(expression.arguments[0].name)
+            && (binding?.scope.block.type === 'Program'
+            || parentScope === binding?.scope)
+          ) {
+            watchArgs.add(expression.arguments[0]);
+          }
+        }
+        else {
+          traverse(expression.arguments[0], {
+            Identifier(path1) {
+              const binding = path1.scope.getBinding(path1.node.name);
+              if (
+                graph.nodes.has(path1.node.name)
+                && (
+                  (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
+                  || path1.parent.object === path1.node
+                )
+                && (binding?.scope.block.type === 'Program'
+                || parentScope === binding?.scope)
+              ) {
+                watchArgs.add(path1.node);
+              }
+            },
+          }, patentScope, node);
+        }
+      }
+      else if (hookName === 'useEffect' && expression.arguments[1].type === 'ArrayExpression') {
+        traverse(expression.arguments[1], {
+          Identifier(path1) {
+            const binding = path1.scope.getBinding(path1.node.name);
+            if (
+              graph.nodes.has(path1.node.name)
+              && (
+                (path1.parent.type !== 'MemberExpression'
+                && path1.parent.type !== 'OptionalMemberExpression')
+                || path1.parent.object === path1.node
+              )
+              && (binding?.scope.block.type === 'Program'
+              || parentScope === binding?.scope)
+            ) {
+              watchArgs.add(path1.node);
+            }
+          },
+        }, patentScope, node);
+      }
+      expression.arguments.forEach((argNode, index) => {
+        if (hookName === 'watch' && index === 0 && argNode.type === 'Identifier') {
+          const _node = nodeCollection.getNode(argNode.name);
+          if (_node?.info?.used) {
+            _node?.info?.used?.add(hookName);
+          }
+          else if (_node) {
+            _node.info = {
+              ..._node?.info,
+              used: new Set([hookName]),
+            };
+          }
+          return;
+        }
+        traverse(argNode, {
+          Identifier(path1) {
+            const binding = path1.scope.getBinding(path1.node.name);
+            if (
+              graph.nodes.has(path1.node.name)
+              && (
+                (path1.parent.type !== 'MemberExpression'
+                && path1.parent.type !== 'OptionalMemberExpression')
+                || path1.parent.object === path1.node
+              )
+              && (binding?.scope.block.type === 'Program'
+              || parentScope === binding?.scope)
+            ) {
+              if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
+                const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
+                watchArgs.forEach((watchArg) => {
+                  if (!watchArgsNames.includes(path1.node.name)) {
+                    graph.edges.get(watchArg.name)?.add(path1.node.name);
+                  }
+                });
+              }
+              const _node = nodeCollection.getNode(path1.node.name);
+              if (_node?.info?.used) {
+                _node?.info?.used?.add(hookName);
+              }
+              else if (_node) {
+                _node.info = {
+                  ..._node?.info,
+                  used: new Set([hookName]),
+                };
+              }
+            }
+          },
+        }, patentScope, node);
+      });
+    }
+  }
+
+  // get the relation between the variable and the function
   traverse(ast, {
     FunctionDeclaration(path) {
       const name = path.node.id?.name;
@@ -376,6 +544,9 @@ export function processSetup(
         ].includes(path.node.init.type)
         && path.node.id.type === 'Identifier'
         ) {
+          if (path.node.init.type === 'CallExpression' && path.node.init.callee.type === 'Identifier' && ['watch', 'watchEffect'].includes(path.node.init.callee.name)) {
+            traverseHooks(path.node.init, path.scope);
+          }
           const name = path.node.id?.name;
           if (name && graph.nodes.has(name)) {
             traverse(path.node.init, {
@@ -519,145 +690,17 @@ export function processSetup(
         }, path.scope, path);
       }
     },
-
     ExpressionStatement(path) {
-      if (path.node.expression.type === 'CallExpression' && path.node.expression.callee.type === 'Identifier') {
-        const hookName = path.node.expression.callee.name;
-        const hookBinding = path.scope.getBinding(hookName);
-        if (!(hookBinding === undefined || hookBinding?.scope.block.type === 'Program'
-          || parentScope === hookBinding?.scope)) {
-          return;
-        }
-
-        const watchArgs = new Set<t.Identifier>();
-
-        if (hookName === 'provide') {
-          traverse(path.node.expression, {
-            Identifier(path1) {
-              const binding = path1.scope.getBinding(path1.node.name);
-              if (
-                graph.nodes.has(path1.node.name)
-                && (
-                  (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
-                  || path1.parent.object === path1.node
-                )
-                && (binding?.scope.block.type === 'Program'
-                || parentScope === binding?.scope)
-              ) {
-                const _node = nodeCollection.getNode(path1.node.name);
-                if (_node?.info?.used) {
-                  _node?.info?.used?.add(hookName);
-                }
-                else if (_node) {
-                  _node.info = {
-                    ..._node?.info,
-                    used: new Set([hookName]),
-                  };
-                }
-              }
-            },
-          }, path.scope, path);
-        }
-        else if (hookName === 'watch') {
-          if (path.node.expression.arguments[0].type === 'Identifier') {
-            const binding = path.scope.getBinding(path.node.expression.arguments[0].name);
-            if (
-              graph.nodes.has(path.node.expression.arguments[0].name)
-              && (binding?.scope.block.type === 'Program'
-              || parentScope === binding?.scope)
-            ) {
-              watchArgs.add(path.node.expression.arguments[0]);
-            }
-          }
-          else {
-            traverse(path.node.expression.arguments[0], {
-              Identifier(path1) {
-                const binding = path1.scope.getBinding(path1.node.name);
-                if (
-                  graph.nodes.has(path1.node.name)
-                  && (
-                    (path1.parent.type !== 'MemberExpression'
-                    && path1.parent.type !== 'OptionalMemberExpression')
-                    || path1.parent.object === path1.node
-                  )
-                  && (binding?.scope.block.type === 'Program'
-                  || parentScope === binding?.scope)
-                ) {
-                  watchArgs.add(path1.node);
-                }
-              },
-            }, path.scope, path);
-          }
-        }
-        else if (hookName === 'useEffect' && path.node.expression.arguments[1].type === 'ArrayExpression') {
-          traverse(path.node.expression.arguments[1], {
-            Identifier(path1) {
-              const binding = path1.scope.getBinding(path1.node.name);
-              if (
-                graph.nodes.has(path1.node.name)
-                && (
-                  (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
-                  || path1.parent.object === path1.node
-                )
-                && (binding?.scope.block.type === 'Program'
-                || parentScope === binding?.scope)
-              ) {
-                watchArgs.add(path1.node);
-              }
-            },
-          }, path.scope, path);
-        }
-        path.node.expression.arguments.forEach((argNode, index) => {
-          if (hookName === 'watch' && index === 0 && argNode.type === 'Identifier') {
-            const _node = nodeCollection.getNode(argNode.name);
-            if (_node?.info?.used) {
-              _node?.info?.used?.add(hookName);
-            }
-            else if (_node) {
-              _node.info = {
-                ..._node?.info,
-                used: new Set([hookName]),
-              };
-            }
-            return;
-          }
-          traverse(argNode, {
-            Identifier(path1) {
-              const binding = path1.scope.getBinding(path1.node.name);
-              if (
-                graph.nodes.has(path1.node.name)
-                && (
-                  (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
-                  || path1.parent.object === path1.node
-                )
-                && (binding?.scope.block.type === 'Program'
-                || parentScope === binding?.scope)
-              ) {
-                if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
-                  const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
-                  watchArgs.forEach((watchArg) => {
-                    if (!watchArgsNames.includes(path1.node.name)) {
-                      graph.edges.get(watchArg.name)?.add(path1.node.name);
-                    }
-                  });
-                }
-                const _node = nodeCollection.getNode(path1.node.name);
-                if (_node?.info?.used) {
-                  _node?.info?.used?.add(hookName);
-                }
-                else if (_node) {
-                  _node.info = {
-                    ..._node?.info,
-                    used: new Set([hookName]),
-                  };
-                }
-              }
-            },
-          }, path.scope, path);
-        });
+      if (path.type === 'ExpressionStatement'
+        && path.node.expression.type === 'CallExpression'
+        && path.node.expression.callee.type === 'Identifier') {
+        traverseHooks(path.node.expression, path.scope);
+      }
+      if (path.type === 'ExpressionStatement'
+        && path.node.expression.type === 'AssignmentExpression'
+        && path.node.expression.right.type === 'CallExpression'
+        && path.node.expression.right.callee.type === 'Identifier') {
+        traverseHooks(path.node.expression.right, path.scope);
       }
     },
   }, parentScope, parentPath);

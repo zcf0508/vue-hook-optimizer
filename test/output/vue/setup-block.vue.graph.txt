@@ -427,6 +427,79 @@
         "type": "fun",
       },
     },
+    {
+      "info": {
+        "column": 2,
+        "line": 102,
+        "used": Set {
+          "watchEffect",
+        },
+      },
+      "label": "fun1a",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 2,
+        "line": 103,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "fun1b",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 4,
+          "line": 111,
+          "used": Set {
+            "watch",
+          },
+        },
+        "label": "stop2",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 2,
+        "line": 104,
+      },
+      "label": "fun1c",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 107,
+      },
+      "label": "stop1",
+      "type": "var",
+    } => Set {
+      {
+        "info": {
+          "column": 2,
+          "line": 102,
+          "used": Set {
+            "watchEffect",
+          },
+        },
+        "label": "fun1a",
+        "type": "var",
+      },
+    },
+    {
+      "info": {
+        "column": 4,
+        "line": 111,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "stop2",
+      "type": "var",
+    } => Set {},
   },
   "nodes": Set {
     {
@@ -658,6 +731,55 @@
       },
       "label": "add333",
       "type": "fun",
+    },
+    {
+      "info": {
+        "column": 2,
+        "line": 102,
+        "used": Set {
+          "watchEffect",
+        },
+      },
+      "label": "fun1a",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 2,
+        "line": 103,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "fun1b",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 2,
+        "line": 104,
+      },
+      "label": "fun1c",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 107,
+      },
+      "label": "stop1",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 4,
+        "line": 111,
+        "used": Set {
+          "watch",
+        },
+      },
+      "label": "stop2",
+      "type": "var",
     },
   },
 }
