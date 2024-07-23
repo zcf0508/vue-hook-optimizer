@@ -455,7 +455,6 @@
           "line": 111,
           "used": Set {
             "watch",
-            "Assignment Expression",
           },
         },
         "label": "stop2",
@@ -499,7 +498,6 @@
         "line": 111,
         "used": Set {
           "watch",
-          "Assignment Expression",
         },
       },
       "label": "stop2",
@@ -784,7 +782,6 @@
         "line": 111,
         "used": Set {
           "watch",
-          "Assignment Expression",
         },
       },
       "label": "stop2",

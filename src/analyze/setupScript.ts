@@ -722,23 +722,6 @@ export function processSetup(
       ) {
         traverseHooks(path.node.expression.right, path.scope);
       }
-      if (path.type === 'ExpressionStatement'
-        && path.node.expression.type === 'AssignmentExpression'
-        && path.node.expression.left.type === 'Identifier'
-        && graph.nodes.has(path.node.expression.left.name)
-        && (path.scope.block.type === 'Program')
-      ) {
-        const _node = nodeCollection.getNode(path.node.expression.left.name);
-        if (_node?.info?.used) {
-          _node?.info?.used?.add('Assignment Expression');
-        }
-        else if (_node) {
-          _node.info = {
-            ..._node?.info,
-            used: new Set(['Assignment Expression']),
-          };
-        }
-      }
     },
   }, parentScope, parentPath);
 
