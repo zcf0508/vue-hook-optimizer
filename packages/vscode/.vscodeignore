@@ -1,6 +1,6 @@
 .github
 .vscode
-images
+images/demo*.png
 node_modules
 script/*.ts
 src
