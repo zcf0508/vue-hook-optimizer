@@ -26,7 +26,23 @@ export function getVisData(
   const nodes: CustomNode[] = [];
   const edges: Edge[] = [];
 
+  const inDegreeMap: Record<string, number> = {};
+  const outDegreeMap: Record<string, number> = {};
+  graph.edges.forEach((edge) => {
+    edge.forEach((to) => {
+      if (to) {
+        inDegreeMap[to.label] = (inDegreeMap[to.label] || 0) + 1;
+      }
+    });
+  });
+  graph.edges.forEach((edge, key) => {
+    outDegreeMap[key.label] = edge.size;
+  });
+
   graph.nodes.forEach((node) => {
+    const inDegree = inDegreeMap[node.label] || 0;
+    const outDegree = outDegreeMap[node.label] || 0;
+
     nodes.push({
       id: node.label,
       label: node.label,
@@ -36,6 +52,7 @@ export function getVisData(
       group: usedNodes.has(node.label) || node.info?.used?.size
         ? 'used'
         : 'normal',
+      size: 20 + 1.6 ** ((inDegree * 0.75 + outDegree * 0.25)),
       title: `${
         filterNodeUserd(node.info?.used).size
           ? `used by ${Array.from(filterNodeUserd(node.info?.used))?.map(i => `\`${i}\``).join(',')}\n\n`
