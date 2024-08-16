@@ -113,7 +113,6 @@
     "@types/vscode": "^1.78.1",
     "@vscode/vsce": "^2.26.0",
     "rimraf": "^5.0.5",
-    "vite": "^4.5.3",
     "vscode-ext-gen": "^0.3.1"
   }
 }

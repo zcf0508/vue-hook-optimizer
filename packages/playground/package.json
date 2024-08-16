@@ -21,7 +21,7 @@
     "@unocss/nuxt": "^0.54.3",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
-    "nuxt": "^3.11.2",
+    "nuxt": "^3.12.4",
     "unocss": "^0.54.3"
   }
 }

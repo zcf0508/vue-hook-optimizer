@@ -1,0 +1,24 @@
+{
+  "name": "nuxt-module-vue-hook-optimizer",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.4.38"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^3.12.4",
+    "@nuxt/schema": "^3.12.4",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "unocss": "^0.54.3"
+  }
+}
