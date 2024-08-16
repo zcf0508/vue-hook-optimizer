@@ -366,40 +366,61 @@ export function processSetup(
           }
           return;
         }
-        traverse(argNode, {
-          Identifier(path1) {
-            const binding = path1.scope.getBinding(path1.node.name);
-            if (
-              graph.nodes.has(path1.node.name)
-              && (
-                (path1.parent.type !== 'MemberExpression'
-                && path1.parent.type !== 'OptionalMemberExpression')
-                || path1.parent.object === path1.node
-              )
-              && (binding?.scope.block.type === 'Program'
-              || parentScope === binding?.scope)
-            ) {
-              if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
-                const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
-                watchArgs.forEach((watchArg) => {
-                  if (!watchArgsNames.includes(path1.node.name)) {
-                    graph.edges.get(watchArg.name)?.add(path1.node.name);
-                  }
-                });
-              }
-              const _node = nodeCollection.getNode(path1.node.name);
-              if (_node?.info?.used) {
-                _node?.info?.used?.add(hookName);
-              }
-              else if (_node) {
-                _node.info = {
-                  ..._node?.info,
-                  used: new Set([hookName]),
-                };
-              }
+        if (argNode.type === 'Identifier') {
+          const binding = patentScope.getBinding(argNode.name);
+          if (
+            graph.nodes.has(argNode.name)
+            && (binding?.scope.block.type === 'Program'
+            || parentScope === binding?.scope)
+          ) {
+            const _node = nodeCollection.getNode(argNode.name);
+            if (_node?.info?.used) {
+              _node?.info?.used?.add(hookName);
             }
-          },
-        }, patentScope, node);
+            else if (_node) {
+              _node.info = {
+                ..._node?.info,
+                used: new Set([hookName]),
+              };
+            }
+          }
+        }
+        else {
+          traverse(argNode, {
+            Identifier(path1) {
+              const binding = path1.scope.getBinding(path1.node.name);
+              if (
+                graph.nodes.has(path1.node.name)
+                && (
+                  (path1.parent.type !== 'MemberExpression'
+                  && path1.parent.type !== 'OptionalMemberExpression')
+                  || path1.parent.object === path1.node
+                )
+                && (binding?.scope.block.type === 'Program'
+                || parentScope === binding?.scope)
+              ) {
+                if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
+                  const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
+                  watchArgs.forEach((watchArg) => {
+                    if (!watchArgsNames.includes(path1.node.name)) {
+                      graph.edges.get(watchArg.name)?.add(path1.node.name);
+                    }
+                  });
+                }
+                const _node = nodeCollection.getNode(path1.node.name);
+                if (_node?.info?.used) {
+                  _node?.info?.used?.add(hookName);
+                }
+                else if (_node) {
+                  _node.info = {
+                    ..._node?.info,
+                    used: new Set([hookName]),
+                  };
+                }
+              }
+            },
+          }, patentScope, node);
+        }
       });
     }
   }

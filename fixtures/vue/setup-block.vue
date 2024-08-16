@@ -117,6 +117,14 @@ stop2 = watch(fun1b, (val) => {
 
 fun1c()
 
+const func2a = () => {
+  return '2a'
+}
+
+onMounted(func2a)
+
+watch(() => [], func2a)
+
 </script>
 
 <template>

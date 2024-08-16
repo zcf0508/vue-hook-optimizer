@@ -503,6 +503,18 @@
       "label": "stop2",
       "type": "var",
     } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 119,
+        "used": Set {
+          "onMounted",
+          "watch",
+        },
+      },
+      "label": "func2a",
+      "type": "fun",
+    } => Set {},
   },
   "nodes": Set {
     {
@@ -786,6 +798,18 @@
       },
       "label": "stop2",
       "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 119,
+        "used": Set {
+          "onMounted",
+          "watch",
+        },
+      },
+      "label": "func2a",
+      "type": "fun",
     },
   },
 }
