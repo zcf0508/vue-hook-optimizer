@@ -37,6 +37,8 @@ pnpm run play
 - [x] 支持 `options api`
 - [x] [vscode 扩展](./packages/vscode)
 - [x] 支持 `React`
+- [x] eslint 规则
+- [x] mcp server
 
 ## 贡献
 

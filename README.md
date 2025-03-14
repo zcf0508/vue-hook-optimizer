@@ -41,6 +41,8 @@ We can find out some variables are isolated, and some methods are over-associati
 - [x] support `options api`
 - [x] [vscode extension](./packages/vscode)
 - [x] support `React`
+- [x] eslint rules
+- [x] mcp server
 
 ## Contribution
 
