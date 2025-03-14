@@ -6,7 +6,16 @@
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
   "homepage": "https://github.com/zcf0508/vue-hook-optimizer",
-  "bugs": "https://github.com/zcf0508/vue-hook-optimizer/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zcf0508/vue-hook-optimizer.git"
+  },
+  "keywords": [
+    "vue",
+    "hooks",
+    "mcp"
+  ],
+  "sideEffects": false,
   "bin": {
     "mcp-server-vue-hook-optimizer": "dist/index.mjs"
   },
