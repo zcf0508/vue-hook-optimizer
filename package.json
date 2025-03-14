@@ -41,6 +41,7 @@
     "build": "tsup",
     "build:ext": "npm -C packages/vscode run build",
     "build:eslint": "npm -C packages/eslint run build",
+    "build:mcp": "npm -C packages/mcp run build",
     "play": "npm -C packages/playground run dev",
     "lint": "eslint .",
     "test": "vitest",

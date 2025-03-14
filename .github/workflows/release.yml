@@ -51,6 +51,16 @@ jobs:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_CONFIG_PROVENANCE: true
 
+      - name: PNPM build mcp
+        run: pnpm run build:mcp
+
+      - name: Publish mcp to NPM
+        run: pnpm publish --access public --no-git-checks
+        working-directory: ./packages/mcp
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_CONFIG_PROVENANCE: true
+
       - name: Publish to VSCE
         run: pnpm vsce publish --no-dependencies -p ${{secrets.VSCE_TOKEN}}
         working-directory: ./packages/vscode

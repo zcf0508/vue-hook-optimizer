@@ -1,0 +1,30 @@
+{
+  "name": "mcp-server-vue-hook-optimizer",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "MCP server for vue-hook-optimizer",
+  "author": "zcf0508 <zcf0508@live.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/zcf0508/vue-hook-optimizer",
+  "bugs": "https://github.com/zcf0508/vue-hook-optimizer/issues",
+  "bin": {
+    "mcp-server-vue-hook-optimizer": "dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "lint": "npm run dev && eslint .",
+    "prepublishOnly": "npm run build",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "unbuild": "^2.0.0",
+    "vue-hook-optimizer": "workspace:*",
+    "zod": "^3.24.2"
+  }
+}
