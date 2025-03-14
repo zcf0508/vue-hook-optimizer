@@ -1,13 +1,13 @@
 import type { NodePath, Scope } from '@babel/traverse';
-import _traverse from '@babel/traverse';
 import type * as t from '@babel/types';
-import { babelParse } from '@vue/compiler-sfc';
 import type {
   IAddEdge,
   IAddNode,
   IReturnData,
   IUsedNode,
 } from '../utils/traverse';
+import _traverse from '@babel/traverse';
+import { babelParse } from '@vue/compiler-sfc';
 import {
   addGraphBySpreadIdentifier,
   addIdentifiesToGraphByScanReturn,
@@ -25,7 +25,7 @@ import {
   traverse,
   traverseSetup,
 } from '../utils/traverse';
-import { NodeCollection, getComment } from './utils';
+import { getComment, NodeCollection } from './utils';
 
 interface IProcessMain {
   node: t.Node
@@ -395,9 +395,9 @@ export function processTsx(params: IProcessMain) {
       ReturnStatement(path) {
         if (path.node.argument
           && (path.node.argument.type === 'ArrowFunctionExpression'
-          || path.node.argument.type === 'FunctionExpression')
+            || path.node.argument.type === 'FunctionExpression')
           && (path.node.argument.body.type === 'JSXElement'
-          || path.node.argument.body.type === 'JSXFragment')
+            || path.node.argument.body.type === 'JSXFragment')
         ) {
           result = processByReturnJSX(params);
         }
@@ -438,7 +438,7 @@ export function processTsx(params: IProcessMain) {
       if (params.type === 'react') {
         if (
           (path.node.declaration.type === 'FunctionDeclaration'
-          || path.node.declaration.type === 'ArrowFunctionExpression')
+            || path.node.declaration.type === 'ArrowFunctionExpression')
           && path.node.declaration.body.type === 'BlockStatement'
         ) {
           // export default function () {}

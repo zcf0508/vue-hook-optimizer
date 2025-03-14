@@ -1,12 +1,9 @@
 // @ts-check
-/// <reference path="./eslint-typegen.d.ts" />
-
 import antfu from '@antfu/eslint-config';
-import typegen from 'eslint-typegen';
 import pluginSecurity from 'eslint-plugin-security';
 import pluginVueHookOptimizer from 'eslint-plugin-vue-hook-optimizer';
 
-export default typegen(antfu({
+export default antfu({
   typescript: true,
 }, [
   {
@@ -63,4 +60,4 @@ export default typegen(antfu({
       'style/quotes': ['error', 'single'],
     },
   },
-]));
+]);

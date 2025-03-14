@@ -1,8 +1,8 @@
-import { babelParse } from '@vue/compiler-sfc';
 import type { NodePath, Scope, VisitNode } from '@babel/traverse';
-import _traverse from '@babel/traverse';
 import type * as t from '@babel/types';
-import { NodeCollection, NodeType, getComment } from './utils';
+import _traverse from '@babel/traverse';
+import { babelParse } from '@vue/compiler-sfc';
+import { getComment, NodeCollection, NodeType } from './utils';
 
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -39,11 +39,11 @@ export function processSetup(
               if (
                 binding
                 && (path.parent.type === 'Program'
-                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                  || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                && declaration.init?.callee.type === 'Identifier'
-                && ignoreFunctionsName.includes(declaration.init?.callee.name)
+                  && declaration.init?.callee.type === 'Identifier'
+                  && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -62,11 +62,11 @@ export function processSetup(
               if (
                 binding
                 && (path.parent.type === 'Program'
-                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                  || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                && declaration.init?.callee.type === 'Identifier'
-                && ignoreFunctionsName.includes(declaration.init?.callee.name)
+                  && declaration.init?.callee.type === 'Identifier'
+                  && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -88,11 +88,11 @@ export function processSetup(
               if (
                 binding
                 && (path.parent.type === 'Program'
-                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                  || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                && declaration.init?.callee.type === 'Identifier'
-                && ignoreFunctionsName.includes(declaration.init?.callee.name)
+                  && declaration.init?.callee.type === 'Identifier'
+                  && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -111,11 +111,11 @@ export function processSetup(
               if (
                 binding
                 && (path.parent.type === 'Program'
-                || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+                  || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
                 )
                 && !(declaration.init?.type === 'CallExpression'
-                && declaration.init?.callee.type === 'Identifier'
-                && ignoreFunctionsName.includes(declaration.init?.callee.name)
+                  && declaration.init?.callee.type === 'Identifier'
+                  && ignoreFunctionsName.includes(declaration.init?.callee.name)
                 )
               ) {
                 graph.nodes.add(name);
@@ -135,11 +135,11 @@ export function processSetup(
           if (
             binding
             && (path.parent.type === 'Program'
-            || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
+              || (parentPath?.type === 'ObjectMethod' && parentPath.body === path.parent)
             )
             && !(declaration.init?.type === 'CallExpression'
-            && declaration.init?.callee.type === 'Identifier'
-            && ignoreFunctionsName.includes(declaration.init?.callee.name)
+              && declaration.init?.callee.type === 'Identifier'
+              && ignoreFunctionsName.includes(declaration.init?.callee.name)
             )
           ) {
             graph.nodes.add(name);
@@ -282,11 +282,11 @@ export function processSetup(
               graph.nodes.has(path1.node.name)
               && (
                 (path1.parent.type !== 'MemberExpression'
-                && path1.parent.type !== 'OptionalMemberExpression')
+                  && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
-              || parentScope === binding?.scope)
+                || parentScope === binding?.scope)
             ) {
               const _node = nodeCollection.getNode(path1.node.name);
               if (_node?.info?.used) {
@@ -308,7 +308,7 @@ export function processSetup(
           if (
             graph.nodes.has(expression.arguments[0].name)
             && (binding?.scope.block.type === 'Program'
-            || parentScope === binding?.scope)
+              || parentScope === binding?.scope)
           ) {
             watchArgs.add(expression.arguments[0]);
           }
@@ -321,11 +321,11 @@ export function processSetup(
                 graph.nodes.has(path1.node.name)
                 && (
                   (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
+                    && path1.parent.type !== 'OptionalMemberExpression')
                   || path1.parent.object === path1.node
                 )
                 && (binding?.scope.block.type === 'Program'
-                || parentScope === binding?.scope)
+                  || parentScope === binding?.scope)
               ) {
                 watchArgs.add(path1.node);
               }
@@ -341,11 +341,11 @@ export function processSetup(
               graph.nodes.has(path1.node.name)
               && (
                 (path1.parent.type !== 'MemberExpression'
-                && path1.parent.type !== 'OptionalMemberExpression')
+                  && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
-              || parentScope === binding?.scope)
+                || parentScope === binding?.scope)
             ) {
               watchArgs.add(path1.node);
             }
@@ -371,7 +371,7 @@ export function processSetup(
           if (
             graph.nodes.has(argNode.name)
             && (binding?.scope.block.type === 'Program'
-            || parentScope === binding?.scope)
+              || parentScope === binding?.scope)
           ) {
             const _node = nodeCollection.getNode(argNode.name);
             if (_node?.info?.used) {
@@ -393,11 +393,11 @@ export function processSetup(
                 graph.nodes.has(path1.node.name)
                 && (
                   (path1.parent.type !== 'MemberExpression'
-                  && path1.parent.type !== 'OptionalMemberExpression')
+                    && path1.parent.type !== 'OptionalMemberExpression')
                   || path1.parent.object === path1.node
                 )
                 && (binding?.scope.block.type === 'Program'
-                || parentScope === binding?.scope)
+                  || parentScope === binding?.scope)
               ) {
                 if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
                   const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
@@ -437,11 +437,11 @@ export function processSetup(
               graph.nodes.has(path1.node.name)
               && (
                 (path1.parent.type !== 'MemberExpression'
-                && path1.parent.type !== 'OptionalMemberExpression')
+                  && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
-              || (parentScope === binding?.scope)
+                || (parentScope === binding?.scope)
               )
             ) {
               graph.edges.get(name)?.add(path1.node.name);
@@ -457,7 +457,7 @@ export function processSetup(
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
                 && (binding?.scope.block.type === 'Program'
-                || (parentScope === binding?.scope)
+                  || (parentScope === binding?.scope)
                 )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);
@@ -482,11 +482,11 @@ export function processSetup(
                       graph.nodes.has(path1.node.name)
                       && (
                         (path1.parent.type !== 'MemberExpression'
-                        && path1.parent.type !== 'OptionalMemberExpression')
+                          && path1.parent.type !== 'OptionalMemberExpression')
                         || path1.parent.object === path1.node
                       )
                       && (binding?.scope.block.type === 'Program'
-                      || (parentScope === binding?.scope)
+                        || (parentScope === binding?.scope)
                       )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
@@ -502,7 +502,7 @@ export function processSetup(
                         spread.includes(path1.node.object.name)
                         && path1.node.property.type === 'Identifier'
                         && (binding?.scope.block.type === 'Program'
-                        || (parentScope === binding?.scope)
+                          || (parentScope === binding?.scope)
                         )
                       ) {
                         graph.edges.get(name)?.add(path1.node.property.name);
@@ -526,11 +526,11 @@ export function processSetup(
                       graph.nodes.has(path1.node.name)
                       && (
                         (path1.parent.type !== 'MemberExpression'
-                        && path1.parent.type !== 'OptionalMemberExpression')
+                          && path1.parent.type !== 'OptionalMemberExpression')
                         || path1.parent.object === path1.node
                       )
                       && (binding?.scope.block.type === 'Program'
-                      || (parentScope === binding?.scope)
+                        || (parentScope === binding?.scope)
                       )
                     ) {
                       graph.edges.get(name)?.add(path1.node.name);
@@ -546,7 +546,7 @@ export function processSetup(
                         spread.includes(path1.node.object.name)
                         && path1.node.property.type === 'Identifier'
                         && (binding?.scope.block.type === 'Program'
-                        || (parentScope === binding?.scope)
+                          || (parentScope === binding?.scope)
                         )
                       ) {
                         graph.edges.get(name)?.add(path1.node.property.name);
@@ -577,11 +577,11 @@ export function processSetup(
                   graph.nodes.has(path1.node.name)
                   && (
                     (path1.parent.type !== 'MemberExpression'
-                    && path1.parent.type !== 'OptionalMemberExpression')
+                      && path1.parent.type !== 'OptionalMemberExpression')
                     || path1.parent.object === path1.node
                   )
                   && (binding?.scope.block.type === 'Program'
-                  || (parentScope === binding?.scope)
+                    || (parentScope === binding?.scope)
                   )
                 ) {
                   graph.edges.get(name)?.add(path1.node.name);
@@ -597,7 +597,7 @@ export function processSetup(
                     spread.includes(path1.node.object.name)
                     && path1.node.property.type === 'Identifier'
                     && (binding?.scope.block.type === 'Program'
-                    || (parentScope === binding?.scope)
+                      || (parentScope === binding?.scope)
                     )
                   ) {
                     graph.edges.get(name)?.add(path1.node.property.name);
@@ -614,7 +614,7 @@ export function processSetup(
             if (
               graph.nodes.has(path.node.init.name)
               && (binding?.scope.block.type === 'Program'
-              || (parentScope === binding?.scope)
+                || (parentScope === binding?.scope)
               )
             ) {
               graph.edges.get(name)?.add(path.node.init.name);
@@ -628,11 +628,11 @@ export function processSetup(
                   graph.nodes.has(path1.node.name)
                   && (
                     (path1.parent.type !== 'MemberExpression'
-                    && path1.parent.type !== 'OptionalMemberExpression')
+                      && path1.parent.type !== 'OptionalMemberExpression')
                     || path1.parent.object === path1.node
                   )
                   && (binding?.scope.block.type === 'Program'
-                  || (parentScope === binding?.scope)
+                    || (parentScope === binding?.scope)
                   )
                 ) {
                   graph.edges.get(name)?.add(path1.node.name);
@@ -655,11 +655,11 @@ export function processSetup(
               graph.nodes.has(path1.node.name)
               && (
                 (path1.parent.type !== 'MemberExpression'
-                && path1.parent.type !== 'OptionalMemberExpression')
+                  && path1.parent.type !== 'OptionalMemberExpression')
                 || path1.parent.object === path1.node
               )
               && (binding?.scope.block.type === 'Program'
-              || (parentScope === binding?.scope)
+                || (parentScope === binding?.scope)
               )
             ) {
               graph.edges.get(name)?.add(path1.node.name);
@@ -675,7 +675,7 @@ export function processSetup(
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
                 && (binding?.scope.block.type === 'Program'
-                || (parentScope === binding?.scope)
+                  || (parentScope === binding?.scope)
                 )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);
@@ -701,7 +701,7 @@ export function processSetup(
                 spread.includes(path1.node.object.name)
                 && path1.node.property.type === 'Identifier'
                 && (binding?.scope.block.type === 'Program'
-                || (parentScope === binding?.scope)
+                  || (parentScope === binding?.scope)
                 )
               ) {
                 graph.edges.get(name)?.add(path1.node.property.name);

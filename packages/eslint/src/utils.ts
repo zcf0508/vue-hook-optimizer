@@ -93,7 +93,8 @@ export const createEslintRule = RuleCreator(
 ) as any as <
   TOptions extends readonly unknown[],
   TMessageIds extends string,
->({ name, meta, ...rule }: Readonly<RuleWithMetaAndName<TOptions, TMessageIds>>) => RuleModule<TOptions>;
+>({ name, meta, ...rule }: Readonly<RuleWithMetaAndName<TOptions, TMessageIds>>
+) => RuleModule<TOptions>;
 
 const warned = new Set<string>();
 

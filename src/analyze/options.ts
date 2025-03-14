@@ -1,9 +1,9 @@
-import { babelParse } from '@vue/compiler-sfc';
 import type { NodePath } from '@babel/traverse';
-import _traverse from '@babel/traverse';
 import type * as t from '@babel/types';
+import _traverse from '@babel/traverse';
+import { babelParse } from '@vue/compiler-sfc';
 import { processSetup } from './setupScript';
-import { NodeCollection, getComment } from './utils';
+import { getComment, NodeCollection } from './utils';
 
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -484,7 +484,7 @@ export function analyze(
               methodsNode.value.properties.forEach((prop) => {
                 if (
                   (prop.type === 'ObjectMethod'
-                  || prop.type === 'ObjectProperty')
+                    || prop.type === 'ObjectProperty')
                   && prop.key.type === 'Identifier'
                 ) {
                   const name = prop.key.name;

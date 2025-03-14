@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ModeSpec, ModeSpecOptions } from 'codemirror';
-import { inject, onMounted, ref, watchEffect } from 'vue';
 import { debounce } from 'lodash-es';
+import { inject, onMounted, ref, watchEffect } from 'vue';
 import CodeMirror from './codemirror';
 
 export interface Props {

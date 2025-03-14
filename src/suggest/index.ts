@@ -1,8 +1,8 @@
-import * as t from '@babel/types';
 import type { TypedNode } from '../analyze/utils';
+import * as t from '@babel/types';
 import { NodeType } from '../analyze/utils';
-import { splitGraph } from './split';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
+import { splitGraph } from './split';
 import { hasCycle } from './utils';
 
 export enum SuggestionType {

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import * as vis from 'vis-network';
-import 'vis-network/dist/dist/vis-network.min.css';
 import CodeMirror from './components/codemirror/CodeMirror.vue';
 import { defaultCode, tsx } from './default-code';
+import 'vis-network/dist/dist/vis-network.min.css';
 
 // const code = ref(defaultCode);
 const code = ref(tsx);

@@ -1,7 +1,7 @@
-import type * as t from '@babel/types';
 import type { NodePath, Scope } from '@babel/traverse';
-import _traverse from '@babel/traverse';
+import type * as t from '@babel/types';
 import type { NodeCollection } from '../analyze/utils';
+import _traverse from '@babel/traverse';
 import { getComment } from '../analyze/utils';
 
 export const traverse: typeof _traverse
@@ -380,7 +380,7 @@ export function parseEdgeLeftIdentifierPattern({ path, rootScope, cb, collection
             && collectionNodes.has(path1.node.name)
             && (
               (path1.parent.type !== 'MemberExpression'
-              && path1.parent.type !== 'OptionalMemberExpression')
+                && path1.parent.type !== 'OptionalMemberExpression')
               || path1.parent.object === path1.node
             )
           ) {
@@ -445,7 +445,7 @@ export function parseEdgeLeftObjectPattern({ path, rootScope, cb, collectionNode
           && collectionNodes.has(path1.node.name)
           && (
             (path1.parent.type !== 'MemberExpression'
-            && path1.parent.type !== 'OptionalMemberExpression')
+              && path1.parent.type !== 'OptionalMemberExpression')
             || path1.parent.object === path1.node
           )
         ) {
@@ -496,7 +496,7 @@ export function parseEdgeLeftArrayPattern({ path, rootScope, cb, collectionNodes
           && collectionNodes.has(path1.node.name)
           && (
             (path1.parent.type !== 'MemberExpression'
-            && path1.parent.type !== 'OptionalMemberExpression')
+              && path1.parent.type !== 'OptionalMemberExpression')
             || path1.parent.object === path1.node
           )
         ) {

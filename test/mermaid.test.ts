@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { NodeType, type TypedNode } from '@/analyze/utils';
+import type { TypedNode } from '@/analyze/utils';
+import { NodeType } from '@/analyze/utils';
 import { getMermaidText } from '@/mermaid';
 
 describe('getMermaidText', () => {

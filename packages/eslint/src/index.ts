@@ -1,8 +1,8 @@
 import type { ESLint, Linter } from 'eslint';
 import { version } from '../package.json';
-import notUsed from './rules/not-used';
-import loopCall from './rules/loop-call';
 import linearPath from './rules/linear-path';
+import loopCall from './rules/loop-call';
+import notUsed from './rules/not-used';
 
 const plugin = {
   meta: {

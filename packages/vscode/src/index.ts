@@ -1,10 +1,10 @@
 import path from 'node:path';
+import { template } from 'lodash-es';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
-import { template } from 'lodash-es';
 import { analyze } from './analyze';
-import { dark, light } from './themes';
 import * as meta from './generated-meta';
+import { dark, light } from './themes';
 
 const visTemplate = template(`<html>
 <head>

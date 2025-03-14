@@ -44,9 +44,9 @@ module.exports = {
 ```js
 // eslint.config.js
 
-import vueParse from 'vue-eslint-parser';
 import pluginTs from '@typescript-eslint/parser';
 import pluginVueHookOptimizer from 'eslint-plugin-vue-hook-optimizer';
+import vueParse from 'vue-eslint-parser';
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
