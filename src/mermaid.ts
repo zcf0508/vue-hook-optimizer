@@ -38,7 +38,9 @@ export function getMermaidText(
 
   graph.edges.forEach((edge: Set<TypedNode>, key: TypedNode) => {
     edge.forEach((to: TypedNode | undefined) => {
-      if (!to) { return; }
+      if (!to) {
+        return;
+      }
       mermaidText += `    ${key.label} --> ${to.label}\n`;
     });
   });
