@@ -29,15 +29,17 @@ describe('getMermaidText', () => {
       { direction: 'LR' },
     );
 
-    const expected: string = [
-      'flowchart LR',
-      '    count((count))',
-      '    style count fill:#e1f5fe',
-      '    increment{increment}',
-      '    increment --> count',
-      '',
-    ].join('\n');
-
-    expect(result).toBe(expected);
+    expect(result).toMatchInlineSnapshot(`
+      "flowchart LR
+          %% Legend:
+          %% () = variable node
+          %% [] = function node
+          %% * suffix = unused in template/style
+          %% A --> B means A depends on B
+          count(count)
+          increment[increment*]
+          increment --> count
+      "
+    `);
   });
 });
