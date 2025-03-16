@@ -24,11 +24,12 @@ server.tool(
   'analyze',
   'Analyze your Vue component to help you refactor and optimize hook abstractions.',
   {
-    filepath: z.string().regex(/\.vue$/),
+    filepath: z.string(),
+    framework: z.enum(['vue', 'react']),
   },
-  async ({ filepath }) => {
+  async ({ filepath, framework }) => {
     const code = await readFile(filepath, 'utf-8');
-    const res = await analyze(code, 'vue');
+    const res = await analyze(code, framework);
 
     return {
       content: [{
