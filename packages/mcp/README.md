@@ -6,7 +6,7 @@ Node.js server implementing Model Context Protocol (MCP) for analyzing and optim
 
 - Generate Mermaid diagrams for analyze Vue component hooks and their relationships
 - Provide optimization suggestions
-- Support for `.vue` files
+- Support for `vue` and `react`
 
 ## API
 
@@ -15,7 +15,8 @@ Node.js server implementing Model Context Protocol (MCP) for analyzing and optim
 - **analyze**
   - Analyze Vue component hooks and provide optimization suggestions
   - Input:
-    - `filepath` (string): Path to `.vue` file
+    - `filepath` (string): Path to component file
+    - `framework` (string): `vue` or `react`
   - Returns:
     - Mermaid diagram showing hook relationships
     - List of optimization suggestions
