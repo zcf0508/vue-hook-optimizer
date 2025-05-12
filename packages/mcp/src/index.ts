@@ -27,7 +27,7 @@ server.tool(
     absolutePath: z.string(),
     framework: z.enum(['vue', 'react']).optional().default('vue'),
   },
-  async ({ framework, absolutePath }) => {
+  async ({ absolutePath, framework }) => {
     const code = await readFile(absolutePath, 'utf-8');
     const res = await analyze(code, framework);
 
