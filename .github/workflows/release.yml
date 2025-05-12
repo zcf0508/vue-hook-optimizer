@@ -32,17 +32,11 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
-      - name: PNPM build
-        run: pnpm run build
-
       - name: Publish to NPM
         run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_CONFIG_PROVENANCE: true
-
-      - name: PNPM build eslint-plugin
-        run: pnpm run build:eslint
 
       - name: Publish eslint-plugin to NPM
         run: pnpm publish --access public --no-git-checks
@@ -50,9 +44,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_CONFIG_PROVENANCE: true
-
-      - name: PNPM build mcp
-        run: pnpm run build:mcp
 
       - name: Publish mcp to NPM
         run: pnpm publish --access public --no-git-checks
