@@ -22,13 +22,13 @@ const server = new McpServer(
 
 server.tool(
   'analyze',
-  'Analyze your component to help you refactor and optimize hook abstractions.',
+  `Analyze your component to assist in refactoring and optimizing hook abstractions. Requires 2 parameters: \`absolutePath\` (the file's absolute path) and \`framework\` (the project's framework, with optional values vue / react default vue).`,
   {
-    filepath: z.string(),
+    absolutePath: z.string(),
     framework: z.enum(['vue', 'react']).optional().default('vue'),
   },
-  async ({ filepath, framework }) => {
-    const code = await readFile(filepath, 'utf-8');
+  async ({ absolutePath, framework }) => {
+    const code = await readFile(absolutePath, 'utf-8');
     const res = await analyze(code, framework);
 
     return {
