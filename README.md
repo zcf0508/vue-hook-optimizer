@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/zcf0508-vue-hook-optimizer-badge.png)](https://mseep.ai/app/zcf0508-vue-hook-optimizer)
+
 [![NPM version](https://img.shields.io/npm/v/vue-hook-optimizer?color=a1b858&label=)](https://www.npmjs.com/package/vue-hook-optimizer)
 <a href="https://marketplace.visualstudio.com/items?itemName=zcf0508.vue-hook-optimizer-ext" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/v/zcf0508.vue-hook-optimizer-ext.svg?color=eee&amp;label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="Visual Studio Marketplace Version" /></a>
 
