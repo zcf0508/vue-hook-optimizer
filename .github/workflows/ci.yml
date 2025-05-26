@@ -19,13 +19,13 @@ jobs:
       - name: Set node
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 22.x
 
       - name: Setup
-        run: npm i -g pnpm@8
+        run: npm i -g pnpm@9
 
       - name: Install
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       - name: Build
         run: pnpm run build
@@ -42,12 +42,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node_version: [16, 18, 20]
+        node_version: [18, 20, 22]
         include:
           - os: macos-latest
-            node_version: 18
+            node_version: 22
           - os: windows-latest
-            node_version: 18
+            node_version: 22
       fail-fast: false
 
     steps:
@@ -63,10 +63,10 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Setup
-        run: npm i -g pnpm@8
+        run: npm i -g pnpm@9
 
       - name: Install
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       - name: Build
         run: pnpm run build

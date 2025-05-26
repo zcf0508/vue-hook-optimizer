@@ -27,10 +27,10 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Setup
-        run: npm i -g pnpm@8
+        run: npm i -g pnpm@9
 
       - name: Install Dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       - name: Publish to NPM
         run: pnpm publish --access public --no-git-checks
