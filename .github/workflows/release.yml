@@ -53,7 +53,13 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 
       - name: Publish to VSCE
-        run: pnpm vsce publish --no-dependencies -p ${{secrets.VSCE_TOKEN}}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [[ "$VERSION" == *"-beta"* ]]; then
+            pnpm vsce publish --no-dependencies --pre-release -p ${{secrets.VSCE_TOKEN}}
+          else
+            pnpm vsce publish --no-dependencies -p ${{secrets.VSCE_TOKEN}}
+          fi
         working-directory: ./packages/vscode
         env:
           VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
