@@ -28,12 +28,15 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 20,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 20,
+          },
+          "label": "plus",
+          "type": "fun",
         },
-        "label": "plus",
-        "type": "fun",
+        "type": "get",
       },
     },
     {
@@ -45,20 +48,26 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 8,
-          "line": 11,
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 11,
+          },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 20,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 20,
+          },
+          "label": "plus",
+          "type": "fun",
         },
-        "label": "plus",
-        "type": "fun",
+        "type": "get",
       },
     },
   },

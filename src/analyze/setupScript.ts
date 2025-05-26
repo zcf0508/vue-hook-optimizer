@@ -2,7 +2,7 @@ import type { NodePath, Scope, VisitNode } from '@babel/traverse';
 import type * as t from '@babel/types';
 import _traverse from '@babel/traverse';
 import { babelParse } from '@vue/compiler-sfc';
-import { getComment, NodeCollection, NodeType } from './utils';
+import { getComment, isWritingNode, NodeCollection, NodeType } from './utils';
 
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -23,7 +23,7 @@ export function processSetup(
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<string>>(),
+    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
     spread: new Map<string, Set<string>>(),
   };
 
@@ -403,7 +403,12 @@ export function processSetup(
                   const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
                   watchArgs.forEach((watchArg) => {
                     if (!watchArgsNames.includes(path1.node.name)) {
-                      graph.edges.get(watchArg.name)?.add(path1.node.name);
+                      graph.edges.get(watchArg.name)?.add({
+                        label: path1.node.name,
+                        type: isWritingNode(path1)
+                          ? 'set'
+                          : 'get',
+                      });
                     }
                   });
                 }
@@ -444,7 +449,12 @@ export function processSetup(
                 || (parentScope === binding?.scope)
               )
             ) {
-              graph.edges.get(name)?.add(path1.node.name);
+              graph.edges.get(name)?.add({
+                label: path1.node.name,
+                type: isWritingNode(path1)
+                  ? 'set'
+                  : 'get',
+              });
             }
           },
           MemberExpression(path1) {
@@ -460,7 +470,12 @@ export function processSetup(
                   || (parentScope === binding?.scope)
                 )
               ) {
-                graph.edges.get(name)?.add(path1.node.property.name);
+                graph.edges.get(name)?.add({
+                  label: path1.node.property.name,
+                  type: isWritingNode(path1)
+                    ? 'set'
+                    : 'get',
+                });
               }
             }
           },
@@ -489,7 +504,12 @@ export function processSetup(
                         || (parentScope === binding?.scope)
                       )
                     ) {
-                      graph.edges.get(name)?.add(path1.node.name);
+                      graph.edges.get(name)?.add({
+                        label: path1.node.name,
+                        type: isWritingNode(path1)
+                          ? 'set'
+                          : 'get',
+                      });
                     }
                   },
                   MemberExpression(path1) {
@@ -505,7 +525,12 @@ export function processSetup(
                           || (parentScope === binding?.scope)
                         )
                       ) {
-                        graph.edges.get(name)?.add(path1.node.property.name);
+                        graph.edges.get(name)?.add({
+                          label: path1.node.property.name,
+                          type: isWritingNode(path1)
+                            ? 'set'
+                            : 'get',
+                        });
                       }
                     }
                   },
@@ -533,7 +558,12 @@ export function processSetup(
                         || (parentScope === binding?.scope)
                       )
                     ) {
-                      graph.edges.get(name)?.add(path1.node.name);
+                      graph.edges.get(name)?.add({
+                        label: path1.node.name,
+                        type: isWritingNode(path1)
+                          ? 'set'
+                          : 'get',
+                      });
                     }
                   },
                   MemberExpression(path1) {
@@ -549,7 +579,12 @@ export function processSetup(
                           || (parentScope === binding?.scope)
                         )
                       ) {
-                        graph.edges.get(name)?.add(path1.node.property.name);
+                        graph.edges.get(name)?.add({
+                          label: path1.node.property.name,
+                          type: isWritingNode(path1)
+                            ? 'set'
+                            : 'get',
+                        });
                       }
                     }
                   },
@@ -584,7 +619,12 @@ export function processSetup(
                     || (parentScope === binding?.scope)
                   )
                 ) {
-                  graph.edges.get(name)?.add(path1.node.name);
+                  graph.edges.get(name)?.add({
+                    label: path1.node.name,
+                    type: isWritingNode(path1)
+                      ? 'set'
+                      : 'get',
+                  });
                 }
               },
               MemberExpression(path1) {
@@ -600,7 +640,12 @@ export function processSetup(
                       || (parentScope === binding?.scope)
                     )
                   ) {
-                    graph.edges.get(name)?.add(path1.node.property.name);
+                    graph.edges.get(name)?.add({
+                      label: path1.node.property.name,
+                      type: isWritingNode(path1)
+                        ? 'set'
+                        : 'get',
+                    });
                   }
                 }
               },
@@ -617,7 +662,12 @@ export function processSetup(
                 || (parentScope === binding?.scope)
               )
             ) {
-              graph.edges.get(name)?.add(path.node.init.name);
+              graph.edges.get(name)?.add({
+                label: path.node.init.name,
+                type: isWritingNode(path)
+                  ? 'set'
+                  : 'get',
+              });
             }
           }
           else {
@@ -635,7 +685,12 @@ export function processSetup(
                     || (parentScope === binding?.scope)
                   )
                 ) {
-                  graph.edges.get(name)?.add(path1.node.name);
+                  graph.edges.get(name)?.add({
+                    label: path1.node.name,
+                    type: isWritingNode(path1)
+                      ? 'set'
+                      : 'get',
+                  });
                 }
               },
             }, path.scope, path);
@@ -662,7 +717,12 @@ export function processSetup(
                 || (parentScope === binding?.scope)
               )
             ) {
-              graph.edges.get(name)?.add(path1.node.name);
+              graph.edges.get(name)?.add({
+                label: path1.node.name,
+                type: isWritingNode(path1)
+                  ? 'set'
+                  : 'get',
+              });
             }
           },
           MemberExpression(path1) {
@@ -678,7 +738,12 @@ export function processSetup(
                   || (parentScope === binding?.scope)
                 )
               ) {
-                graph.edges.get(name)?.add(path1.node.property.name);
+                graph.edges.get(name)?.add({
+                  label: path1.node.property.name,
+                  type: isWritingNode(path1)
+                    ? 'set'
+                    : 'get',
+                });
               }
             }
           },
@@ -704,7 +769,12 @@ export function processSetup(
                   || (parentScope === binding?.scope)
                 )
               ) {
-                graph.edges.get(name)?.add(path1.node.property.name);
+                graph.edges.get(name)?.add({
+                  label: path1.node.property.name,
+                  type: isWritingNode(path1)
+                    ? 'set'
+                    : 'get',
+                });
               }
             }
           },

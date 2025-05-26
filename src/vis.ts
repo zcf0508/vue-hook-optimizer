@@ -16,7 +16,7 @@ function filterNodeUserd(used: Set<string> | undefined) {
 export function getVisData(
   graph: {
     nodes: Set<TypedNode>
-    edges: Map<TypedNode, Set<TypedNode>>
+    edges: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),
@@ -31,7 +31,7 @@ export function getVisData(
   graph.edges.forEach((edge) => {
     edge.forEach((to) => {
       if (to) {
-        inDegreeMap[to.label] = (inDegreeMap[to.label] || 0) + 1;
+        inDegreeMap[to.node.label] = (inDegreeMap[to.node.label] || 0) + 1;
       }
     });
   });
@@ -82,7 +82,7 @@ export function getVisData(
       }
       edges.push({
         from: key.label,
-        to: to.label,
+        to: to.node.label,
         arrows: {
           to: {
             enabled: true,

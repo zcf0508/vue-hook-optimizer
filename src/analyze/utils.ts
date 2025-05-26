@@ -1,3 +1,4 @@
+import type { NodePath } from '@babel/traverse';
 import type * as t from '@babel/types';
 
 export interface TypedNode {
@@ -114,16 +115,27 @@ export class NodeCollection {
 
   map(graph: {
     nodes: Set<string>
-    edges: Map<string, Set<string>>
+    edges: Map<string, Set<{ label: string, type: 'get' | 'set' }>>
   }) {
     const nodes = new Set(Array.from(graph.nodes).map((node) => {
       return this.nodes.get(node)!;
     }).filter(node => !!node));
 
     const edges = new Map(Array.from(graph.edges).map(([from, to]) => {
-      return [this.nodes.get(from)!, new Set(Array.from(to).map((node) => {
-        return this.nodes.get(node)!;
-      }).filter(node => !!node))];
+      // dedupe by node label, preferring 'set' over 'get'
+      const labelMap = new Map<string, { node: TypedNode, type: 'get' | 'set' }>();
+      for (const item of to) {
+        const node = this.nodes.get(item.label)!;
+        if (!node) {
+          continue;
+        }
+        const existing = labelMap.get(item.label);
+        if (!existing || (existing.type === 'get' && item.type === 'set')) {
+          labelMap.set(item.label, { node, type: item.type });
+        }
+      }
+      const items = Array.from(labelMap.values());
+      return [this.nodes.get(from)!, new Set(items)];
     }));
 
     return {
@@ -158,4 +170,34 @@ export function getComment(node: t.Node) {
   });
 
   return comment.trim();
+}
+
+export function isWritingNode(path: NodePath<t.Node>) {
+  // Check if the current node is inside an assignment expression (including nested MemberExpression)
+  const assignParent = path.findParent(p => p.isAssignmentExpression()) as NodePath<t.AssignmentExpression> | null;
+  if (assignParent) {
+    const leftNode = assignParent.node.left;
+    if (
+      leftNode.start != null
+      && path.node.start! >= leftNode.start
+      && path.node.end! <= (leftNode.end as number)
+    ) {
+      return true;
+    }
+  }
+
+  // Check if the current node is inside an update expression (including nested MemberExpression)
+  const updateParent = path.findParent(p => p.isUpdateExpression()) as NodePath<t.UpdateExpression> | null;
+  if (updateParent) {
+    const argNode = updateParent.node.argument as t.Node;
+    if (
+      argNode.start != null
+      && path.node.start! >= argNode.start
+      && path.node.end! <= (argNode.end as number)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 }

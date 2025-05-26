@@ -97,52 +97,70 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 61,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 61,
+          },
+          "label": "configLoaded",
+          "type": "var",
         },
-        "label": "configLoaded",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 12,
-          "line": 59,
+        "node": {
+          "info": {
+            "column": 12,
+            "line": 59,
+          },
+          "label": "store",
+          "type": "var",
         },
-        "label": "store",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 64,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 64,
+          },
+          "label": "pinned",
+          "type": "var",
         },
-        "label": "pinned",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 66,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 66,
+          },
+          "label": "pinnedQuickCommandBar",
+          "type": "var",
         },
-        "label": "pinnedQuickCommandBar",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 63,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 63,
+          },
+          "label": "terminalFullScreen",
+          "type": "var",
         },
-        "label": "terminalFullScreen",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 65,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 65,
+          },
+          "label": "isSencondInstance",
+          "type": "var",
         },
-        "label": "isSencondInstance",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -154,12 +172,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 72,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 72,
+          },
+          "label": "cls",
+          "type": "var",
         },
-        "label": "cls",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -179,12 +200,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 85,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 85,
+          },
+          "label": "cpConf",
+          "type": "var",
         },
-        "label": "cpConf",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -196,12 +220,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 12,
-          "line": 59,
+        "node": {
+          "info": {
+            "column": 12,
+            "line": 59,
+          },
+          "label": "store",
+          "type": "var",
         },
-        "label": "store",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -213,12 +240,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 62,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 62,
+          },
+          "label": "config",
+          "type": "var",
         },
-        "label": "config",
-        "type": "var",
+        "type": "get",
       },
     },
   },

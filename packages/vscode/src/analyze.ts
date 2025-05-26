@@ -15,7 +15,7 @@ import {
 export async function analyze(code: string, language: 'vue' | 'react') {
   let graph = {
     nodes: new Set<TypedNode>(),
-    edges: new Map<TypedNode, Set<TypedNode>>(),
+    edges: new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>(),
   };
   let nodesUsedInTemplate = new Set<string>();
   let nodesUsedInStyle = new Set<string>();

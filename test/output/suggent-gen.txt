@@ -197,25 +197,6 @@
     "type": "info",
   },
   {
-    "message": "There is a loop call in nodes [funC], perhaps you can refactor it.",
-    "nodeInfo": [
-      {
-        "info": {
-          "column": 9,
-          "comment": "这是注释",
-          "line": 54,
-          "used": Set {
-            "onMounted",
-            "provide",
-          },
-        },
-        "label": "funC",
-        "type": "fun",
-      },
-    ],
-    "type": "error",
-  },
-  {
     "message": "Node [restArr] is not used, perhaps you can remove it.",
     "nodeInfo": {
       "info": {

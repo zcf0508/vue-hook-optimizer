@@ -25,28 +25,37 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 15,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 15,
+          },
+          "label": "methods",
+          "type": "var",
         },
-        "label": "methods",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 10,
-          "line": 10,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 10,
+          },
+          "label": "data",
+          "type": "var",
         },
-        "label": "data",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 10,
-          "line": 13,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 13,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -58,12 +67,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 13,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 13,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -75,12 +87,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 13,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 13,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {

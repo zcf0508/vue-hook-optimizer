@@ -25,7 +25,7 @@ import {
   traverse,
   traverseSetup,
 } from '../utils/traverse';
-import { getComment, NodeCollection } from './utils';
+import { getComment, isWritingNode, NodeCollection } from './utils';
 
 interface IProcessMain {
   node: t.Node
@@ -69,7 +69,7 @@ function processByReturnNotJSX(params: IProcessBranch) {
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<string>>(),
+    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
   };
 
   // 解析return, 收集spread
@@ -124,7 +124,7 @@ function processByReturnJSX(params: IProcessBranch) {
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<string>>(),
+    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
     spread: new Map<string, Set<string>>(),
   };
 
@@ -146,7 +146,12 @@ function processByReturnJSX(params: IProcessBranch) {
   function addEdge({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
     const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
     if (scope === bindingScope && collectionNodes.has(toName)) {
-      graph.edges.get(fromName)?.add(toName);
+      graph.edges.get(fromName)?.add({
+        label: toName,
+        type: isWritingNode(path)
+          ? 'set'
+          : 'get',
+      });
     }
   }
 
@@ -265,7 +270,7 @@ function processByReact(params: IProcessReact) {
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<string>>(),
+    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
     spread: new Map<string, Set<string>>(),
   };
 
@@ -287,7 +292,12 @@ function processByReact(params: IProcessReact) {
   function addEdge({ fromName, toName, path, scope, toScope, collectionNodes }: IAddEdge) {
     const bindingScope = toScope || path.scope.getBinding(toName)?.scope;
     if (scope === bindingScope && collectionNodes.has(toName)) {
-      graph.edges.get(fromName)?.add(toName);
+      graph.edges.get(fromName)?.add({
+        label: toName,
+        type: isWritingNode(path)
+          ? 'set'
+          : 'get',
+      });
     }
   }
 

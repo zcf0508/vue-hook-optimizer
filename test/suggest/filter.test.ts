@@ -10,7 +10,7 @@ import {
 
 describe('suggest tests', () => {
   it('graph filter noIndegree 1', () => {
-    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -27,15 +27,15 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
-    graph.set(node1, new Set([node1]));
-    graph.set(node1, new Set([node2]));
-    graph.set(node2, new Set([node1, node3]));
-    graph.set(node3, new Set([node4]));
+    graph.set(node1, new Set([{ node: node1, type: 'get' }]));
+    graph.set(node1, new Set([{ node: node2, type: 'get' }]));
+    graph.set(node2, new Set([{ node: node1, type: 'get' }, { node: node3, type: 'get' }]));
+    graph.set(node3, new Set([{ node: node4, type: 'get' }]));
 
     expect(noIndegreeFilter(graph)).toEqual([]);
   });
   it('graph filter noIndegree 2', () => {
-    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -52,9 +52,9 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
-    graph.set(node1, new Set([node2]));
-    graph.set(node2, new Set([node1]));
-    graph.set(node3, new Set([node4]));
+    graph.set(node1, new Set([{ node: node2, type: 'get' }]));
+    graph.set(node2, new Set([{ node: node1, type: 'get' }]));
+    graph.set(node3, new Set([{ node: node4, type: 'get' }]));
 
     expect(noIndegreeFilter(graph)).toEqual([node3]);
   });
@@ -169,7 +169,7 @@ describe('suggest tests', () => {
     ]));
   });
   it('graph linear paths 1', () => {
-    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -190,18 +190,18 @@ describe('suggest tests', () => {
       label: 'node5',
       type: NodeType.fun,
     };
-    graph.set(node1, new Set([node2]));
-    graph.set(node2, new Set([node3]));
-    graph.set(node3, new Set([node4]));
+    graph.set(node1, new Set([{ node: node2, type: 'get' }]));
+    graph.set(node2, new Set([{ node: node3, type: 'get' }]));
+    graph.set(node3, new Set([{ node: node4, type: 'get' }]));
     graph.set(node4, new Set([]));
-    graph.set(node5, new Set([node5]));
+    graph.set(node5, new Set([{ node: node5, type: 'get' }]));
 
     expect(findLinearPaths(graph)).toEqual([
       [node1, node2, node3, node4],
     ]);
   });
   it('graph linear paths 2', () => {
-    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -218,15 +218,15 @@ describe('suggest tests', () => {
       label: 'node4',
       type: NodeType.fun,
     };
-    graph.set(node1, new Set([node2, node4]));
-    graph.set(node2, new Set([node3]));
+    graph.set(node1, new Set([{ node: node2, type: 'get' }, { node: node4, type: 'get' }]));
+    graph.set(node2, new Set([{ node: node3, type: 'get' }]));
     graph.set(node3, new Set([]));
-    graph.set(node4, new Set([node3]));
+    graph.set(node4, new Set([{ node: node3, type: 'get' }]));
 
     expect(findLinearPaths(graph)).toEqual([]);
   });
   it('graph linear paths 3', () => {
-    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -248,10 +248,10 @@ describe('suggest tests', () => {
       type: NodeType.var,
     };
 
-    graph.set(node2, new Set([node1]));
-    graph.set(node3, new Set([node2]));
+    graph.set(node2, new Set([{ node: node1, type: 'get' }]));
+    graph.set(node3, new Set([{ node: node2, type: 'get' }]));
     graph.set(node1, new Set([]));
-    graph.set(node4, new Set([node3]));
+    graph.set(node4, new Set([{ node: node3, type: 'get' }]));
     graph.set(node5, new Set([]));
 
     expect(findLinearPaths(graph)).toEqual([
@@ -259,7 +259,7 @@ describe('suggest tests', () => {
     ]);
   });
   it('graph articulation points 1', () => {
-    const graph = new Map<TypedNode, Set<TypedNode>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -280,10 +280,10 @@ describe('suggest tests', () => {
       label: 'node5',
       type: NodeType.fun,
     };
-    graph.set(node1, new Set([node1]));
-    graph.set(node1, new Set([node3]));
-    graph.set(node2, new Set([node3]));
-    graph.set(node3, new Set([node4, node5]));
+    graph.set(node1, new Set([{ node: node1, type: 'get' }]));
+    graph.set(node1, new Set([{ node: node3, type: 'get' }]));
+    graph.set(node2, new Set([{ node: node3, type: 'get' }]));
+    graph.set(node3, new Set([{ node: node4, type: 'get' }, { node: node5, type: 'get' }]));
     graph.set(node4, new Set([]));
     graph.set(node5, new Set([]));
 

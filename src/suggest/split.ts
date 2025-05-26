@@ -1,17 +1,17 @@
 import type { TypedNode } from '../analyze/utils';
 
 function dfs(
-  graph: Map<TypedNode, Set<TypedNode>>,
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>,
   node: TypedNode,
-  targets: Set<TypedNode>,
+  targets: Set<{ node: TypedNode, type: 'get' | 'set' }>,
   visited: Set<TypedNode>,
   component: Set<TypedNode>,
 ) {
   component.add(node);
   visited.add(node);
   targets.forEach((target) => {
-    if (!visited.has(target)) {
-      dfs(graph, target, graph.get(target) || new Set(), visited, component);
+    if (!visited.has(target.node)) {
+      dfs(graph, target.node, graph.get(target.node) || new Set(), visited, component);
     }
   });
 }
@@ -42,7 +42,7 @@ function mergeSets(arr: Set<TypedNode>[]): Set<TypedNode>[] {
 }
 
 export function splitGraph(
-  graph: Map<TypedNode, Set<TypedNode>>,
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>,
 ) {
   const components = [] as Set<TypedNode>[];
 
@@ -58,7 +58,7 @@ export function splitGraph(
   });
 
   return mergeSets(components).map((component) => {
-    const subGraph = new Map<TypedNode, Set<TypedNode>>();
+    const subGraph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
     component.forEach((node) => {
       const targets = graph.get(node);
       if (targets) {

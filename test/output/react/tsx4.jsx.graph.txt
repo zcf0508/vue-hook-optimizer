@@ -33,12 +33,15 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 9,
-          "line": 1,
+        "node": {
+          "info": {
+            "column": 9,
+            "line": 1,
+          },
+          "label": "open",
+          "type": "var",
         },
-        "label": "open",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -50,12 +53,15 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 9,
-          "line": 3,
+        "node": {
+          "info": {
+            "column": 9,
+            "line": 3,
+          },
+          "label": "xx",
+          "type": "var",
         },
-        "label": "xx",
-        "type": "var",
+        "type": "get",
       },
     },
   },

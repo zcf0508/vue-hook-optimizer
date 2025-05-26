@@ -2,7 +2,7 @@ import type { NodePath, Scope } from '@babel/traverse';
 import type * as t from '@babel/types';
 import type { NodeCollection } from '../analyze/utils';
 import _traverse from '@babel/traverse';
-import { getComment } from '../analyze/utils';
+import { getComment, isWritingNode } from '../analyze/utils';
 
 export const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -11,7 +11,7 @@ export const traverse: typeof _traverse
 export interface IReturnData {
   graph: {
     nodes: Set<string>
-    edges: Map<string, Set<string>>
+    edges: Map<string, Set<{ label: string, type: 'get' | 'set' }>>
     spread?: Map<string, Set<string>>
   }
   nodeCollection: NodeCollection
@@ -652,7 +652,7 @@ export function addIdentifiesToGraphByScanReturn(
                 }
                 if (!graph.edges.has(valName)) {
                   graph.edges.set(valName, new Set([...Array.from(
-                    tempEdges.get(valName) || new Set<string>(),
+                    tempEdges.get(valName) || new Set<{ label: string, type: 'get' | 'set' }>(),
                   )]));
                 }
 
@@ -662,7 +662,12 @@ export function addIdentifiesToGraphByScanReturn(
                   nodeCollection.addNode(name, path3.node.key, {
                     comment: getComment(path3.node),
                   });
-                  graph.edges.set(name, new Set([valName]));
+                  graph.edges.set(name, new Set([{
+                    label: valName,
+                    type: isWritingNode(path3)
+                      ? 'set'
+                      : 'get',
+                  }]));
                 }
               }
             }

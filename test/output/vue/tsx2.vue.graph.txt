@@ -9,20 +9,26 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 30,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 30,
+          },
+          "label": "aa",
+          "type": "var",
         },
-        "label": "aa",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 27,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 27,
+          },
+          "label": "x",
+          "type": "var",
         },
-        "label": "x",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -42,12 +48,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 30,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 30,
+          },
+          "label": "aa",
+          "type": "var",
         },
-        "label": "aa",
-        "type": "var",
+        "type": "get",
       },
     },
     {

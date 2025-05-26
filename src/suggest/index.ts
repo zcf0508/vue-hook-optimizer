@@ -1,4 +1,5 @@
 import type { TypedNode } from '../analyze/utils';
+import utils from 'node:util';
 import * as t from '@babel/types';
 import { NodeType } from '../analyze/utils';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
@@ -20,7 +21,7 @@ export interface Suggestion {
 export function gen(
   graph: {
     nodes: Set<TypedNode>
-    edges: Map<TypedNode, Set<TypedNode>>
+    edges: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),
@@ -29,7 +30,7 @@ export function gen(
 
   const suggestions: Suggestion[] = [];
   const splitedGraph = splitGraph(graph.edges);
-  // console.log(splitedGraph);
+  console.log(utils.inspect(splitedGraph, { depth: Infinity }));
   splitedGraph.forEach((g) => {
     const nodes = Array.from(g.keys());
 

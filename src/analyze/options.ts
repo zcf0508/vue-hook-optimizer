@@ -3,7 +3,7 @@ import type * as t from '@babel/types';
 import _traverse from '@babel/traverse';
 import { babelParse } from '@vue/compiler-sfc';
 import { processSetup } from './setupScript';
-import { getComment, NodeCollection } from './utils';
+import { getComment, isWritingNode, NodeCollection } from './utils';
 
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -47,7 +47,7 @@ export function analyze(
   const tNodes = new Map<string, t.Identifier>();
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<string>>(),
+    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
   };
 
   /** used in render block or setup return */
@@ -273,7 +273,7 @@ export function analyze(
                           }
                           if (!graph.edges.has(valName)) {
                             graph.edges.set(valName, new Set([...Array.from(
-                              tempEdges.get(valName) || new Set<string>(),
+                              tempEdges.get(valName) || new Set<{ label: string, type: 'get' | 'set' }>(),
                             )]));
                           }
 
@@ -284,7 +284,12 @@ export function analyze(
                             nodeCollection.addNode(name, path3.node.key, {
                               comment: getComment(path3.node),
                             });
-                            graph.edges.set(name, new Set([valName]));
+                            graph.edges.set(name, new Set([{
+                              label: valName,
+                              type: isWritingNode(path3)
+                                ? 'set'
+                                : 'get',
+                            }]));
                           }
                         }
                       }
@@ -443,7 +448,12 @@ export function analyze(
                   traverse(prop, {
                     MemberExpression(path2) {
                       if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
-                        graph.edges.get(name)?.add(path2.node.property.name);
+                        graph.edges.get(name)?.add({
+                          label: path2.node.property.name,
+                          type: isWritingNode(path2)
+                            ? 'set'
+                            : 'get',
+                        });
                       }
                     },
                   }, path1.scope, path1);
@@ -467,7 +477,12 @@ export function analyze(
                             path2.node.object.type === 'ThisExpression'
                             && path2.node.property.type === 'Identifier'
                           ) {
-                            graph.edges.get(name)?.add(path2.node.property.name);
+                            graph.edges.get(name)?.add({
+                              label: path2.node.property.name,
+                              type: isWritingNode(path2)
+                                ? 'set'
+                                : 'get',
+                            });
                           }
                         },
                       }, path1.scope, path1);
@@ -491,7 +506,12 @@ export function analyze(
                   traverse(prop, {
                     MemberExpression(path2) {
                       if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
-                        graph.edges.get(name)?.add(path2.node.property.name);
+                        graph.edges.get(name)?.add({
+                          label: path2.node.property.name,
+                          type: isWritingNode(path2)
+                            ? 'set'
+                            : 'get',
+                        });
                       }
                     },
                   }, path1.scope, path1);
@@ -530,7 +550,12 @@ export function analyze(
                     MemberExpression(path2) {
                       if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
                         if (watchArg && watchArg.name !== path2.node.property.name) {
-                          graph.edges.get(watchArg.name)?.add(path2.node.property.name);
+                          graph.edges.get(watchArg.name)?.add({
+                            label: path2.node.property.name,
+                            type: isWritingNode(path2)
+                              ? 'set'
+                              : 'get',
+                          });
                         }
                       }
                     },

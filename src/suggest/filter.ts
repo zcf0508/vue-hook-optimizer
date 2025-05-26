@@ -5,7 +5,7 @@ import { NodeType } from '../analyze/utils';
  * Filter out nodes that have no indegree.
  */
 export function noIndegreeFilter(
-  graph: Map<TypedNode, Set<TypedNode>>,
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>,
 ) {
   const nodes = Array.from(graph.keys());
   const indegree = new Map<TypedNode, number>();
@@ -14,7 +14,7 @@ export function noIndegreeFilter(
   });
   graph.forEach((targets, node) => {
     targets.forEach((target) => {
-      indegree.set(target, (indegree.get(target) || 0) + 1);
+      indegree.set(target.node, (indegree.get(target.node) || 0) + 1);
     });
   });
   return nodes.filter(node => indegree.get(node) === 0);
@@ -76,7 +76,7 @@ export function onlyFunctions(
 
 // ---
 
-export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
+export function findLinearPaths(graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>) {
   const linearPaths = [] as TypedNode[][];
   const visitedNodes = new Set<TypedNode>();
   const nodeInDegrees = new Map<TypedNode, number>();
@@ -87,8 +87,8 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
       nodeInDegrees.set(node, 0); // 确保每个节点都在入度映射中
     }
     for (const edge of edges) {
-      const inDegree = nodeInDegrees.get(edge) || 0;
-      nodeInDegrees.set(edge, inDegree + 1);
+      const inDegree = nodeInDegrees.get(edge.node) || 0;
+      nodeInDegrees.set(edge.node, inDegree + 1);
     }
   }
 
@@ -108,7 +108,7 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
       }
     }
     else {
-      const nextNode = Array.from(edges)[0];
+      const nextNode = Array.from(edges)[0].node;
       const nextNodeInDegree = nodeInDegrees.get(nextNode) || 0;
 
       // 确保下一个节点只有一个入度
@@ -169,7 +169,7 @@ export function findLinearPaths(graph: Map<TypedNode, Set<TypedNode>>) {
 
 // ---
 
-export function findArticulationPoints(graph: Map<TypedNode, Set<TypedNode>>) {
+export function findArticulationPoints(graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>) {
   const noIndegreeNodes = noIndegreeFilter(graph);
   let time = 0;
   const low = new Map<TypedNode, number>();
@@ -178,7 +178,7 @@ export function findArticulationPoints(graph: Map<TypedNode, Set<TypedNode>>) {
   const ap = new Set<TypedNode>();
   const visited = new Set<TypedNode>();
 
-  function APUtil(graph: Map<TypedNode, Set<TypedNode>>, node: TypedNode) {
+  function APUtil(graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>, node: TypedNode) {
     let children = 0;
     disc.set(node, time);
     low.set(node, time);
@@ -186,20 +186,20 @@ export function findArticulationPoints(graph: Map<TypedNode, Set<TypedNode>>) {
     visited.add(node);
 
     for (const neighbor of graph.get(node) || []) {
-      if (!visited.has(neighbor)) {
+      if (!visited.has(neighbor.node)) {
         children++;
-        parent.set(neighbor, node);
-        APUtil(graph, neighbor);
-        low.set(node, Math.min(low.get(node)!, low.get(neighbor)!));
+        parent.set(neighbor.node, node);
+        APUtil(graph, neighbor.node);
+        low.set(node, Math.min(low.get(node)!, low.get(neighbor.node)!));
         if (parent.get(node) === null && children > 1) {
           ap.add(node);
         }
-        if (parent.get(node) !== null && low.get(neighbor)! >= disc.get(node)!) {
+        if (parent.get(node) !== null && low.get(neighbor.node)! >= disc.get(node)!) {
           ap.add(node);
         }
       }
-      else if (neighbor !== parent.get(node)) {
-        low.set(node, Math.min(low.get(node)!, disc.get(neighbor)!));
+      else if (neighbor.node !== parent.get(node)) {
+        low.set(node, Math.min(low.get(node)!, disc.get(neighbor.node)!));
       }
     }
   }

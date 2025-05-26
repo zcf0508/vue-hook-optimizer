@@ -25,16 +25,19 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 8,
-          "line": 65,
-          "used": Set {
-            "provide",
-            "created",
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 65,
+            "used": Set {
+              "provide",
+              "created",
+            },
           },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -46,12 +49,15 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 74,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 74,
+          },
+          "label": "plus",
+          "type": "fun",
         },
-        "label": "plus",
-        "type": "fun",
+        "type": "get",
       },
     },
     {
@@ -66,27 +72,33 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 8,
-          "line": 65,
-          "used": Set {
-            "provide",
-            "created",
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 65,
+            "used": Set {
+              "provide",
+              "created",
+            },
           },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 78,
-          "used": Set {
-            "created",
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 78,
+            "used": Set {
+              "created",
+            },
           },
+          "label": "add",
+          "type": "fun",
         },
-        "label": "add",
-        "type": "fun",
+        "type": "get",
       },
     },
   },

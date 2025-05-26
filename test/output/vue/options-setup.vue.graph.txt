@@ -9,12 +9,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 72,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 72,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -27,12 +30,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 72,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 72,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -44,12 +50,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 72,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 72,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -69,12 +78,15 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 10,
-          "line": 72,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 72,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -86,13 +98,16 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 17,
-          "comment": "这是注释",
-          "line": 70,
+        "node": {
+          "info": {
+            "column": 17,
+            "comment": "这是注释",
+            "line": 70,
+          },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -104,12 +119,15 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 83,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 83,
+          },
+          "label": "plus",
+          "type": "fun",
         },
-        "label": "plus",
-        "type": "fun",
+        "type": "get",
       },
     },
     {
@@ -137,29 +155,38 @@
       "type": "fun",
     } => Set {
       {
-        "info": {
-          "column": 17,
-          "comment": "这是注释",
-          "line": 70,
+        "node": {
+          "info": {
+            "column": 17,
+            "comment": "这是注释",
+            "line": 70,
+          },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 6,
-          "line": 83,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 83,
+          },
+          "label": "plus",
+          "type": "fun",
         },
-        "label": "plus",
-        "type": "fun",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 10,
-          "line": 72,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 72,
+          },
+          "label": "count",
+          "type": "var",
         },
-        "label": "count",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -171,29 +198,38 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 69,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 69,
+          },
+          "label": "a",
+          "type": "var",
         },
-        "label": "a",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 10,
-          "line": 98,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 98,
+          },
+          "label": "b",
+          "type": "var",
         },
-        "label": "b",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 17,
-          "comment": "这是注释",
-          "line": 70,
+        "node": {
+          "info": {
+            "column": 17,
+            "comment": "这是注释",
+            "line": 70,
+          },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
     },
     {
@@ -205,29 +241,38 @@
       "type": "var",
     } => Set {
       {
-        "info": {
-          "column": 6,
-          "line": 69,
+        "node": {
+          "info": {
+            "column": 6,
+            "line": 69,
+          },
+          "label": "a",
+          "type": "var",
         },
-        "label": "a",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 10,
-          "line": 98,
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 98,
+          },
+          "label": "b",
+          "type": "var",
         },
-        "label": "b",
-        "type": "var",
+        "type": "get",
       },
       {
-        "info": {
-          "column": 17,
-          "comment": "这是注释",
-          "line": 70,
+        "node": {
+          "info": {
+            "column": 17,
+            "comment": "这是注释",
+            "line": 70,
+          },
+          "label": "number",
+          "type": "var",
         },
-        "label": "number",
-        "type": "var",
+        "type": "get",
       },
     },
   },
