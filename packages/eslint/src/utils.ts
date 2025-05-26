@@ -112,7 +112,7 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
 
   let graph = {
     nodes: new Set<TypedNode>(),
-    edges: new Map<TypedNode, Set<{ node: TypedNode; type: 'get' | 'set' }>>(),
+    edges: new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>(),
   };
   let nodesUsedInTemplate = new Set<string>();
   let nodesUsedInStyle = new Set<string>();

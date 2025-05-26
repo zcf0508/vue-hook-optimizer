@@ -1,8 +1,6 @@
 import type { TypedNode } from '../analyze/utils';
-import utils from 'node:util';
-import * as t from '@babel/types';
 import { NodeType } from '../analyze/utils';
-import { findArticulationPoints, findLinearPaths, noIndegreeFilter, noOutdegreeFilter, onlyFunctions } from './filter';
+import { findArticulationPoints, findLinearPaths, noIndegreeFilter } from './filter';
 import { splitGraph } from './split';
 import { hasCycle } from './utils';
 
@@ -30,7 +28,6 @@ export function gen(
 
   const suggestions: Suggestion[] = [];
   const splitedGraph = splitGraph(graph.edges);
-  console.log(utils.inspect(splitedGraph, { depth: Infinity }));
   splitedGraph.forEach((g) => {
     const nodes = Array.from(g.keys());
 
