@@ -1,6 +1,8 @@
 import type { RelationType, TypedNode } from '../analyze/utils';
 
-export function hasCycle(graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>): { hasCycle: boolean, cycleNodes: TypedNode[] } {
+export function hasCycle(
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
+): { hasCycle: boolean, cycleNodes: TypedNode[] } {
   const visited: Set<TypedNode> = new Set();
   const onStack: Set<TypedNode> = new Set();
   const stack: TypedNode[] = [];
