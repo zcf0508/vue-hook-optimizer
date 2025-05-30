@@ -53,10 +53,10 @@ const ddd = {
 
 /** 这是注释 */
 function funC(varB) { // 这是注释
-  const varD = 1
-  const varE = 2
+  const _varD = 1
+  const _varE = 2
   funC()
-  return [varD, varE]
+  return [_varD, _varE]
 }
 
 const [ varD, varE ] = funC(varB)

@@ -115,7 +115,7 @@
           "label": "writeBaseInfo",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {
@@ -146,7 +146,7 @@
           "label": "processInfo",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
       {
         "node": {
@@ -365,7 +365,7 @@
           "label": "writeBaseInfo",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {
@@ -396,7 +396,7 @@
           "label": "writeBaseInfo",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {
@@ -427,7 +427,7 @@
           "label": "writeBaseInfo",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {
@@ -586,7 +586,7 @@
           "label": "xyz",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
   },

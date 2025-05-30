@@ -1,4 +1,5 @@
 import type {
+  RelationType,
   TypedNode,
 } from 'vue-hook-optimizer';
 import {
@@ -16,7 +17,7 @@ export default defineEventHandler(async (ctx) => {
   const { code, framework } = await readBody<{ code: string, framework: 'vue' | 'react' }>(ctx);
   let graph = {
     nodes: new Set<TypedNode>(),
-    edges: new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>(),
+    edges: new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>(),
   };
   let nodesUsedInTemplate = new Set<string>();
   let nodesUsedInStyle = new Set<string>();

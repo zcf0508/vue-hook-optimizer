@@ -1,11 +1,11 @@
-import type { TypedNode } from '../analyze/utils';
+import type { RelationType, TypedNode } from '../analyze/utils';
 import { NodeType } from '../analyze/utils';
 
 /**
  * Filter out nodes that have no indegree.
  */
 export function noIndegreeFilter(
-  graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>,
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
 ) {
   const nodes = Array.from(graph.keys());
   const indegree = new Map<TypedNode, number>();
@@ -76,7 +76,7 @@ export function onlyFunctions(
 
 // ---
 
-export function findLinearPaths(graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>) {
+export function findLinearPaths(graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>) {
   const linearPaths = [] as TypedNode[][];
   const visitedNodes = new Set<TypedNode>();
   const nodeInDegrees = new Map<TypedNode, number>();
@@ -169,7 +169,7 @@ export function findLinearPaths(graph: Map<TypedNode, Set<{ node: TypedNode, typ
 
 // ---
 
-export function findArticulationPoints(graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>) {
+export function findArticulationPoints(graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>) {
   const noIndegreeNodes = noIndegreeFilter(graph);
   let time = 0;
   const low = new Map<TypedNode, number>();
@@ -178,7 +178,7 @@ export function findArticulationPoints(graph: Map<TypedNode, Set<{ node: TypedNo
   const ap = new Set<TypedNode>();
   const visited = new Set<TypedNode>();
 
-  function APUtil(graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>, node: TypedNode) {
+  function APUtil(graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>, node: TypedNode) {
     let children = 0;
     disc.set(node, time);
     low.set(node, time);

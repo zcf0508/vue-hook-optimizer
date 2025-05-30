@@ -1,9 +1,9 @@
-import type { TypedNode } from '../analyze/utils';
+import type { RelationType, TypedNode } from '../analyze/utils';
 
 function dfs(
-  graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>,
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
   node: TypedNode,
-  targets: Set<{ node: TypedNode, type: 'get' | 'set' }>,
+  targets: Set<{ node: TypedNode, type: RelationType }>,
   visited: Set<TypedNode>,
   component: Set<TypedNode>,
 ) {
@@ -42,7 +42,7 @@ function mergeSets(arr: Set<TypedNode>[]): Set<TypedNode>[] {
 }
 
 export function splitGraph(
-  graph: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>,
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
 ) {
   const components = [] as Set<TypedNode>[];
 
@@ -58,7 +58,7 @@ export function splitGraph(
   });
 
   return mergeSets(components).map((component) => {
-    const subGraph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const subGraph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     component.forEach((node) => {
       const targets = graph.get(node);
       if (targets) {

@@ -1,9 +1,10 @@
 import type { NodePath } from '@babel/traverse';
 import type * as t from '@babel/types';
+import type { RelationType } from './utils';
 import _traverse from '@babel/traverse';
 import { babelParse } from '@vue/compiler-sfc';
 import { processSetup } from './setupScript';
-import { getComment, isWritingNode, NodeCollection } from './utils';
+import { getComment, getRelationType, NodeCollection } from './utils';
 
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -47,7 +48,7 @@ export function analyze(
   const tNodes = new Map<string, t.Identifier>();
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
+    edges: new Map<string, Set<{ label: string, type: RelationType }>>(),
   };
 
   /** used in render block or setup return */
@@ -273,7 +274,7 @@ export function analyze(
                           }
                           if (!graph.edges.has(valName)) {
                             graph.edges.set(valName, new Set([...Array.from(
-                              tempEdges.get(valName) || new Set<{ label: string, type: 'get' | 'set' }>(),
+                              tempEdges.get(valName) || new Set<{ label: string, type: RelationType }>(),
                             )]));
                           }
 
@@ -286,9 +287,7 @@ export function analyze(
                             });
                             graph.edges.set(name, new Set([{
                               label: valName,
-                              type: isWritingNode(path3)
-                                ? 'set'
-                                : 'get',
+                              type: getRelationType(path3),
                             }]));
                           }
                         }
@@ -450,9 +449,7 @@ export function analyze(
                       if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
                         graph.edges.get(name)?.add({
                           label: path2.node.property.name,
-                          type: isWritingNode(path2)
-                            ? 'set'
-                            : 'get',
+                          type: getRelationType(path2),
                         });
                       }
                     },
@@ -479,9 +476,7 @@ export function analyze(
                           ) {
                             graph.edges.get(name)?.add({
                               label: path2.node.property.name,
-                              type: isWritingNode(path2)
-                                ? 'set'
-                                : 'get',
+                              type: getRelationType(path2),
                             });
                           }
                         },
@@ -508,9 +503,7 @@ export function analyze(
                       if (path2.node.object.type === 'ThisExpression' && path2.node.property.type === 'Identifier') {
                         graph.edges.get(name)?.add({
                           label: path2.node.property.name,
-                          type: isWritingNode(path2)
-                            ? 'set'
-                            : 'get',
+                          type: getRelationType(path2),
                         });
                       }
                     },
@@ -552,9 +545,7 @@ export function analyze(
                         if (watchArg && watchArg.name !== path2.node.property.name) {
                           graph.edges.get(watchArg.name)?.add({
                             label: path2.node.property.name,
-                            type: isWritingNode(path2)
-                              ? 'set'
-                              : 'get',
+                            type: getRelationType(path2),
                           });
                         }
                       }

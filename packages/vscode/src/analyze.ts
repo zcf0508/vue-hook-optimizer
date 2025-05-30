@@ -1,4 +1,5 @@
 import type {
+  RelationType,
   TypedNode,
 } from '../../../src';
 import {
@@ -15,7 +16,7 @@ import {
 export async function analyze(code: string, language: 'vue' | 'react') {
   let graph = {
     nodes: new Set<TypedNode>(),
-    edges: new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>(),
+    edges: new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>(),
   };
   let nodesUsedInTemplate = new Set<string>();
   let nodesUsedInStyle = new Set<string>();

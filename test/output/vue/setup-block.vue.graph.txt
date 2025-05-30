@@ -160,7 +160,7 @@
           "label": "funA",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {
@@ -230,7 +230,7 @@
           "label": "funC",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {
@@ -255,7 +255,7 @@
           "label": "funC",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
       {
         "node": {
@@ -291,7 +291,7 @@
           "label": "funC",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
       {
         "node": {
@@ -484,7 +484,7 @@
           "label": "add2222",
           "type": "fun",
         },
-        "type": "get",
+        "type": "call",
       },
     },
     {

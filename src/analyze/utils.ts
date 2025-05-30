@@ -23,6 +23,8 @@ interface Options {
   comment: string
 };
 
+export type RelationType = 'get' | 'set' | 'call';
+
 export class NodeCollection {
   lineOffset = 0;
   addInfo = true;
@@ -115,7 +117,7 @@ export class NodeCollection {
 
   map(graph: {
     nodes: Set<string>
-    edges: Map<string, Set<{ label: string, type: 'get' | 'set' }>>
+    edges: Map<string, Set<{ label: string, type: RelationType }>>
   }) {
     const nodes = new Set(Array.from(graph.nodes).map((node) => {
       return this.nodes.get(node)!;
@@ -123,7 +125,7 @@ export class NodeCollection {
 
     const edges = new Map(Array.from(graph.edges).map(([from, to]) => {
       // dedupe by node label, preferring 'set' over 'get'
-      const labelMap = new Map<string, { node: TypedNode, type: 'get' | 'set' }>();
+      const labelMap = new Map<string, { node: TypedNode, type: RelationType }>();
       for (const item of to) {
         const node = this.nodes.get(item.label)!;
         if (!node) {
@@ -200,4 +202,23 @@ export function isWritingNode(path: NodePath<t.Node>) {
   }
 
   return false;
+}
+
+export function isCallingNode(path: NodePath<t.Identifier>) {
+  const parent = path.parentPath;
+  // 判断父节点是否为 CallExpression，并且当前节点是 callee
+  if (parent && parent.isCallExpression()) {
+    return parent.node.callee === path.node;
+  }
+  return false;
+}
+
+export function getRelationType(path: NodePath<t.Node>) {
+  if (path.node.type === 'Identifier' && isCallingNode(path as NodePath<t.Identifier>)) {
+    return 'call';
+  }
+  if (isWritingNode(path)) {
+    return 'set';
+  }
+  return 'get';
 }

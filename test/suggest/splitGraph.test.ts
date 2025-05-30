@@ -1,10 +1,10 @@
-import type { TypedNode } from '@/analyze/utils';
+import type { RelationType, TypedNode } from '@/analyze/utils';
 import { NodeType } from '@/analyze/utils';
 import { splitGraph } from '@/suggest/split';
 
 describe('suggest tests', () => {
   it('split graph 1', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -29,7 +29,7 @@ describe('suggest tests', () => {
     expect(splitGraph(graph)).toEqual([graph]);
   });
   it('split graph 2', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -57,7 +57,7 @@ describe('suggest tests', () => {
     ]);
   });
   it('split graph 3', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -87,7 +87,7 @@ describe('suggest tests', () => {
     ]);
   });
   it('split graph 4', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -117,7 +117,7 @@ describe('suggest tests', () => {
     ]);
   });
   it('split graph 5', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,

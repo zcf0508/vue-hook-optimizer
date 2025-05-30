@@ -1,4 +1,4 @@
-import type { TypedNode } from '@/analyze/utils';
+import type { RelationType, TypedNode } from '@/analyze/utils';
 import { NodeType } from '@/analyze/utils';
 import {
   findArticulationPoints,
@@ -10,7 +10,7 @@ import {
 
 describe('suggest tests', () => {
   it('graph filter noIndegree 1', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -35,7 +35,7 @@ describe('suggest tests', () => {
     expect(noIndegreeFilter(graph)).toEqual([]);
   });
   it('graph filter noIndegree 2', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -169,7 +169,7 @@ describe('suggest tests', () => {
     ]));
   });
   it('graph linear paths 1', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -201,7 +201,7 @@ describe('suggest tests', () => {
     ]);
   });
   it('graph linear paths 2', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -226,7 +226,7 @@ describe('suggest tests', () => {
     expect(findLinearPaths(graph)).toEqual([]);
   });
   it('graph linear paths 3', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,
@@ -259,7 +259,7 @@ describe('suggest tests', () => {
     ]);
   });
   it('graph articulation points 1', () => {
-    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>();
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const node1: TypedNode = {
       label: 'node1',
       type: NodeType.var,

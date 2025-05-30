@@ -1,5 +1,5 @@
 import type { Data, Edge, Node } from 'vis-network';
-import type { TypedNode } from './analyze/utils';
+import type { RelationType, TypedNode } from './analyze/utils';
 
 type CustomNode = Node & {
   info: TypedNode['info']
@@ -16,7 +16,7 @@ function filterNodeUserd(used: Set<string> | undefined) {
 export function getVisData(
   graph: {
     nodes: Set<TypedNode>
-    edges: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>
+    edges: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),

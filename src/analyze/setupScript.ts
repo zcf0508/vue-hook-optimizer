@@ -1,8 +1,9 @@
 import type { NodePath, Scope, VisitNode } from '@babel/traverse';
 import type * as t from '@babel/types';
+import type { RelationType } from './utils';
 import _traverse from '@babel/traverse';
 import { babelParse } from '@vue/compiler-sfc';
-import { getComment, isWritingNode, NodeCollection, NodeType } from './utils';
+import { getComment, getRelationType, NodeCollection, NodeType } from './utils';
 
 const traverse: typeof _traverse
   // @ts-expect-error unwarp default
@@ -23,7 +24,7 @@ export function processSetup(
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
+    edges: new Map<string, Set<{ label: string, type: RelationType }>>(),
     spread: new Map<string, Set<string>>(),
   };
 
@@ -405,9 +406,7 @@ export function processSetup(
                     if (!watchArgsNames.includes(path1.node.name)) {
                       graph.edges.get(watchArg.name)?.add({
                         label: path1.node.name,
-                        type: isWritingNode(path1)
-                          ? 'set'
-                          : 'get',
+                        type: getRelationType(path1),
                       });
                     }
                   });
@@ -451,9 +450,7 @@ export function processSetup(
             ) {
               graph.edges.get(name)?.add({
                 label: path1.node.name,
-                type: isWritingNode(path1)
-                  ? 'set'
-                  : 'get',
+                type: getRelationType(path1),
               });
             }
           },
@@ -472,9 +469,7 @@ export function processSetup(
               ) {
                 graph.edges.get(name)?.add({
                   label: path1.node.property.name,
-                  type: isWritingNode(path1)
-                    ? 'set'
-                    : 'get',
+                  type: getRelationType(path1),
                 });
               }
             }
@@ -506,9 +501,7 @@ export function processSetup(
                     ) {
                       graph.edges.get(name)?.add({
                         label: path1.node.name,
-                        type: isWritingNode(path1)
-                          ? 'set'
-                          : 'get',
+                        type: getRelationType(path1),
                       });
                     }
                   },
@@ -527,9 +520,7 @@ export function processSetup(
                       ) {
                         graph.edges.get(name)?.add({
                           label: path1.node.property.name,
-                          type: isWritingNode(path1)
-                            ? 'set'
-                            : 'get',
+                          type: getRelationType(path1),
                         });
                       }
                     }
@@ -560,9 +551,7 @@ export function processSetup(
                     ) {
                       graph.edges.get(name)?.add({
                         label: path1.node.name,
-                        type: isWritingNode(path1)
-                          ? 'set'
-                          : 'get',
+                        type: getRelationType(path1),
                       });
                     }
                   },
@@ -581,9 +570,7 @@ export function processSetup(
                       ) {
                         graph.edges.get(name)?.add({
                           label: path1.node.property.name,
-                          type: isWritingNode(path1)
-                            ? 'set'
-                            : 'get',
+                          type: getRelationType(path1),
                         });
                       }
                     }
@@ -621,9 +608,7 @@ export function processSetup(
                 ) {
                   graph.edges.get(name)?.add({
                     label: path1.node.name,
-                    type: isWritingNode(path1)
-                      ? 'set'
-                      : 'get',
+                    type: getRelationType(path1),
                   });
                 }
               },
@@ -642,9 +627,7 @@ export function processSetup(
                   ) {
                     graph.edges.get(name)?.add({
                       label: path1.node.property.name,
-                      type: isWritingNode(path1)
-                        ? 'set'
-                        : 'get',
+                      type: getRelationType(path1),
                     });
                   }
                 }
@@ -664,9 +647,7 @@ export function processSetup(
             ) {
               graph.edges.get(name)?.add({
                 label: path.node.init.name,
-                type: isWritingNode(path)
-                  ? 'set'
-                  : 'get',
+                type: getRelationType(path),
               });
             }
           }
@@ -687,9 +668,7 @@ export function processSetup(
                 ) {
                   graph.edges.get(name)?.add({
                     label: path1.node.name,
-                    type: isWritingNode(path1)
-                      ? 'set'
-                      : 'get',
+                    type: getRelationType(path1),
                   });
                 }
               },
@@ -719,9 +698,7 @@ export function processSetup(
             ) {
               graph.edges.get(name)?.add({
                 label: path1.node.name,
-                type: isWritingNode(path1)
-                  ? 'set'
-                  : 'get',
+                type: getRelationType(path1),
               });
             }
           },
@@ -740,9 +717,7 @@ export function processSetup(
               ) {
                 graph.edges.get(name)?.add({
                   label: path1.node.property.name,
-                  type: isWritingNode(path1)
-                    ? 'set'
-                    : 'get',
+                  type: getRelationType(path1),
                 });
               }
             }
@@ -771,9 +746,7 @@ export function processSetup(
               ) {
                 graph.edges.get(name)?.add({
                   label: path1.node.property.name,
-                  type: isWritingNode(path1)
-                    ? 'set'
-                    : 'get',
+                  type: getRelationType(path1),
                 });
               }
             }

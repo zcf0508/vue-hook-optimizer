@@ -1,7 +1,7 @@
 import type { RuleListener, RuleWithMeta, RuleWithMetaAndName } from '@typescript-eslint/utils/eslint-utils';
 import type { RuleContext } from '@typescript-eslint/utils/ts-eslint';
 import type { Rule } from 'eslint';
-import type { TypedNode } from 'vue-hook-optimizer';
+import type { RelationType, TypedNode } from 'vue-hook-optimizer';
 import {
   analyzeOptions,
   analyzeSetupScript,
@@ -112,7 +112,7 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
 
   let graph = {
     nodes: new Set<TypedNode>(),
-    edges: new Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>(),
+    edges: new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>(),
   };
   let nodesUsedInTemplate = new Set<string>();
   let nodesUsedInStyle = new Set<string>();

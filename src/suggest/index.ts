@@ -1,4 +1,4 @@
-import type { TypedNode } from '../analyze/utils';
+import type { RelationType, TypedNode } from '../analyze/utils';
 import { NodeType } from '../analyze/utils';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter } from './filter';
 import { splitGraph } from './split';
@@ -19,7 +19,7 @@ export interface Suggestion {
 export function gen(
   graph: {
     nodes: Set<TypedNode>
-    edges: Map<TypedNode, Set<{ node: TypedNode, type: 'get' | 'set' }>>
+    edges: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),

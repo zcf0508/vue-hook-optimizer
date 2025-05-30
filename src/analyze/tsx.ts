@@ -6,6 +6,7 @@ import type {
   IReturnData,
   IUsedNode,
 } from '../utils/traverse';
+import type { RelationType } from './utils';
 import _traverse from '@babel/traverse';
 import { babelParse } from '@vue/compiler-sfc';
 import {
@@ -25,7 +26,7 @@ import {
   traverse,
   traverseSetup,
 } from '../utils/traverse';
-import { getComment, isWritingNode, NodeCollection } from './utils';
+import { getComment, getRelationType, NodeCollection } from './utils';
 
 interface IProcessMain {
   node: t.Node
@@ -69,7 +70,7 @@ function processByReturnNotJSX(params: IProcessBranch) {
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
+    edges: new Map<string, Set<{ label: string, type: RelationType }>>(),
   };
 
   // 解析return, 收集spread
@@ -124,7 +125,7 @@ function processByReturnJSX(params: IProcessBranch) {
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
+    edges: new Map<string, Set<{ label: string, type: RelationType }>>(),
     spread: new Map<string, Set<string>>(),
   };
 
@@ -148,9 +149,7 @@ function processByReturnJSX(params: IProcessBranch) {
     if (scope === bindingScope && collectionNodes.has(toName)) {
       graph.edges.get(fromName)?.add({
         label: toName,
-        type: isWritingNode(path)
-          ? 'set'
-          : 'get',
+        type: getRelationType(path),
       });
     }
   }
@@ -270,7 +269,7 @@ function processByReact(params: IProcessReact) {
 
   const graph = {
     nodes: new Set<string>(),
-    edges: new Map<string, Set<{ label: string, type: 'get' | 'set' }>>(),
+    edges: new Map<string, Set<{ label: string, type: RelationType }>>(),
     spread: new Map<string, Set<string>>(),
   };
 
@@ -294,9 +293,7 @@ function processByReact(params: IProcessReact) {
     if (scope === bindingScope && collectionNodes.has(toName)) {
       graph.edges.get(fromName)?.add({
         label: toName,
-        type: isWritingNode(path)
-          ? 'set'
-          : 'get',
+        type: getRelationType(path),
       });
     }
   }
