@@ -63,6 +63,11 @@
             "react"
           ],
           "description": "Choose the language used by components. It is recommended that differentiated settings be made according to the workspace."
+        },
+        "vho.highlight": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable dependence highlight."
         }
       }
     },
@@ -110,8 +115,10 @@
     "update": "vscode-ext-gen"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
     "@types/vscode": "^1.78.1",
     "@vscode/vsce": "^2.26.0",
+    "lodash-es": "^4.17.21",
     "rimraf": "^5.0.5",
     "vite": "^4.5.3",
     "vscode-ext-gen": "^0.3.1"

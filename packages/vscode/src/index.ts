@@ -3,8 +3,9 @@ import { template } from 'lodash-es';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 import { analyze } from './analyze';
+import { getLauguageConfig, getVisConfigByTheme } from './config';
 import * as meta from './generated-meta';
-import { dark, light } from './themes';
+import { activateHighlighting } from './highlight';
 
 const visTemplate = template(`<html>
 <head>
@@ -151,6 +152,8 @@ const outputChannel = window.createOutputChannel('Vue Hook Optimizer');
 let alerted = false;
 
 export function activate(context: vscode.ExtensionContext) {
+  activateHighlighting(context);
+
   context.subscriptions.push(vscode.commands.registerCommand(meta.commands.vhoActionAnalyze, async () => {
     // 根据主题获取vis config
     const config = getVisConfigByTheme();
@@ -237,36 +240,6 @@ export function activate(context: vscode.ExtensionContext) {
       alerted = true;
     }
   }));
-}
-
-function getVisConfigByTheme() {
-  const config = vscode.workspace.getConfiguration();
-  const theme = config.get(meta.configs.vhoTheme.key, meta.configs.vhoTheme.default);
-
-  if (theme === 'auto') {
-    const themeKind = vscode.window.activeColorTheme.kind;
-    if (themeKind === 2 || themeKind === 3) {
-      return dark;
-    }
-    else if (themeKind === 1 || themeKind === 4) {
-      return light;
-    }
-    else {
-      outputChannel.append('The current theme is not supported at the moment, so it will be set as light theme.');
-      return light;
-    }
-  }
-  else if (theme === 'light') {
-    return light;
-  }
-  else if (theme === 'dark') {
-    return dark;
-  }
-}
-
-function getLauguageConfig() {
-  const config = vscode.workspace.getConfiguration();
-  return config.get(meta.configs.vhoLanguage.key, meta.configs.vhoLanguage.default) || 'vue';
 }
 
 export function deactivate() {

@@ -4,7 +4,7 @@
 // Meta info
 export const publisher = 'zcf0508';
 export const name = 'vue-hook-optimizer-ext';
-export const version = '0.0.61';
+export const version = '0.0.73';
 export const displayName = 'vue-hook-optimizer';
 export const description = undefined;
 export const extensionId = `${publisher}.${name}`;
@@ -31,16 +31,19 @@ export const commands = {
  */
 export type ConfigKey =
   | 'vho.theme'
-  | 'vho.language';
+  | 'vho.language'
+  | 'vho.highlight';
 
 export interface ConfigKeyTypeMap {
   'vho.theme': ('auto' | 'light' | 'dark')
   'vho.language': ('vue' | 'react')
+  'vho.highlight': boolean
 }
 
 export interface ConfigShorthandMap {
   vhoTheme: 'vho.theme'
   vhoLanguage: 'vho.language'
+  vhoHighlight: 'vho.highlight'
 }
 
 export interface ConfigItem<T extends keyof ConfigKeyTypeMap> {
@@ -72,4 +75,14 @@ export const configs = {
     key: 'vho.language',
     default: 'vue',
   } as ConfigItem<'vho.language'>,
+  /**
+   * Enable dependence highlight.
+   * @key `vho.highlight`
+   * @default `true`
+   * @type `boolean`
+   */
+  vhoHighlight: {
+    key: 'vho.highlight',
+    default: true,
+  } as ConfigItem<'vho.highlight'>,
 };
