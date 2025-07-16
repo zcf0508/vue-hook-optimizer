@@ -42,6 +42,7 @@
     "build:ext": "npm -C packages/vscode run build",
     "build:eslint": "npm -C packages/eslint run build",
     "build:mcp": "npm -C packages/mcp run build",
+    "build:all": "npm run build && npm run build:eslint && npm run build:mcp && npm run build:ext",
     "play": "npm -C packages/playground run dev",
     "lint": "eslint .",
     "test": "vitest",

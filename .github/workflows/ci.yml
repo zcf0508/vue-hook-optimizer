@@ -69,7 +69,7 @@ jobs:
         run: pnpm i --frozen-lockfile
 
       - name: Build
-        run: pnpm run build
+        run: pnpm run build:all
 
       - name: Coverage
         run: pnpm run coverage
