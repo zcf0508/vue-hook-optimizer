@@ -20,28 +20,42 @@ const server = new McpServer(
   },
 );
 
-server.tool(
+server.registerTool(
   'analyze',
-  'Analyze your component to assist in refactoring and optimizing hook abstractions. Requires 2 parameters: `absolutePath` (the file\'s absolute path) and `framework` (the project\'s framework, with optional values vue / react default vue).',
   {
-    absolutePath: z.string(),
-    framework: z.enum(['vue', 'react']).optional().default('vue'),
+    title: 'Analyze',
+    description: 'Analyze your component to assist in refactoring and optimizing hook abstractions. Requires 2 parameters: `absolutePath` (the file\'s absolute path) and `framework` (the project\'s framework, with optional values vue / react default vue).',
+    inputSchema: {
+      absolutePath: z.string(),
+      framework: z.enum(['vue', 'react']).optional().default('vue'),
+    }
   },
   async ({ absolutePath, framework }) => {
-    const code = await readFile(absolutePath, 'utf-8');
-    const res = await analyze(code, framework);
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '```mermaid',
-          res.mermaid,
-          '```',
-          ...res.suggests.map(s => s.message),
-        ].join('\n'),
-      }],
-    };
+    try {
+      const code = await readFile(absolutePath, 'utf-8');
+      const res = await analyze(code, framework);
+  
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '```mermaid',
+            res.mermaid,
+            '```',
+            ...res.suggests.map(s => s.message),
+          ].join('\n'),
+        }],
+      };
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.error('Something went wrong:', error.message);
+      return {
+        content: [{
+          type: 'text',
+          text: 'Error analyzing file',
+        }],
+      };
+    }
   },
 );
 
