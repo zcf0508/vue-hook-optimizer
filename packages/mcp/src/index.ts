@@ -28,13 +28,13 @@ server.registerTool(
     inputSchema: {
       absolutePath: z.string(),
       framework: z.enum(['vue', 'react']).optional().default('vue'),
-    }
+    },
   },
   async ({ absolutePath, framework }) => {
     try {
       const code = await readFile(absolutePath, 'utf-8');
       const res = await analyze(code, framework);
-  
+
       return {
         content: [{
           type: 'text',
@@ -46,13 +46,14 @@ server.registerTool(
           ].join('\n'),
         }],
       };
-    } catch (err: unknown) {
-      const error = err as Error;
-      console.error('Something went wrong:', error.message);
+    }
+    catch (error: unknown) {
+      const errorMessage = (error as Error)?.message ?? 'Get error message failed.';
+      console.error('Something went wrong:', errorMessage);
       return {
         content: [{
           type: 'text',
-          text: 'Error analyzing file',
+          text: `Error analyzing file: ${errorMessage}`,
         }],
       };
     }
