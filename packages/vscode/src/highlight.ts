@@ -6,11 +6,15 @@ import { getHighlightConfig, getLauguageConfig } from './config';
 const dependencyDecorationType = vscode.window.createTextEditorDecorationType({
   backgroundColor: 'rgba(122, 198, 253, 0.2)',
   isWholeLine: true,
+  overviewRulerColor: 'rgba(122, 198, 253, 0.8)',
+  overviewRulerLane: vscode.OverviewRulerLane.Full,
 });
 
 const dependentDecorationType = vscode.window.createTextEditorDecorationType({
   backgroundColor: 'rgba(115, 201, 159, 0.2)',
   isWholeLine: true,
+  overviewRulerColor: 'rgba(115, 201, 159, 0.8)',
+  overviewRulerLane: vscode.OverviewRulerLane.Full,
 });
 
 function clearDecorations(editor: vscode.TextEditor) {
