@@ -11,6 +11,23 @@ const traverse: typeof _traverse
 
 const ignoreFunctionsName = ['defineProps', 'defineEmits', 'withDefaults'];
 
+export const watchHooks = [
+  'watch',
+
+  // from `@vueuse/core`
+  'watchArray',
+  'watchAtMost',
+  'watchDebounced',
+  'watchDeep',
+  'watchIgnorable',
+  'watchImmediate',
+  'watchOnce',
+  'watchPausable',
+  'watchThrottled',
+  'watchTriggerable',
+  'watchWithFilter',
+];
+
 export function processSetup(
   ast: t.Node,
   parentScope?: Scope,
@@ -303,7 +320,7 @@ export function processSetup(
           },
         }, patentScope, node);
       }
-      else if (hookName === 'watch') {
+      else if (watchHooks.includes(hookName)) {
         if (expression.arguments[0].type === 'Identifier') {
           const binding = patentScope.getBinding(expression.arguments[0].name);
           if (
@@ -354,7 +371,7 @@ export function processSetup(
         }, patentScope, node);
       }
       expression.arguments.forEach((argNode, index) => {
-        if (hookName === 'watch' && index === 0 && argNode.type === 'Identifier') {
+        if (watchHooks.includes(hookName) && index === 0 && argNode.type === 'Identifier') {
           const _node = nodeCollection.getNode(argNode.name);
           if (_node?.info?.used) {
             _node?.info?.used?.add(hookName);
@@ -400,7 +417,7 @@ export function processSetup(
                 && (binding?.scope.block.type === 'Program'
                   || parentScope === binding?.scope)
               ) {
-                if (['watch', 'useEffect'].includes(hookName) && watchArgs.size > 0) {
+                if ([...watchHooks, 'useEffect'].includes(hookName) && watchArgs.size > 0) {
                   const watchArgsNames = Array.from(watchArgs).map(arg => arg.name);
                   watchArgs.forEach((watchArg) => {
                     if (!watchArgsNames.includes(path1.node.name)) {
@@ -587,7 +604,7 @@ export function processSetup(
         ].includes(path.node.init.type)
         && path.node.id.type === 'Identifier'
         ) {
-          if (path.node.init.type === 'CallExpression' && path.node.init.callee.type === 'Identifier' && ['watch', 'watchEffect'].includes(path.node.init.callee.name)) {
+          if (path.node.init.type === 'CallExpression' && path.node.init.callee.type === 'Identifier' && [...watchHooks, 'watchEffect'].includes(path.node.init.callee.name)) {
             traverseHooks(path.node.init, path.scope);
           }
           const name = path.node.id?.name;

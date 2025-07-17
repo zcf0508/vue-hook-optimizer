@@ -575,7 +575,7 @@
         "line": 119,
         "used": Set {
           "onMounted",
-          "watch",
+          "watchDeep",
         },
       },
       "label": "func2a",
@@ -871,7 +871,7 @@
         "line": 119,
         "used": Set {
           "onMounted",
-          "watch",
+          "watchDeep",
         },
       },
       "label": "func2a",

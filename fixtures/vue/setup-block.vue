@@ -123,7 +123,7 @@ const func2a = () => {
 
 onMounted(func2a)
 
-watch(() => [], func2a)
+watchDeep(() => [], func2a)
 
 </script>
 

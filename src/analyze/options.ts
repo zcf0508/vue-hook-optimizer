@@ -3,7 +3,7 @@ import type * as t from '@babel/types';
 import type { RelationType } from './utils';
 import _traverse from '@babel/traverse';
 import { babelParse } from '@vue/compiler-sfc';
-import { processSetup } from './setupScript';
+import { processSetup, watchHooks } from './setupScript';
 import { getComment, getRelationType, NodeCollection } from './utils';
 
 const traverse: typeof _traverse
@@ -513,10 +513,10 @@ export function analyze(
             }
           }
 
-          if (path1.node.key.type === 'Identifier' && ['watch', ...vueLifeCycleHooks].includes(path1.node.key.name)) {
+          if (path1.node.key.type === 'Identifier' && [...watchHooks, ...vueLifeCycleHooks].includes(path1.node.key.name)) {
             const hookName = path1.node.key.name;
 
-            if (hookName === 'watch' && path1.node.value.type === 'ObjectExpression') {
+            if (watchHooks.includes(hookName) && path1.node.value.type === 'ObjectExpression') {
               path1.node.value.properties.forEach((prop) => {
                 if ((prop.type === 'ObjectProperty' || prop.type === 'ObjectMethod') && (
                   prop.key.type === 'Identifier' || prop.key.type === 'StringLiteral'
