@@ -12,8 +12,8 @@ export const extensionId = `${publisher}.${name}`;
 /**
  * Type union of all commands
  */
-export type CommandKey =
-  | 'vho.action.analyze';
+export type CommandKey
+  = | 'vho.action.analyze';
 
 /**
  * Commands map registed by `zcf0508.vue-hook-optimizer-ext`
@@ -29,10 +29,10 @@ export const commands = {
 /**
  * Type union of all configs
  */
-export type ConfigKey =
-  | 'vho.theme'
-  | 'vho.language'
-  | 'vho.highlight';
+export type ConfigKey
+  = | 'vho.theme'
+    | 'vho.language'
+    | 'vho.highlight';
 
 export interface ConfigKeyTypeMap {
   'vho.theme': ('auto' | 'light' | 'dark')

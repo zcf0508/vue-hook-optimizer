@@ -5,13 +5,12 @@ import pluginVueHookOptimizer from 'eslint-plugin-vue-hook-optimizer';
 
 export default antfu({
   typescript: true,
+  pnpm: true,
 }, [
   {
     ignores: [
       'fixtures/**/*',
-      'test/output/**/*',
-      'public/**/*',
-      'components/ui/**/*',
+      'packages/core/test/output/**/*',
     ],
   },
   pluginSecurity.configs.recommended,
@@ -58,6 +57,7 @@ export default antfu({
       ],
       'comma-dangle': ['error', 'always-multiline'],
       'style/quotes': ['error', 'single'],
+      'pnpm/json-prefer-workspace-settings': 'off',
     },
   },
 ]);

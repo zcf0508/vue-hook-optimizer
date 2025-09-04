@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
-import { analyzeOptions, analyzeSetupScript, analyzeStyle, analyzeTemplate, analyzeTsx, parse } from '@/index';
 import fg from 'fast-glob';
+import { analyzeOptions, analyzeSetupScript, analyzeStyle, analyzeTemplate, analyzeTsx, parse } from '@/index';
 
 describe('fixtures', async () => {
   const frameworks = ['vue', 'react'] as const;

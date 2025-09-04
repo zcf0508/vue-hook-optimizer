@@ -29,9 +29,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.1",
-    "unbuild": "^2.0.0",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "unbuild": "catalog:",
     "vue-hook-optimizer": "workspace:*",
-    "zod": "^3.24.2"
+    "zod": "catalog:"
   }
 }
