@@ -60,4 +60,12 @@ export default antfu({
       'pnpm/json-prefer-workspace-settings': 'off',
     },
   },
+  {
+    files: [
+      'packages/vscode/package.json',
+    ],
+    rules: {
+      'pnpm/json-enforce-catalog': 'off',
+    },
+  },
 ]);

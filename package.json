@@ -1,4 +1,5 @@
 {
+  "version": "0.0.78",
   "private": true,
   "license": "MIT",
   "sideEffects": false,
@@ -23,6 +24,5 @@
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
-  },
-  "version": "0.0.78"
+  }
 }
