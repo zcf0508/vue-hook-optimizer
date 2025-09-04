@@ -36,10 +36,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "unbuild --stub",
-    "lint": "npm run dev && eslint .",
     "prepublishOnly": "npm run build",
-    "release": "bumpp",
-    "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {

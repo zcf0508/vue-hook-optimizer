@@ -105,11 +105,9 @@
   "scripts": {
     "build": "tsc ./script/index.ts && tsup",
     "dev": "nodemon",
-    "lint": "eslint .",
     "vscode:prepublish": "pnpm build",
     "publish": "vsce publish --no-dependencies",
     "pack": "vsce package --no-dependencies",
-    "test": "vitest",
     "typecheck": "tsc --noEmit",
     "release": "pnpm run publish",
     "update": "vscode-ext-gen"

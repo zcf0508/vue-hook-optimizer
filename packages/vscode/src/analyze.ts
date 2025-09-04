@@ -1,7 +1,7 @@
 import type {
   RelationType,
   TypedNode,
-} from '../../../src';
+} from '../../../packages/core/src';
 import {
   analyzeOptions,
   analyzeSetupScript,
@@ -11,7 +11,7 @@ import {
   gen,
   getVisData,
   parse,
-} from '../../../src';
+} from '../../../packages/core/src';
 
 export async function analyze(code: string, language: 'vue' | 'react') {
   let graph = {

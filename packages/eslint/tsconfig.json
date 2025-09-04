@@ -6,7 +6,7 @@
     "moduleResolution": "Bundler",
     "paths": {
       "vue-hook-optimizer": [
-        "../../src"
+        "../../packages/core/src"
       ]
     },
     "resolveJsonModule": true,

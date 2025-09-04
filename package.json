@@ -1,55 +1,15 @@
 {
-  "name": "vue-hook-optimizer",
-  "version": "0.0.77",
-  "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
-  "author": "zcf0508 <zcf0508@live.com>",
+  "private": true,
   "license": "MIT",
-  "homepage": "https://github.com/zcf0508/vue-hook-optimizer",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zcf0508/vue-hook-optimizer.git"
-  },
-  "keywords": [
-    "vue",
-    "hooks"
-  ],
   "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*",
-        "./dist/index.d.ts"
-      ]
-    }
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "dev": "nodemon",
-    "dev:ext": "npm -C packages/vscode run dev",
-    "build": "tsup",
-    "build:ext": "npm -C packages/vscode run build",
-    "build:eslint": "npm -C packages/eslint run build",
-    "build:mcp": "npm -C packages/mcp run build",
-    "build:all": "npm run build && npm run build:eslint && npm run build:mcp && npm run build:ext",
+    "build": "pnpm -r run build",
     "play": "npm -C packages/playground run dev",
     "lint": "eslint .",
-    "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit",
-    "release": "bumpp -r",
-    "prepublishOnly": "npm run build"
+    "test": "pnpm -r run test --run",
+    "coverage": "pnpm -r run coverage",
+    "typecheck": "pnpm -r run typecheck",
+    "release": "bumpp -r"
   },
   "peerDependencies": {
     "@babel/core": "^7.22.5",
@@ -78,7 +38,6 @@
     "ts-node": "^10.9.2",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
-    "vis-network": "^9.1.9",
     "vitest": "^1.5.2"
   }
 }

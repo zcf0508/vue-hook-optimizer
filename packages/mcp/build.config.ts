@@ -8,7 +8,7 @@ export default defineBuildConfig({
   declaration: false,
   clean: true,
   alias: {
-    'vue-hook-optimizer': path.resolve(__dirname, '../../src'),
+    'vue-hook-optimizer': path.resolve(__dirname, '../../packages/core/src'),
   },
   rollup: {
     dts: {

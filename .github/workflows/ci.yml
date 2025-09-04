@@ -31,7 +31,7 @@ jobs:
         run: pnpm run build
 
       - name: Build eslint
-        run: pnpm run build:eslint
+        run: pnpm -C packages/eslint run build
 
       - name: Lint
         run: pnpm run lint
@@ -69,7 +69,7 @@ jobs:
         run: pnpm i --frozen-lockfile
 
       - name: Build
-        run: pnpm run build:all
+        run: pnpm run build
 
       - name: Coverage
         run: pnpm run coverage

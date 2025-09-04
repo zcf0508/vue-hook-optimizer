@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { analyzeSetupScript, analyzeStyle, analyzeTemplate, gen, parse } from '@/index';
 
-const testFile = './fixtures/vue/setup-block.vue';
+const testFile = '../../fixtures/vue/setup-block.vue';
 
 describe('suggest gen', () => {
   const source = readFileSync(testFile, 'utf-8');

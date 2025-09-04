@@ -1,4 +1,4 @@
-import type { TypedNode } from '@/analyze/utils';
+import type { RelationType, TypedNode } from '@/analyze/utils';
 import { NodeType } from '@/analyze/utils';
 import { getMermaidText } from '@/mermaid';
 
@@ -16,8 +16,8 @@ describe('getMermaidText', () => {
     };
 
     const nodes: Set<TypedNode> = new Set([node1, node2]);
-    const edges: Map<TypedNode, Set<TypedNode>> = new Map();
-    edges.set(node2, new Set([node1]));
+    const edges: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>> = new Map();
+    edges.set(node2, new Set([{ node: node1, type: 'get' }]));
 
     const nodesUsedInTemplate: Set<string> = new Set(['count']);
     const nodesUsedInStyle: Set<string> = new Set();

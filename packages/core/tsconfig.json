@@ -5,15 +5,19 @@
     "module": "esnext",
     "moduleResolution": "Bundler",
     "paths": {
-      "vue-hook-optimizer": [
-        "../../packages/core/src"
+      "@/*": [
+        "./src/*"
       ]
     },
     "resolveJsonModule": true,
+    "types": [
+      "vitest/globals"
+    ],
     "strict": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  }
+  },
+  "exclude": ["test/output"]
 }

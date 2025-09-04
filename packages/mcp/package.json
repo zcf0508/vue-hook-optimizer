@@ -25,9 +25,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "unbuild --stub",
-    "lint": "npm run dev && eslint .",
     "prepublishOnly": "npm run build",
-    "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
