@@ -24,13 +24,7 @@
       "outFiles": [
         "${workspaceFolder}/packages/vscode/dist/**/*.js"
       ],
-      "preLaunchTask": "npm: dev:ext"
+      "preLaunchTask": "npm: dev"
     },
-    {
-      "command": "npm run dev",
-      "name": "dev",
-      "request": "launch",
-      "type": "node-terminal"
-    }
   ]
 }
