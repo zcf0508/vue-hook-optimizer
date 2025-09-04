@@ -23,5 +23,6 @@
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
-  }
+  },
+  "version": "0.0.78"
 }
