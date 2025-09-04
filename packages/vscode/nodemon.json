@@ -4,5 +4,5 @@
     "./script/index.ts"
   ],
   "ext": "ts,json",
-  "exec": "tsc ./script/index.ts & tsup --env.NODE_ENV development"
+  "exec": "tsc ./script/index.ts & tsdown --env.NODE_ENV development"
 }

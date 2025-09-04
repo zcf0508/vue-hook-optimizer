@@ -103,7 +103,7 @@
     ]
   },
   "scripts": {
-    "build": "tsc ./script/index.ts && tsup",
+    "build": "tsc ./script/index.ts && tsdown",
     "dev": "nodemon",
     "vscode:prepublish": "pnpm build",
     "publish": "vsce publish --no-dependencies",
@@ -118,7 +118,7 @@
     "@vscode/vsce": "catalog:",
     "lodash-es": "catalog:",
     "rimraf": "catalog:",
-    "vite": "catalog:",
+    "tsdown": "catalog:",
     "vscode-ext-gen": "catalog:"
   }
 }

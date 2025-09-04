@@ -1,6 +1,6 @@
 export * from './analyze';
 export type { TypedNode } from './analyze/utils';
-export { NodeType, RelationType } from './analyze/utils';
+export type { NodeType, RelationType } from './analyze/utils';
 export * from './mermaid';
 export * from './suggest';
 export { getVisData } from './vis';

@@ -1,6 +1,7 @@
 {
   "name": "vue-hook-optimizer",
   "version": "0.0.77",
+  "type": "module",
   "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
@@ -17,12 +18,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
@@ -37,7 +38,7 @@
   ],
   "scripts": {
     "dev": "nodemon",
-    "build": "tsup",
+    "build": "tsdown",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
@@ -63,7 +64,7 @@
     "lodash-es": "catalog:",
     "nodemon": "catalog:",
     "ts-node": "catalog:",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vis-network": "catalog:",
     "vitest": "catalog:"

@@ -17,20 +17,19 @@
   ],
   "sideEffects": false,
   "bin": {
-    "mcp-server-vue-hook-optimizer": "dist/index.mjs"
+    "mcp-server-vue-hook-optimizer": "dist/index.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
-    "dev": "unbuild --stub",
+    "build": "tsdown",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "catalog:",
-    "unbuild": "catalog:",
+    "tsdown": "catalog:",
     "vue-hook-optimizer": "workspace:*",
     "zod": "catalog:"
   }

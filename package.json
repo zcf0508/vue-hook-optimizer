@@ -19,6 +19,8 @@
     "eslint": "catalog:",
     "eslint-plugin-security": "catalog:",
     "eslint-plugin-vue-hook-optimizer": "workspace:*",
+    "tsdown": "catalog:",
+    "@rolldown/pluginutils": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

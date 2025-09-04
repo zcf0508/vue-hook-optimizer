@@ -1,5 +1,6 @@
 import type { TypedNode } from 'vue-hook-optimizer';
 import { analyze, createEslintRule } from '../utils';
+import { PluginOptions } from '../types';
 
 export const RULE_NAME = 'not-used';
 export type MessageIds = 'maybeCanRemove';

@@ -11,6 +11,7 @@ import {
   gen,
   parse,
 } from 'vue-hook-optimizer';
+import { PluginOptions } from './types';
 
 const hasDocs = [
   'not-used',

@@ -23,19 +23,18 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
-    "dev": "unbuild --stub",
+    "build": "tsdown",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },
@@ -46,6 +45,7 @@
     "@types/eslint": "catalog:",
     "@typescript-eslint/utils": "catalog:",
     "eslint-define-config": "catalog:",
-    "unbuild": "catalog:"
+    "eslint": "catalog:",
+    "tsdown": "catalog:"
   }
 }

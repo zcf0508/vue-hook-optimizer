@@ -1,3 +1,3 @@
-type PluginOptions = [{
+export type PluginOptions = [{
   framework: 'vue' | 'react'
 }];
