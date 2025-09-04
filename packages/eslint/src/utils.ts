@@ -2,6 +2,7 @@ import type { RuleListener, RuleWithMeta, RuleWithMetaAndName } from '@typescrip
 import type { RuleContext } from '@typescript-eslint/utils/ts-eslint';
 import type { Rule } from 'eslint';
 import type { RelationType, TypedNode } from 'vue-hook-optimizer';
+import type { PluginOptions } from './types';
 import {
   analyzeOptions,
   analyzeSetupScript,
@@ -11,7 +12,6 @@ import {
   gen,
   parse,
 } from 'vue-hook-optimizer';
-import { PluginOptions } from './types';
 
 const hasDocs = [
   'not-used',

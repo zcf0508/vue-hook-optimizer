@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
+    "@rolldown/pluginutils": "catalog:",
     "@vitest/coverage-istanbul": "catalog:",
     "bumpp": "catalog:",
     "cross-env": "catalog:",
@@ -20,7 +21,6 @@
     "eslint-plugin-security": "catalog:",
     "eslint-plugin-vue-hook-optimizer": "workspace:*",
     "tsdown": "catalog:",
-    "@rolldown/pluginutils": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

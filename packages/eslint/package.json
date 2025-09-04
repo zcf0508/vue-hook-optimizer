@@ -44,8 +44,8 @@
   "devDependencies": {
     "@types/eslint": "catalog:",
     "@typescript-eslint/utils": "catalog:",
-    "eslint-define-config": "catalog:",
     "eslint": "catalog:",
+    "eslint-define-config": "catalog:",
     "tsdown": "catalog:"
   }
 }

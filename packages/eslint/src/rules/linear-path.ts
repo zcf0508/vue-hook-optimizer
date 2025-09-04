@@ -1,6 +1,6 @@
 import type { TypedNode } from 'vue-hook-optimizer';
+import type { PluginOptions } from '../types';
 import { analyze, createEslintRule } from '../utils';
-import { PluginOptions } from '../types';
 
 export const RULE_NAME = 'linear-path';
 export type MessageIds = 'maybeCanRefactor';
