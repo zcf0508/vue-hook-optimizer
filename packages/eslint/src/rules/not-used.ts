@@ -11,7 +11,6 @@ export default createEslintRule<PluginOptions, MessageIds>({
     type: 'suggestion',
     docs: {
       description: 'This node may not be used in the template.',
-      recommended: 'recommended',
     },
     schema: [{
       type: 'object',

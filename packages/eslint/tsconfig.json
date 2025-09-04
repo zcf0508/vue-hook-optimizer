@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
     "target": "es2020",
     "lib": ["esnext"],
     "module": "esnext",

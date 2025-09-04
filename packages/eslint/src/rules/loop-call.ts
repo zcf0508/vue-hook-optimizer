@@ -11,7 +11,6 @@ export default createEslintRule<PluginOptions, MessageIds>({
     type: 'problem',
     docs: {
       description: 'There is a loop call, perhaps you can refactor it.',
-      recommended: 'recommended',
     },
     schema: [{
       type: 'object',

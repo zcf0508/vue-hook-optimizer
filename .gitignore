@@ -34,3 +34,4 @@ packages/vscode/script/*.js
 coverage
 
 eslint-typegen.d.ts
+**/*/.tsbuildinfo

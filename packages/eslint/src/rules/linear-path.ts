@@ -11,7 +11,6 @@ export default createEslintRule<PluginOptions, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Nodes are have function chain calls, perhaps you can refactor it.',
-      recommended: 'recommended',
     },
     schema: [{
       type: 'object',
