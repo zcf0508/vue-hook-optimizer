@@ -1,4 +1,4 @@
-import type { TypedNode } from './analyze/utils';
+import type { RelationType, TypedNode } from './analyze/utils';
 
 interface MermaidOptions {
   direction?: 'TB' | 'BT' | 'LR' | 'RL'
@@ -7,7 +7,7 @@ interface MermaidOptions {
 export function getMermaidText(
   graph: {
     nodes: Set<TypedNode>
-    edges: Map<TypedNode, Set<TypedNode>>
+    edges: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),
@@ -36,12 +36,12 @@ export function getMermaidText(
     mermaidText += `    ${node.label}${shape}${node.label}${unusedSuffix}${closeShape}\n`;
   });
 
-  graph.edges.forEach((edge: Set<TypedNode>, key: TypedNode) => {
-    edge.forEach((to: TypedNode | undefined) => {
-      if (!to) {
+  graph.edges.forEach((edge, key) => {
+    edge.forEach((to) => {
+      if (!to || !to.node.label) {
         return;
       }
-      mermaidText += `    ${key.label} --> ${to.label}\n`;
+      mermaidText += `    ${key.label} --> ${to.node.label}\n`;
     });
   });
 
