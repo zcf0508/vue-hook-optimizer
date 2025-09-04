@@ -16,7 +16,7 @@ catalog:
   '@types/vscode': ^1.78.1
   '@typescript-eslint/utils': ^8.42.0
   '@unocss/nuxt': ^0.54.3
-  '@vitest/coverage-istanbul': ^1.5.2
+  '@vitest/coverage-istanbul': ^3.2.4
   '@vscode/vsce': ^2.26.0
   '@vueuse/core': ^10.9.0
   '@vueuse/nuxt': ^10.9.0
@@ -36,6 +36,6 @@ catalog:
   typescript: ^5.4.5
   unocss: ^0.54.3
   vis-network: ^9.1.9
-  vitest: ^1.5.2
+  vitest: ^3.2.4
   vscode-ext-gen: ^0.3.1
   zod: ^3.24.2
