@@ -104,7 +104,8 @@
   },
   "scripts": {
     "build": "tsc ./script/index.ts && tsdown",
-    "dev": "nodemon",
+    "dev": "tsc ./script/index.ts & tsdown --env.NODE_ENV development",
+    "nodemon": "nodemon",
     "vscode:prepublish": "pnpm build",
     "publish": "vsce publish --no-dependencies",
     "pack": "vsce package --no-dependencies",
