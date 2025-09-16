@@ -103,7 +103,9 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
   }
 
   async function showFirstTimeNotification() {
-    if (hasShownSessionNotification) { return; }
+    if (hasShownSessionNotification) {
+      return;
+    }
 
     vscode.window.showInformationMessage(
       'Vue Hook Optimizer: ˄ (requires) ˅ (used by). Can be disabled in settings.',
@@ -113,10 +115,14 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
   }
 
   async function ensureAnalysisResult() {
-    if (!activeEditor) { return null; }
+    if (!activeEditor) {
+      return null;
+    }
 
     const code = activeEditor.document.getText();
-    if (!code) { return null; }
+    if (!code) {
+      return null;
+    }
 
     const codeHash = hashCode(code);
     const fileUri = activeEditor.document.uri.toString();
@@ -161,7 +167,9 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
     // 确保有分析结果
     const analysisResult = await ensureAnalysisResult();
-    if (!analysisResult) { return; }
+    if (!analysisResult) {
+      return;
+    }
 
     const { nodes, edges } = analysisResult.data.vis;
 
@@ -178,7 +186,9 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     let selectedNode = matchingNodes[0];
     if (matchingNodes.length > 1) {
       selectedNode = matchingNodes.reduce((closest, node) => {
-        if (!node.info?.line || !closest.info?.line) { return closest; }
+        if (!node.info?.line || !closest.info?.line) {
+          return closest;
+        }
         const nodeDistance = Math.abs(node.info.line - cursorLine);
         const closestDistance = Math.abs(closest.info.line - cursorLine);
         return nodeDistance < closestDistance
