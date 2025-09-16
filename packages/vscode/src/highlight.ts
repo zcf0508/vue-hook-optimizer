@@ -87,21 +87,49 @@ function clearDecorations(editor: vscode.TextEditor) {
 
 export function activateHighlighting(context: vscode.ExtensionContext) {
   let activeEditor = vscode.window.activeTextEditor;
-  let lastSelectedWord = '';
+
+  /** 缓存当前文件的analysis结果，避免重复analyze */
+  let currentAnalysisResult: Awaited<ReturnType<typeof analyze>> | null = null;
+
+  /** 缓存上次高亮的行号，用于避免闪烁 */
+  let lastDependencyLines = new Set<number>();
+  let lastDependentLines = new Set<number>();
+
+  function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+    return a.size === b.size && [...a].every(x => b.has(x));
+  }
+
+  async function ensureAnalysisResult() {
+    if (!activeEditor) { return null; }
+
+    const code = activeEditor.document.getText();
+    if (!code) { return null; }
+
+    const codeHash = hashCode(code);
+    const fileUri = activeEditor.document.uri.toString();
+
+    // 检查缓存
+    const cachedEntry = analysisCache.get(fileUri);
+    if (cachedEntry && cachedEntry.hash === codeHash) {
+      currentAnalysisResult = cachedEntry.result;
+      return currentAnalysisResult;
+    }
+
+    // 重新分析
+    const analysisResult = await analyze(code, getLauguageConfig());
+    analysisCache.set(fileUri, {
+      hash: codeHash,
+      result: analysisResult,
+      timestamp: Date.now(),
+    });
+
+    currentAnalysisResult = analysisResult;
+    return analysisResult;
+  }
 
   async function updateDecorations() {
     const highlight = getHighlightConfig();
-    if (!highlight) {
-      return;
-    }
-
-    if (!activeEditor) {
-      return;
-    }
-
-    const code = activeEditor.document.getText();
-
-    if (!code) {
+    if (!highlight || !activeEditor) {
       return;
     }
 
@@ -110,42 +138,40 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
     if (!selectedWordRange) {
       clearDecorations(activeEditor);
+      lastDependencyLines.clear();
+      lastDependentLines.clear();
       return;
     }
 
     const selectedWord = activeEditor.document.getText(selectedWordRange);
+    const cursorLine = selection.start.line;
 
-    if (selectedWord === lastSelectedWord) {
-      return;
-    }
-
-    lastSelectedWord = selectedWord;
-
-    const codeHash = hashCode(code);
-    const fileUri = activeEditor.document.uri.toString();
-
-    let analysisResult;
-    const cachedEntry = analysisCache.get(fileUri);
-
-    if (cachedEntry && cachedEntry.hash === codeHash) {
-      analysisResult = cachedEntry.result;
-    }
-    else {
-      analysisResult = await analyze(code, getLauguageConfig());
-      analysisCache.set(fileUri, {
-        hash: codeHash,
-        result: analysisResult,
-        timestamp: Date.now(),
-      });
-    }
+    // 确保有分析结果
+    const analysisResult = await ensureAnalysisResult();
+    if (!analysisResult) { return; }
 
     const { nodes, edges } = analysisResult.data.vis;
 
-    const selectedNode = nodes.find(node => node.label === selectedWord);
-
-    if (!selectedNode) {
+    // 查找光标位置最近的匹配节点
+    const matchingNodes = nodes.filter(node => node.label === selectedWord);
+    if (matchingNodes.length === 0) {
       clearDecorations(activeEditor);
+      lastDependencyLines.clear();
+      lastDependentLines.clear();
       return;
+    }
+
+    // 找到最接近光标位置的节点
+    let selectedNode = matchingNodes[0];
+    if (matchingNodes.length > 1) {
+      selectedNode = matchingNodes.reduce((closest, node) => {
+        if (!node.info?.line || !closest.info?.line) { return closest; }
+        const nodeDistance = Math.abs(node.info.line - cursorLine);
+        const closestDistance = Math.abs(closest.info.line - cursorLine);
+        return nodeDistance < closestDistance
+          ? node
+          : closest;
+      });
     }
 
     const nodeMap = new Map(nodes.map(node => [node.id, node]));
@@ -173,11 +199,20 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
       }
     });
 
-    const dependencies = [...dependencyLines].map(line => activeEditor!.document.lineAt(line).range);
-    const dependents = [...dependentLines].map(line => activeEditor!.document.lineAt(line).range);
+    // 只有当高亮内容发生变化时才更新装饰
+    const dependencyChanged = !setsEqual(dependencyLines, lastDependencyLines);
+    const dependentChanged = !setsEqual(dependentLines, lastDependentLines);
 
-    activeEditor.setDecorations(dependencyDecorationType, dependencies);
-    activeEditor.setDecorations(dependentDecorationType, dependents);
+    if (dependencyChanged || dependentChanged) {
+      const dependencies = [...dependencyLines].map(line => activeEditor!.document.lineAt(line).range);
+      const dependents = [...dependentLines].map(line => activeEditor!.document.lineAt(line).range);
+
+      activeEditor.setDecorations(dependencyDecorationType, dependencies);
+      activeEditor.setDecorations(dependentDecorationType, dependents);
+
+      lastDependencyLines = new Set(dependencyLines);
+      lastDependentLines = new Set(dependentLines);
+    }
   }
 
   const triggerUpdateDecorations = debounce(updateDecorations, 300);
@@ -189,11 +224,14 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
   vscode.workspace.onDidChangeTextDocument((event) => {
     const fileUri = event.document.uri.toString();
     analysisCache.delete(fileUri);
+    currentAnalysisResult = null; // 清空内存中的分析结果
   }, null, context.subscriptions);
 
   vscode.window.onDidChangeActiveTextEditor((editor) => {
     activeEditor = editor;
-    lastSelectedWord = '';
+    currentAnalysisResult = null; // 切换文件时清空分析结果
+    lastDependencyLines.clear();
+    lastDependentLines.clear();
     if (editor) {
       clearDecorations(activeEditor!);
       triggerUpdateDecorations();
@@ -202,8 +240,7 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
   vscode.window.onDidChangeTextEditorSelection((event) => {
     if (activeEditor && event.textEditor === activeEditor) {
-      clearDecorations(activeEditor!);
-      triggerUpdateDecorations();
+      triggerUpdateDecorations(); // 移除预先清空，让比较逻辑决定是否更新
     }
   }, null, context.subscriptions);
 }
