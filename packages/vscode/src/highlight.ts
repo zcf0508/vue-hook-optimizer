@@ -59,6 +59,12 @@ const dependencyDecorationType = vscode.window.createTextEditorDecorationType({
   isWholeLine: true,
   overviewRulerColor: 'rgba(122, 198, 253, 0.8)',
   overviewRulerLane: vscode.OverviewRulerLane.Full,
+  before: {
+    contentText: '˄',
+    color: 'rgba(122, 198, 253, 0.8)',
+    fontWeight: 'bold',
+    margin: '0 4px 0 0',
+  },
 });
 
 const dependentDecorationType = vscode.window.createTextEditorDecorationType({
@@ -66,6 +72,12 @@ const dependentDecorationType = vscode.window.createTextEditorDecorationType({
   isWholeLine: true,
   overviewRulerColor: 'rgba(115, 201, 159, 0.8)',
   overviewRulerLane: vscode.OverviewRulerLane.Full,
+  before: {
+    contentText: '˅',
+    color: 'rgba(115, 201, 159, 0.8)',
+    fontWeight: 'bold',
+    margin: '0 4px 0 0',
+  },
 });
 
 function clearDecorations(editor: vscode.TextEditor) {
