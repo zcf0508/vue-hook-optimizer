@@ -95,8 +95,21 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
   let lastDependencyLines = new Set<number>();
   let lastDependentLines = new Set<number>();
 
+  /** 是否已经显示过本次会话的首次提示 */
+  let hasShownSessionNotification = false;
+
   function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
     return a.size === b.size && [...a].every(x => b.has(x));
+  }
+
+  async function showFirstTimeNotification() {
+    if (hasShownSessionNotification) { return; }
+
+    vscode.window.showInformationMessage(
+      'Vue Hook Optimizer: ˄ (requires) ˅ (used by). Can be disabled in settings.',
+    );
+
+    hasShownSessionNotification = true;
   }
 
   async function ensureAnalysisResult() {
@@ -212,6 +225,11 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
       lastDependencyLines = new Set(dependencyLines);
       lastDependentLines = new Set(dependentLines);
+
+      // 首次高亮时显示提示
+      if (!hasShownSessionNotification && (dependencies.length > 0 || dependents.length > 0)) {
+        showFirstTimeNotification();
+      }
     }
   }
 
