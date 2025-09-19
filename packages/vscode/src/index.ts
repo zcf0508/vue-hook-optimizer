@@ -218,6 +218,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     outputChannel.append(`${fileName}: \n`);
+    outputChannel.append(`Mermaid: \n${res.data.mermaid}\n`);
     res.data.suggests.forEach((suggest) => {
       outputChannel.append(`[${
         suggest.type === 'info'

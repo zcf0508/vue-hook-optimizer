@@ -9,6 +9,7 @@ import {
   analyzeTemplate,
   analyzeTsx,
   gen,
+  getMermaidText,
   getVisData,
   parse,
 } from '../../../packages/core/src';
@@ -85,5 +86,6 @@ export async function analyze(code: string, language: 'vue' | 'react') {
   return { code: 0, data: {
     vis: getVisData(graph, nodesUsedInTemplate, nodesUsedInStyle),
     suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle),
+    mermaid: getMermaidText(graph, nodesUsedInTemplate, nodesUsedInStyle),
   }, msg: 'ok' };
 }
