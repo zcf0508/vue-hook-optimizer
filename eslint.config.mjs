@@ -68,4 +68,10 @@ export default antfu({
       'pnpm/json-enforce-catalog': 'off',
     },
   },
+  {
+    files: ['**/*.md'],
+    rules: {
+      'style/max-len': 'off',
+    },
+  },
 ]);
