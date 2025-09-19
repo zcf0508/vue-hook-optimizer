@@ -23,7 +23,14 @@ export function gen(
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),
+  options?: Partial<{
+    ellipsis: boolean
+  }>,
 ) {
+  const {
+    ellipsis = true,
+  } = options ?? {};
+
   const usedNodes = new Set([...nodesUsedInTemplate, ...nodesUsedInStyle]);
 
   const suggestions: Suggestion[] = [];
@@ -36,7 +43,7 @@ export function gen(
         suggestions.push({
           type: SuggestionType.info,
           message: `Nodes [${
-            nodes.length > 10
+            (ellipsis && nodes.length > 10)
               ? `${nodes.slice(0, 10).map(node => node.label).join(',')}...(${nodes.length})`
               : nodes.map(node => node.label).join(',')
           }] are isolated, perhaps you can refactor them to an isolated file.`,
@@ -49,7 +56,7 @@ export function gen(
       suggestions.push({
         type: SuggestionType.info,
         message: `Nodes [${
-          nodes.length > 10
+          (ellipsis && nodes.length > 10)
             ? `${nodes.slice(0, 10).map(node => node.label).join(',')}...`
             : nodes.map(node => node.label).join(',')
         }] are not used, perhaps you can remove them.`,
@@ -79,7 +86,7 @@ export function gen(
         suggestions.push({
           type: SuggestionType.warning,
           message: `Nodes [${
-            path.length > 10
+            (ellipsis && path.length > 10)
               ? `${path.slice(0, 10).map(node => node.label).join(',')}...(${path.length})`
               : path.map(node => node.label).join(',')
           }] are have function chain calls, perhaps you can refactor it.`,

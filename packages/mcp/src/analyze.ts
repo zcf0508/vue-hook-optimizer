@@ -84,6 +84,8 @@ export async function analyze(code: string, language: 'vue' | 'react') {
 
   return {
     mermaid: getMermaidText(graph, nodesUsedInTemplate, nodesUsedInStyle),
-    suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle),
+    suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle, {
+      ellipsis: false,
+    }),
   };
 }
