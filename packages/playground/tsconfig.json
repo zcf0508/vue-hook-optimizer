@@ -8,5 +8,8 @@
         "../../packages/core/src"
       ]
     }
-  }
+  },
+  "exclude": [
+    "./default-codes"
+  ]
 }

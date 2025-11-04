@@ -1,13 +1,47 @@
 <script lang="ts" setup>
 import * as vis from 'vis-network';
 import CodeMirror from './components/codemirror/CodeMirror.vue';
-import { defaultCode, tsx } from './default-code';
+import complexComponent from './default-codes/complexComponent.vue?raw';
+import compositionBase from './default-codes/compositionBase.vue?raw';
+import optionsBase from './default-codes/optionsBase.vue?raw';
+import reactClass from './default-codes/reactClass.jsx?raw';
+import reactFunction from './default-codes/reactFunction.jsx?raw';
+import reactHooks from './default-codes/reactHooks.jsx?raw';
+import tsx from './default-codes/tsx.vue?raw';
 import 'vis-network/dist/dist/vis-network.min.css';
 
-// const code = ref(defaultCode);
-const code = ref(tsx);
+const exampleCode = {
+  vue: {
+    optionsBase,
+    compositionBase,
+    complexComponent,
+    tsx,
+  },
+  react: {
+    reactClass,
+    reactFunction,
+    reactHooks,
+  },
+};
+
+const selectedExample = ref<string>('optionsBase');
+const code = ref(optionsBase);
 const autoRefresh = ref(false);
 const framework = ref<'vue' | 'react'>('vue');
+
+// 监听框架切换，自动选择第一个示例
+watch(framework, (newFramework) => {
+  const examples = exampleCode[newFramework];
+  const firstExampleKey = Object.keys(examples)[0];
+  selectedExample.value = firstExampleKey;
+  code.value = examples[firstExampleKey as keyof typeof examples];
+});
+
+// 监听示例切换
+watch(selectedExample, (example) => {
+  const examples = exampleCode[framework.value];
+  code.value = examples[example as keyof typeof examples] || Object.values(examples)[0];
+});
 
 provide('autoresize', true);
 
@@ -153,134 +187,275 @@ const {
 <template>
   <div
     ref="containerRef"
-    class="w-full h-full flex relative"
+    class="w-full h-full flex relative bg-[#f8f9fa]"
     @mousemove="dragMove"
     @mouseup="dragEnd"
     @mouseleave="dragEnd"
   >
+    <!-- 左侧代码编辑区 -->
     <div
-      class="flex-1 border-solid border-0 border-r-1"
+      class="flex-1 border-solid border-0 border-r-2 border-[#e5e7eb] bg-white flex flex-col"
       :style="`max-width: ${boundSplit}%`"
     >
-      <ClientOnly>
-        <CodeMirror :value="code" :mode="framework === 'vue' ? 'htmlmixed' : 'javascript'" @change="codeChange" />
-      </ClientOnly>
-    </div>
-    <div
-      class="px-1 flex-shrink flex items-center cursor-ew-resize"
-      @mousedown.prevent="dragStart"
-    >
-      |
-    </div>
-    <div ref="chartRef" class="flex-1 flex flex-col">
-      <div class="flex mt-16px">
-        <button class="mr-8px" @click="start">
-          analyze
-        </button>
-        <span class="flex items-center">
-          <input id="refreshBtn" v-model="autoRefresh" type="checkbox">
-          <label for="refreshBtn">Auto Refresh</label>
-        </span>
-        <span class="ml-1 flex items-center">
-          <input
-            id="framework_vue"
-            v-model="framework"
-            type="radio"
-            value="vue"
+      <div class="flex items-center gap-4 px-4 py-3 border-b border-[#e5e7eb] bg-[#f8f9fa]">
+        <!-- 框架选择 -->
+        <div class="flex items-center gap-2">
+          <label
+            class="
+              flex items-center gap-2 px-3 py-1.5 rounded-lg
+              bg-white border-solid border-2
+              transition-all duration-200
+              cursor-pointer select-none
+            "
+            :class="framework === 'vue'
+              ? 'border-[#42b883] text-[#42b883]'
+              : 'border-white text-[#6b7280] hover:border-[#42b883]/50'"
           >
-          <label for="framework_vue" title="Vue Single-File Component">Vue</label>
-          <input
-            id="framework_react"
-            v-model="framework"
-            type="radio"
-            value="react"
+            <input
+              id="framework_vue"
+              v-model="framework"
+              type="radio"
+              value="vue"
+              class="sr-only"
+            >
+            <span class="i-logos:vue inline-block w-4 h-4" />
+            <span class="text-sm font-medium">Vue</span>
+          </label>
+
+          <label
+            class="
+              flex items-center gap-2 px-3 py-1.5 rounded-lg
+              bg-white border-solid border-2
+              transition-all duration-200
+              cursor-pointer select-none
+            "
+            :class="framework === 'react'
+              ? 'border-[#61dafb] text-[#61dafb]'
+              : 'border-white text-[#6b7280] hover:border-[#61dafb]/50'"
           >
-          <label for="framework_react" title="Functional Component or Class Component">React</label>
-        </span>
+            <input
+              id="framework_react"
+              v-model="framework"
+              type="radio"
+              value="react"
+              class="sr-only"
+            >
+            <span class="i-logos:react inline-block w-4 h-4" />
+            <span class="text-sm font-medium">React</span>
+          </label>
+        </div>
+
+        <!-- 分隔线 -->
+        <div class="h-6 w-px bg-[#e5e7eb]" />
+
+        <!-- 示例选择 -->
+        <span class="text-sm text-[#6b7280] font-medium">Example:</span>
+        <select
+          v-model="selectedExample"
+          class="
+            flex-1 px-3 py-1.5 rounded-lg
+            bg-white border border-[#e5e7eb]
+            text-sm text-[#374151] font-medium
+            hover:border-[#42b883]
+            focus:outline-none focus:border-[#42b883] focus:ring-2 focus:ring-[#42b883]/20
+            cursor-pointer transition-all duration-200
+          "
+        >
+          <optgroup v-if="framework === 'vue'" label="Vue Examples">
+            <option value="optionsBase">
+              Options API Base
+            </option>
+            <option value="compositionBase">
+              Composition API Base
+            </option>
+            <option value="complexComponent">
+              Complex Component
+            </option>
+            <option value="tsx">
+              TSX
+            </option>
+          </optgroup>
+          <optgroup v-if="framework === 'react'" label="React Examples">
+            <option value="reactClass">
+              Class Component
+            </option>
+            <option value="reactFunction">
+              Function Component
+            </option>
+            <option value="reactHooks">
+              Hooks Component
+            </option>
+          </optgroup>
+        </select>
       </div>
-      <div class="h-full w-full relative">
-        <div v-if="showSearchInput" class="absolute right-[10px] top-[5px] z-50">
+
+      <!-- 代码编辑器 -->
+      <div class="flex-1 overflow-hidden">
+        <ClientOnly>
+          <CodeMirror :value="code" :mode="framework === 'vue' ? 'htmlmixed' : 'javascript'" @change="codeChange" />
+        </ClientOnly>
+      </div>
+    </div>
+
+    <!-- 分隔条 -->
+    <div
+      class="w-4px bg-[#e5e7eb] hover:bg-[#42b883] transition-colors duration-200 flex-shrink-0 cursor-ew-resize"
+      @mousedown.prevent="dragStart"
+    />
+
+    <!-- 右侧图表区 -->
+    <div ref="chartRef" class="flex-1 flex flex-col bg-white">
+      <!-- 工具栏 -->
+      <div
+        class="
+          flex items-center justify-end gap-3
+          px-6 py-4
+          border-b border-[#e5e7eb]
+          bg-gradient-to-r from-white to-[#f8f9fa]
+        "
+      >
+        <!-- 分析按钮 -->
+        <button
+          class="
+            px-5 py-2
+            bg-[#42b883] hover:bg-[#35a372] active:bg-[#2d8f64]
+            text-white font-medium
+            transition-all duration-200
+            shadow-sm hover:shadow-md
+            transform hover:scale-105 active:scale-95
+            border-0 rounded-lg outline-none focus:outline-none
+            cursor-pointer
+          "
+          @click="start"
+        >
+          <span class="i-carbon:analytics inline-block mr-1.5 align-text-bottom" />
+          Analyze
+        </button>
+
+        <!-- 自动刷新 -->
+        <label
+          class="
+            flex items-center gap-2 px-4 py-2 rounded-lg
+            bg-white border border-[#e5e7eb]
+            cursor-pointer transition-all duration-200
+            select-none
+          "
+        >
+          <input
+            id="refreshBtn"
+            v-model="autoRefresh"
+            type="checkbox"
+            class="
+              w-4 h-4 rounded
+              border-2 border-[#d1d5db]
+              text-[#42b883] focus:ring-2 focus:ring-[#42b883] focus:ring-offset-0
+              cursor-pointer
+            "
+          >
+          <span class="text-sm text-[#374151] font-medium">Auto Refresh</span>
+        </label>
+      </div>
+      <!-- 图表容器 -->
+      <div class="h-full w-full relative bg-[#fafafa]">
+        <!-- 搜索框 -->
+        <div v-if="showSearchInput" class="absolute right-4 top-4 z-50">
           <div class="relative flex items-center">
+            <span class="i-carbon:search absolute left-3 w-4 h-4 text-[#9ca3af]" />
             <input
               ref="searchInputRef"
               v-model="searchkey"
-              placeholder="search by node name"
+              placeholder="Search by node name..."
               class="
-                w-[200px]
-                pl-4 pr-6 py-2
-                border-[#ddd] border-[1px] border-solid rounded-md
-                shadow
-                bg-transparent
-                backdrop-blur
+                w-64 pl-4 pr-10 py-2.5
+                border-2 border-solid border-[#e5e7eb] rounded-lg
+                shadow-lg
+                bg-white/95 backdrop-blur-sm
+                text-sm text-[#374151] placeholder:text-[#9ca3af]
+                focus:outline-none focus:border-[#42b883] focus:ring-2 focus:ring-[#42b883]/20
+                transition-all duration-200
+                outlinte-none
               "
             >
-            <span
+            <button
               class="
-                i-material-symbols:close-rounded
-                w-[20px] h-[20px]
-                absolute right-[10px]
-                color-[#626365]
-                cursor-pointer
+                absolute right-2
+                w-6 h-6 rounded-md
+                flex items-center justify-center
+                text-[#6b7280] hover:text-[#374151] hover:bg-[#f3f4f6]
+                transition-all duration-200 border-none bg-transparent cursor-pointer
               "
               @click="closeSearch"
-            />
+            >
+              <span class="i-carbon:close w-4 h-4" />
+            </button>
           </div>
         </div>
+        <!-- 可视化图表 -->
         <div ref="networkRef" class="h-full" />
+
+        <!-- 图例 -->
         <div
           v-if="visData.nodes!.length > 0"
           class="
-            absolute right-[10px] top-[10px] p-2
-            border border-solid border-[#eee]
-            shadow-light-500
-            flex flex-col gap-2
-            backdrop-blur
+            absolute right-4 p-4 rounded-xl
+            bg-white/95 backdrop-blur-sm
+            border border-[#e5e7eb]
+            shadow-xl
+            flex flex-col gap-3
+            transition-all duration-200
           "
-          :class="showSearchInput ? 'top-[45px]' : 'top-[10px]'"
+          :class="showSearchInput ? 'top-20' : 'top-4'"
         >
-          <div class="flex items-center align-baseline">
-            <div
-              class="
-                inline-block mr-1
-                bg-[#9dc2f9]
-                border border-solid border-[#3d7de4]
-                w-[10px] h-[10px]
-              "
-            />
-            <span>USED</span>
+          <div class="text-xs font-semibold text-[#6b7280] uppercase tracking-wider mb-1">
+            Legend
           </div>
-          <div class="flex items-center align-baseline">
+
+          <div class="flex items-center gap-2.5">
             <div
               class="
-                inline-block mr-1
-                bg-[#eee]
-                border border-solid border-[#ddd]
-                w-[10px] h-[10px]
+                w-3 h-3 rounded-sm
+                bg-[#42b883]
+                shadow-sm
               "
             />
-            <span>NOT USED</span>
+            <span class="text-sm text-[#374151] font-medium">Used</span>
           </div>
-          <div class="flex items-center align-baseline">
+
+          <div class="flex items-center gap-2.5">
             <div
               class="
-                inline-block mr-1
-                border border-solid border-[#333]
-                rounded-full
-                w-[10px] h-[10px]
+                w-3 h-3 rounded-sm
+                bg-[#f3f4f6]
+                shadow-sm
               "
             />
-            <span>Variant</span>
+            <span class="text-sm text-[#374151] font-medium">Not Used</span>
           </div>
-          <div class="flex items-center align-baseline">
+
+          <div class="h-px bg-[#e5e7eb] my-1" />
+
+          <div class="flex items-center gap-2.5">
             <div
               class="
-                inline-block mr-1
-                border border-solid border-[#333]
-                rotate-45 transform scale-80
-                w-[10px] h-[10px]
+                box-border w-3 h-3 rounded-full
+                bg-white
+                border border-solid border-[#374151]
               "
             />
-            <span>Function</span>
+            <span class="text-sm text-[#6b7280]">Variant</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <div class="box-border w-3 h-3 flex items-center justify-center flex-shrink-0">
+              <div
+                class="
+                  box-border w-2.5 h-2.5
+                  bg-white
+                  border border-solid border-[#374151]
+                  rotate-45 transform
+                "
+              />
+            </div>
+            <span class="text-sm text-[#6b7280]">Function</span>
           </div>
         </div>
       </div>
@@ -295,9 +470,32 @@ html, body, #__nuxt {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 :root {
   --bg: #fff;
+  --vue-green: #42b883;
+  --vue-dark: #35495e;
+}
+
+/* 优化滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #42b883;
 }
 </style>

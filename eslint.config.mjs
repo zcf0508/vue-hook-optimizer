@@ -11,6 +11,7 @@ export default antfu({
     ignores: [
       'fixtures/**/*',
       'packages/core/test/output/**/*',
+      'packages/playground/default-codes/**/*',
     ],
   },
   pluginSecurity.configs.recommended,
