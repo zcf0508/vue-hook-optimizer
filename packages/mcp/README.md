@@ -39,6 +39,30 @@ Add this to your `claude_desktop_config.json`:
 }
 ```
 
+## Using the Refactor Skills
+
+- Files:
+  - `packages/mcp/refactor_prompt_zh.md` (Chinese Skill)
+  - `packages/mcp/refactor_prompt_en.md` (English Skill)
+- Both files already include valid Skill YAML frontmatter (`name`, `description`) and detailed instructions.
+- Setup (choose one):
+  - Personal Skills: copy each file’s content to `~/.claude/skills/<skill-name>/SKILL.md`
+  - Project Skills: copy to `.claude/skills/<skill-name>/SKILL.md` within your project
+  - Example:
+    - `~/.claude/skills/vho-refactor-zh/SKILL.md` → content from `refactor_prompt_zh.md`
+    - `~/.claude/skills/vho-refactor-en/SKILL.md` → content from `refactor_prompt_en.md`
+- Workflow:
+  - Ensure the `vue-hook-optimizer` MCP server is connected (as above)
+  - Invoke the Skill; it will instruct the agent to call the MCP tool `analyze`:
+    - Input:
+      - `absolutePath`: absolute path to the component file
+      - `framework`: `vue` or `react` (default `vue`)
+    - Output:
+      - `mermaid` diagram (dependency graph)
+      - Optimization suggestions (articulation points, isolated groups, chain calls, cycles)
+  - Follow the Skill’s decision framework to refactor
+  - Re-run `analyze` after changes to validate (structure/design/quality/business checks)
+
 ## License
 
 MIT

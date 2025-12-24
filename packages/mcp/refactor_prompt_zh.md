@@ -1,4 +1,23 @@
+---
+name: vho-refactor-zh
+description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-optimizer MCP 的 analyze 工具获取依赖图与建议，再按决策框架实施重构并复验。
+---
 # 基于 VHO 分析的 Vue 组件重构指南
+
+## 0. 使用说明（MCP 调用）
+- 触发条件：当需要依据真实依赖关系图与优化建议开展组件重构评估与实施
+- 前置配置：已连接 `vue-hook-optimizer`/`vho` MCP Server，工具 `analyze` 可用
+- 输入参数：
+  - `absolutePath`：待分析组件文件的绝对路径
+  - `framework`：`vue` 或 `react`（默认 `vue`）
+- 操作步骤：
+  - 调用 MCP 工具 `analyze`，传入上述参数
+  - 解析输出中的 `mermaid` 代码块（依赖图）与建议列表
+  - 结合本指南第 1–8 章内容，将分析结果用于决策与实施
+  - 完成重构后再次调用 `analyze` 复验（参见第 6.3 与第 8 章）
+- 输出说明：
+  - `mermaid`：节点/边依赖关系可视化
+  - 建议：包含循环依赖、链式调用、孤立节点群、关节点等提示
 
 ## 1. 重构决策框架
 

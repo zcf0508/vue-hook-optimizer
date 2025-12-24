@@ -1,4 +1,23 @@
+---
+name: vho-refactor-en
+description: Skill for Vue/React refactoring driven by VHO analysis. First call the vue-hook-optimizer MCP analyze tool to obtain the dependency graph and suggestions, then execute the refactor plan and re-validate.
+---
 # Vue Component Refactoring Guide Based on VHO Analysis
+
+## 0. Usage (MCP Invocation)
+- When to use: you need a real dependency graph and optimization suggestions to guide refactoring
+- Prerequisite: the `vue-hook-optimizer`/`vho` MCP server is connected and tool `analyze` is available
+- Input:
+  - `absolutePath`: absolute path of the component file to analyze
+  - `framework`: `vue` or `react` (default `vue`)
+- Steps:
+  - Invoke MCP tool `analyze` with the above parameters
+  - Parse the output `mermaid` code block (dependency graph) and the suggestion list
+  - Apply the results with sections 1–8 of this guide for decision and implementation
+  - After refactoring, invoke `analyze` again to re-validate (see 6.3 and 8)
+- Output:
+  - `mermaid`: visualized node/edge dependency graph
+  - Suggestions: hints for cycles, chain calls, isolated node groups, articulation points
 
 ## 1. Refactoring Decision Framework
 
