@@ -63,6 +63,20 @@ Add this to your `claude_desktop_config.json`:
   - Follow the Skill’s decision framework to refactor
   - Re-run `analyze` after changes to validate (structure/design/quality/business checks)
 
+## Add MCP to Claude Code (CLI)
+
+- macOS/Linux:
+  - Add server:
+    - `claude mcp add --transport stdio vho -- npx -y mcp-server-vue-hook-optimizer`
+  - Verify:
+    - `claude mcp list`
+  - Remove:
+    - `claude mcp remove vho`
+- Windows (native, not WSL):
+  - Use `cmd /c` wrapper:
+    - `claude mcp add --transport stdio vho -- cmd /c npx -y mcp-server-vue-hook-optimizer`
+  - Then verify/remove as above
+
 ## License
 
 MIT
