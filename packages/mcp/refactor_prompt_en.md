@@ -14,7 +14,12 @@ description: Skill for Vue/React refactoring driven by VHO analysis. First call 
   - Invoke MCP tool `analyze` with the above parameters
   - Parse the output `mermaid` code block (dependency graph) and the suggestion list
   - Apply the results with sections 1–8 of this guide for decision and implementation
-  - After refactoring, invoke `analyze` again to re-validate (see 6.3 and 8)
+  - After refactoring, run type checking first:
+    - Prefer checking your project `package.json` for an existing typecheck script (e.g. `typecheck`, `tsc`, `vue-tsc`), and run it (`pnpm run typecheck`, `npm run typecheck`, or `yarn typecheck`)
+    - If no script exists:
+      - Vue projects: run `vue-tsc --noEmit`
+      - React projects: run `tsc --noEmit`
+  - When type checks pass, invoke `analyze` again to re-validate (see 6.3 and 8)
 - Output:
   - `mermaid`: visualized node/edge dependency graph
   - Suggestions: hints for cycles, chain calls, isolated node groups, articulation points

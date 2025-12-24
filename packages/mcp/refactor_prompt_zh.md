@@ -14,7 +14,12 @@ description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-op
   - 调用 MCP 工具 `analyze`，传入上述参数
   - 解析输出中的 `mermaid` 代码块（依赖图）与建议列表
   - 结合本指南第 1–8 章内容，将分析结果用于决策与实施
-  - 完成重构后再次调用 `analyze` 复验（参见第 6.3 与第 8 章）
+  - 重构完成后先进行类型检查：
+    - 优先查看项目 `package.json` 是否存在类型检查脚本（如 `typecheck`、`tsc`、`vue-tsc`），若存在请运行该脚本（如 `pnpm run typecheck`、`npm run typecheck` 或 `yarn typecheck`）
+    - 若不存在脚本：
+      - Vue 项目：运行 `vue-tsc --noEmit`
+      - React 项目：运行 `tsc --noEmit`
+  - 类型检查通过后，再次调用 MCP 工具 `analyze` 完成复验（参见第 6.3 与第 8 章）
 - 输出说明：
   - `mermaid`：节点/边依赖关系可视化
   - 建议：包含循环依赖、链式调用、孤立节点群、关节点等提示
