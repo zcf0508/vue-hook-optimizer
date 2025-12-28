@@ -1,7 +1,7 @@
 {
   "name": "vue-hook-optimizer",
   "type": "module",
-  "version": "0.0.82",
+  "version": "0.0.83",
   "description": "a tool that helps refactor and optimize hook abstractions in Vue components",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
