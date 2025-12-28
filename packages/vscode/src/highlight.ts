@@ -2,6 +2,7 @@ import { debounce } from 'lodash-es';
 import * as vscode from 'vscode';
 import { generateCommunityColorsRGBA } from '../../../packages/core/src';
 import { analyze } from './analyze';
+import { CommunityTreeDataProvider, registerCommunityTreeView } from './communityTreeView';
 import { getCommunityColorsConfig, getHighlightConfig, getLauguageConfig } from './config';
 
 interface CacheEntry {
@@ -138,6 +139,10 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
   /** 是否已经显示过本次会话的首次提示 */
   let hasShownSessionNotification = false;
+
+  /** TreeView provider for community display */
+  const communityTreeProvider = new CommunityTreeDataProvider();
+  registerCommunityTreeView(context, communityTreeProvider);
 
   function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
     return a.size === b.size && [...a].every(x => b.has(x));
@@ -294,6 +299,7 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     if (!communityColorsEnabled) {
       if (lastCommunityColorsEnabled) {
         clearCommunityDecorations(activeEditor);
+        communityTreeProvider.clear();
         lastCommunityColorsEnabled = false;
       }
       return;
@@ -307,8 +313,14 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     const { communities } = analysisResult.data;
     if (!communities || communities.communities.length === 0) {
       clearCommunityDecorations(activeEditor);
+      communityTreeProvider.clear();
       return;
     }
+
+    communityTreeProvider.refresh({
+      communities,
+      filePath: activeEditor.document.fileName,
+    });
 
     if (communityDecorationTypes.length === 0) {
       createCommunityDecorationTypes();
@@ -317,6 +329,10 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     const communityDecorations: Map<number, vscode.Range[]> = new Map();
 
     for (const community of communities.communities) {
+      if (community.nodes.size <= 1) {
+        continue;
+      }
+
       const colorIndex = community.id % MAX_COMMUNITY_COLORS;
       if (!communityDecorations.has(colorIndex)) {
         communityDecorations.set(colorIndex, []);

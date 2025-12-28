@@ -91,6 +91,21 @@
         }
       ]
     },
+    "views": {
+      "explorer": [
+        {
+          "id": "vho.communityView",
+          "name": "Variable Communities",
+          "when": "config.vho.communityColors"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "vho.communityView",
+        "contents": "No communities detected.\n\nOpen a Vue/React component to analyze variable relationships.\n\n[Analyze Current File](command:vho.action.analyze)"
+      }
+    ],
     "languages": [
       {
         "id": "vho-output",
