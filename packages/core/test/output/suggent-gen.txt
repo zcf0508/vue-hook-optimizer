@@ -324,7 +324,7 @@
     "type": "info",
   },
   {
-    "message": "Found 3 independent variable groups that are not used in template. Consider removing or extracting them.",
+    "message": "Found 2 independent variable groups that are not used in template. Consider removing or extracting them.",
     "nodeInfo": [
       {
         "info": {
@@ -333,14 +333,6 @@
         },
         "label": "aaa1",
         "type": "var",
-      },
-      {
-        "info": {
-          "column": 6,
-          "line": 82,
-        },
-        "label": "updateBBB",
-        "type": "fun",
       },
       {
         "info": {
@@ -357,6 +349,14 @@
         },
         "label": "cc333",
         "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 82,
+        },
+        "label": "updateBBB",
+        "type": "fun",
       },
       {
         "info": {
