@@ -71,7 +71,7 @@
         },
         "vho.highlight": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Enable dependence highlight."
         }
       }
