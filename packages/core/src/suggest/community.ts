@@ -110,15 +110,23 @@ export function calculateSemanticSimilarity(labelA: string, labelB: string): num
   return jaccardSimilarity;
 }
 
+interface BuildWeightedGraphOptions {
+  semanticWeight?: number
+  similarityThreshold?: number
+}
+
 /**
  * Build a weighted graph that combines structural connections with semantic similarity.
  */
 function buildWeightedGraph(
   graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
-  semanticWeight: number = 1.0,
+  options: BuildWeightedGraphOptions = {},
 ): Map<TypedNode, Map<TypedNode, number>> {
+  const { semanticWeight = 1.0, similarityThreshold = 0.3 } = options;
+
   const weighted = new Map<TypedNode, Map<TypedNode, number>>();
   const allNodes = new Set<TypedNode>();
+  const connectedPairs = new Set<string>();
 
   for (const [node, edges] of graph) {
     allNodes.add(node);
@@ -140,6 +148,9 @@ function buildWeightedGraph(
 
       const reverseWeight = weighted.get(edge.node)!.get(node) || 0;
       weighted.get(edge.node)!.set(node, Math.max(reverseWeight, structuralWeight));
+
+      const pairKey = [node.label, edge.node.label].sort().join('|');
+      connectedPairs.add(pairKey);
     }
   }
 
@@ -150,15 +161,24 @@ function buildWeightedGraph(
         const nodeA = nodeArray[i];
         const nodeB = nodeArray[j];
 
+        const pairKey = [nodeA.label, nodeB.label].sort().join('|');
+        const isConnected = connectedPairs.has(pairKey);
+
         const similarity = calculateSemanticSimilarity(nodeA.label, nodeB.label);
-        if (similarity > 0.3) {
+        if (similarity > similarityThreshold) {
           const semanticEdgeWeight = similarity * semanticWeight;
 
           const currentAB = weighted.get(nodeA)!.get(nodeB) || 0;
-          weighted.get(nodeA)!.set(nodeB, currentAB + semanticEdgeWeight);
+          const newWeightAB = isConnected
+            ? Math.max(currentAB, semanticEdgeWeight)
+            : currentAB + semanticEdgeWeight;
+          weighted.get(nodeA)!.set(nodeB, Math.min(newWeightAB, 2.0));
 
           const currentBA = weighted.get(nodeB)!.get(nodeA) || 0;
-          weighted.get(nodeB)!.set(nodeA, currentBA + semanticEdgeWeight);
+          const newWeightBA = isConnected
+            ? Math.max(currentBA, semanticEdgeWeight)
+            : currentBA + semanticEdgeWeight;
+          weighted.get(nodeB)!.set(nodeA, Math.min(newWeightBA, 2.0));
         }
       }
     }
@@ -214,9 +234,15 @@ export interface DetectCommunitiesOptions {
   /**
    * Weight for semantic similarity (0-1).
    * Higher values give more importance to naming patterns.
-   * Default: 0.8
+   * Default: 1.0
    */
   semanticWeight?: number
+  /**
+   * Minimum semantic similarity threshold to create an edge (0-1).
+   * Only node pairs with similarity above this threshold will be connected.
+   * Default: 0.3
+   */
+  similarityThreshold?: number
 }
 
 /**
@@ -238,9 +264,9 @@ export function detectCommunities(
   graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
   options: DetectCommunitiesOptions = {},
 ): CommunityResult {
-  const { maxIterations = 100, semanticWeight = 1.0 } = options;
+  const { maxIterations = 100, semanticWeight = 1.0, similarityThreshold = 0.3 } = options;
   const random = createSeededRandom(options.seed);
-  const weightedGraph = buildWeightedGraph(graph, semanticWeight);
+  const weightedGraph = buildWeightedGraph(graph, { semanticWeight, similarityThreshold });
   const nodes = Array.from(weightedGraph.keys());
 
   if (nodes.length === 0) {
