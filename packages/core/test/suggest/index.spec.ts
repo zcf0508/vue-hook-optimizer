@@ -18,6 +18,6 @@ describe('suggest gen', () => {
       ? analyzeTemplate(sfc.descriptor.template!.content)
       : new Set<string>();
 
-    expect(gen(graph, nodesUsedInTemplate, nodesUsedInStyle)).toMatchFileSnapshot('../output/suggent-gen.txt');
+    expect(gen(graph, nodesUsedInTemplate, nodesUsedInStyle, { communitySeed: 42 })).toMatchFileSnapshot('../output/suggent-gen.txt');
   });
 });

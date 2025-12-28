@@ -2,6 +2,8 @@ import type { RelationType, TypedNode } from '@/analyze/utils';
 import { NodeType } from '@/analyze/utils';
 import { detectCommunities, generateCommunityColors, generateCommunityColorsRGBA } from '@/suggest/community';
 
+const TEST_SEED = 42;
+
 describe('community detection', () => {
   it('should detect isolated nodes as separate communities', () => {
     const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
@@ -13,7 +15,7 @@ describe('community detection', () => {
     graph.set(node2, new Set());
     graph.set(node3, new Set());
 
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(3);
     expect(result.nodeToCommuntiy.size).toBe(3);
@@ -29,7 +31,7 @@ describe('community detection', () => {
     graph.set(node2, new Set([{ node: node3, type: 'call' }]));
     graph.set(node3, new Set([{ node: node1, type: 'set' }]));
 
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(1);
     expect(result.communities[0].nodes.size).toBe(3);
@@ -47,7 +49,7 @@ describe('community detection', () => {
     graph.set(nodeB1, new Set([{ node: nodeB2, type: 'get' }]));
     graph.set(nodeB2, new Set([{ node: nodeB1, type: 'set' }]));
 
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(2);
     expect(result.communities[0].nodes.size).toBe(2);
@@ -73,7 +75,7 @@ describe('community detection', () => {
     graph.set(fullName, new Set([{ node: name, type: 'get' }]));
     graph.set(updateName, new Set([{ node: name, type: 'set' }]));
 
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(2);
 
@@ -91,7 +93,7 @@ describe('community detection', () => {
 
   it('should handle empty graph', () => {
     const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(0);
     expect(result.nodeToCommuntiy.size).toBe(0);
@@ -102,7 +104,7 @@ describe('community detection', () => {
     const node: TypedNode = { label: 'single', type: NodeType.var };
     graph.set(node, new Set());
 
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(1);
     expect(result.communities[0].nodes.has(node)).toBe(true);
@@ -122,11 +124,31 @@ describe('community detection', () => {
     graph.set(big2, new Set([{ node: big3, type: 'call' }]));
     graph.set(big3, new Set([{ node: big1, type: 'set' }]));
 
-    const result = detectCommunities(graph);
+    const result = detectCommunities(graph, { seed: TEST_SEED });
 
     expect(result.communities.length).toBe(2);
     expect(result.communities[0].nodes.size).toBe(3);
     expect(result.communities[1].nodes.size).toBe(1);
+  });
+
+  it('should produce deterministic results with same seed', () => {
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
+
+    const a: TypedNode = { label: 'a', type: NodeType.var };
+    const b: TypedNode = { label: 'b', type: NodeType.var };
+    const c: TypedNode = { label: 'c', type: NodeType.fun };
+
+    graph.set(a, new Set([{ node: b, type: 'get' }]));
+    graph.set(b, new Set([{ node: c, type: 'call' }]));
+    graph.set(c, new Set());
+
+    const result1 = detectCommunities(graph, { seed: 123 });
+    const result2 = detectCommunities(graph, { seed: 123 });
+
+    expect(result1.communities.length).toBe(result2.communities.length);
+    for (const [node, communityId] of result1.nodeToCommuntiy) {
+      expect(result2.nodeToCommuntiy.get(node)).toBe(communityId);
+    }
   });
 });
 

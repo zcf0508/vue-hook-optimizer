@@ -26,10 +26,12 @@ export function gen(
   nodesUsedInStyle: Set<string> = new Set(),
   options?: Partial<{
     ellipsis: boolean
+    communitySeed: number
   }>,
 ) {
   const {
     ellipsis = true,
+    communitySeed,
   } = options ?? {};
 
   const usedNodes = new Set([...nodesUsedInTemplate, ...nodesUsedInStyle]);
@@ -124,7 +126,7 @@ export function gen(
     }
   });
 
-  const communityResult = detectCommunities(graph.edges);
+  const communityResult = detectCommunities(graph.edges, { seed: communitySeed });
   const { communities } = communityResult;
 
   const extractableCommunities = communities.filter((community) => {

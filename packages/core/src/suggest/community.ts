@@ -31,10 +31,21 @@ function buildUndirectedGraph(
   return undirected;
 }
 
-function shuffleArray<T>(array: T[]): T[] {
+function createSeededRandom(seed?: number): () => number {
+  if (seed === undefined) {
+    return Math.random;
+  }
+  let state = seed;
+  return () => {
+    state = (state * 1103515245 + 12345) & 0x7FFFFFFF;
+    return state / 0x7FFFFFFF;
+  };
+}
+
+function shuffleArray<T>(array: T[], random: () => number = Math.random): T[] {
   const result = [...array];
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
@@ -52,8 +63,10 @@ function shuffleArray<T>(array: T[]): T[] {
  */
 export function detectCommunities(
   graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
-  maxIterations: number = 100,
+  options: { maxIterations?: number, seed?: number } = {},
 ): CommunityResult {
+  const { maxIterations = 100 } = options;
+  const random = createSeededRandom(options.seed);
   const undirectedGraph = buildUndirectedGraph(graph);
   const nodes = Array.from(undirectedGraph.keys());
 
@@ -73,7 +86,7 @@ export function detectCommunities(
     changed = false;
     iterations++;
 
-    const shuffledNodes = shuffleArray(nodes);
+    const shuffledNodes = shuffleArray(nodes, random);
 
     for (const node of shuffledNodes) {
       const neighbors = undirectedGraph.get(node);
@@ -104,7 +117,7 @@ export function detectCommunities(
         continue;
       }
 
-      const newLabel = maxLabels[Math.floor(Math.random() * maxLabels.length)];
+      const newLabel = maxLabels[Math.floor(random() * maxLabels.length)];
       if (newLabel !== currentLabel) {
         labels.set(node, newLabel);
         changed = true;
