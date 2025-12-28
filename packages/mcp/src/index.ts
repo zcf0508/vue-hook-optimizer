@@ -37,18 +37,22 @@ server.registerTool(
 
       const communitySection = res.communities.length > 0
         ? [
-            '',
-            '## Variable Communities',
-            'The following groups of variables are tightly coupled and can potentially be extracted together:',
-            '',
-            ...res.communities.map((c) => {
-              const memberList = c.members
-                .map(m => `  - \`${m.name}\` (${m.type === 'fun' ? 'function' : 'variable'}${m.line !== undefined ? `, line ${m.line + 1}` : ''})`)
-                .join('\n');
-              return `### Community ${c.id + 1} (${c.size} members)\n${memberList}`;
-            }),
-            '',
-          ]
+          '',
+          '## Variable Communities',
+          'The following groups of variables are tightly coupled and can potentially be extracted together:',
+          '',
+          ...res.communities.map((c) => {
+            const memberList = c.members
+              .map(m => `  - \`${m.name}\` (${m.type === 'fun'
+                ? 'function'
+                : 'variable'}${m.line !== undefined
+                ? `, line ${m.line + 1}`
+                : ''})`)
+              .join('\n');
+            return `### Community ${c.id + 1} (${c.size} members)\n${memberList}`;
+          }),
+          '',
+        ]
         : [];
 
       return {

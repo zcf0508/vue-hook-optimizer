@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { generateCommunityColorsRGBA } from '../../../packages/core/src';
 import { analyze } from './analyze';
 import { CommunityTreeDataProvider, registerCommunityTreeView } from './communityTreeView';
-import { getCommunityColorsConfig, getHighlightConfig, getLauguageConfig } from './config';
+import { getHighlightConfig, getLauguageConfig } from './config';
 
 interface CacheEntry {
   hash: string
@@ -136,6 +136,9 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
   /** 缓存上次社区着色状态 */
   let lastCommunityColorsEnabled = false;
+
+  /** 社区着色开关状态（面板内控制） */
+  let communityColorsEnabled = false;
 
   /** 是否已经显示过本次会话的首次提示 */
   let hasShownSessionNotification = false;
@@ -290,18 +293,7 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
   }
 
   async function updateCommunityColors() {
-    const communityColorsEnabled = getCommunityColorsConfig();
-
     if (!activeEditor) {
-      return;
-    }
-
-    if (!communityColorsEnabled) {
-      if (lastCommunityColorsEnabled) {
-        clearCommunityDecorations(activeEditor);
-        communityTreeProvider.clear();
-        lastCommunityColorsEnabled = false;
-      }
       return;
     }
 
@@ -321,6 +313,14 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
       communities,
       filePath: activeEditor.document.fileName,
     });
+
+    if (!communityColorsEnabled) {
+      if (lastCommunityColorsEnabled) {
+        clearCommunityDecorations(activeEditor);
+        lastCommunityColorsEnabled = false;
+      }
+      return;
+    }
 
     if (communityDecorationTypes.length === 0) {
       createCommunityDecorationTypes();
@@ -394,13 +394,25 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     }
   }, null, context.subscriptions);
 
-  vscode.workspace.onDidChangeConfiguration((event) => {
-    if (event.affectsConfiguration('vho.communityColors')) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand('vho.community.toggleColors', () => {
+      communityColorsEnabled = !communityColorsEnabled;
+      vscode.commands.executeCommand(
+        'setContext',
+        'vho.communityColorsEnabled',
+        communityColorsEnabled,
+      );
       if (activeEditor) {
-        triggerUpdateCommunityColors();
+        if (!communityColorsEnabled) {
+          clearCommunityDecorations(activeEditor);
+          lastCommunityColorsEnabled = false;
+        }
+        else {
+          triggerUpdateCommunityColors();
+        }
       }
-    }
-  }, null, context.subscriptions);
+    }),
+  );
 
   context.subscriptions.push({
     dispose: () => {

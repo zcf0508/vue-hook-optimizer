@@ -40,6 +40,11 @@
           "dark": "images/analyze-light.png",
           "light": "images/analyze.png"
         }
+      },
+      {
+        "command": "vho.community.toggleColors",
+        "title": "Toggle Community Colors",
+        "icon": "$(symbol-color)"
       }
     ],
     "configuration": {
@@ -68,11 +73,6 @@
           "type": "boolean",
           "default": true,
           "description": "Enable dependence highlight."
-        },
-        "vho.communityColors": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable community-based variable coloring. Variables that belong to the same community (can be extracted as a hook together) will have similar colors."
         }
       }
     },
@@ -89,6 +89,13 @@
           "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact",
           "group": "navigation"
         }
+      ],
+      "view/title": [
+        {
+          "command": "vho.community.toggleColors",
+          "when": "view == vho.communityView",
+          "group": "navigation"
+        }
       ]
     },
     "views": {
@@ -96,7 +103,7 @@
         {
           "id": "vho.communityView",
           "name": "Variable Communities",
-          "when": "config.vho.communityColors"
+          "icon": "$(type-hierarchy)"
         }
       ]
     },

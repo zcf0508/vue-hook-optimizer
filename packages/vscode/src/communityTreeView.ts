@@ -1,10 +1,10 @@
-import * as vscode from 'vscode';
 import type { CommunityResult, TypedNode } from '../../../packages/core/src';
+import * as vscode from 'vscode';
 import { generateCommunityColorsRGBA } from '../../../packages/core/src';
 
 export interface CommunityData {
-  communities: CommunityResult;
-  filePath: string;
+  communities: CommunityResult
+  filePath: string
 }
 
 const MAX_HIGHLIGHT_COLORS = 20;
@@ -40,9 +40,9 @@ function clearAllHighlights(editor: vscode.TextEditor): void {
   });
 }
 
-type TreeItemData =
-  | { type: 'community'; communityId: number; nodes: TypedNode[]; color: string }
-  | { type: 'node'; node: TypedNode; communityId: number; color: string };
+type TreeItemData
+  = | { type: 'community', communityId: number, nodes: TypedNode[], color: string }
+    | { type: 'node', node: TypedNode, communityId: number, color: string };
 
 class CommunityTreeItem extends vscode.TreeItem {
   constructor(
@@ -67,9 +67,13 @@ class CommunityTreeItem extends vscode.TreeItem {
     }
     else {
       const nodeType = data.node.type;
-      const iconName = nodeType === 'fun' ? 'symbol-method' : 'symbol-variable';
+      const iconName = nodeType === 'fun'
+        ? 'symbol-method'
+        : 'symbol-variable';
       this.iconPath = new vscode.ThemeIcon(iconName);
-      this.tooltip = `${data.node.label} (${nodeType === 'fun' ? 'function' : 'variable'})`;
+      this.tooltip = `${data.node.label} (${nodeType === 'fun'
+        ? 'function'
+        : 'variable'})`;
       this.contextValue = 'node';
 
       if (data.node.info?.line !== undefined) {
@@ -89,7 +93,7 @@ export class CommunityTreeDataProvider implements vscode.TreeDataProvider<Commun
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private communityData: CommunityData | null = null;
-  private colors: Array<{ background: string; foreground: string; border: string }> = [];
+  private colors: Array<{ background: string, foreground: string, border: string }> = [];
   private selectedCommunityId: number | null = null;
 
   constructor() {

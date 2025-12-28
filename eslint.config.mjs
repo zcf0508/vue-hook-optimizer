@@ -12,6 +12,7 @@ export default antfu({
       'fixtures/**/*',
       'packages/core/test/output/**/*',
       'packages/playground/default-codes/**/*',
+      'packages/vscode/src/generated-meta.ts',
     ],
   },
   pluginSecurity.configs.recommended,
@@ -36,6 +37,7 @@ export default antfu({
       'curly': ['error', 'all'],
       'style/brace-style': 'error',
       'style/multiline-ternary': ['error', 'always'],
+      'style/max-statements-per-line': ['warn', { max: 1 }],
       'unused-imports/no-unused-imports': 'off',
       'unused-imports/no-unused-vars': [
         'warn',

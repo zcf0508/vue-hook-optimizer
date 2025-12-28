@@ -35,8 +35,3 @@ export function getLauguageConfig() {
   const config = vscode.workspace.getConfiguration();
   return config.get(meta.configs.vhoLanguage.key, meta.configs.vhoLanguage.default) || 'vue';
 }
-
-export function getCommunityColorsConfig() {
-  const config = vscode.workspace.getConfiguration();
-  return config.get(meta.configs.vhoCommunityColors.key, meta.configs.vhoCommunityColors.default);
-}
