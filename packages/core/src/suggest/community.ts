@@ -31,8 +31,13 @@ function buildUndirectedGraph(
   return undirected;
 }
 
-function sortNodesDeterministically(nodes: TypedNode[]): TypedNode[] {
-  return [...nodes].sort((a, b) => a.label.localeCompare(b.label));
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 /**
@@ -68,9 +73,9 @@ export function detectCommunities(
     changed = false;
     iterations++;
 
-    const sortedNodes = sortNodesDeterministically(nodes);
+    const shuffledNodes = shuffleArray(nodes);
 
-    for (const node of sortedNodes) {
+    for (const node of shuffledNodes) {
       const neighbors = undirectedGraph.get(node);
       if (!neighbors || neighbors.size === 0) {
         continue;
@@ -99,7 +104,7 @@ export function detectCommunities(
         continue;
       }
 
-      const newLabel = Math.min(...maxLabels);
+      const newLabel = maxLabels[Math.floor(Math.random() * maxLabels.length)];
       if (newLabel !== currentLabel) {
         labels.set(node, newLabel);
         changed = true;
