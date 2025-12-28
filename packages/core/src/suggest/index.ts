@@ -1,5 +1,6 @@
 import type { RelationType, TypedNode } from '../analyze/utils';
 import { NodeType } from '../analyze/utils';
+import { detectCommunities } from './community';
 import { findArticulationPoints, findLinearPaths, noIndegreeFilter } from './filter';
 import { splitGraph } from './split';
 import { hasCycle } from './utils';
@@ -123,16 +124,67 @@ export function gen(
     }
   });
 
-  // const noOutdegreeNodes = noOutdegreeFilter(graph.edges);
-  // noOutdegreeNodes.forEach(node => {
-  //   if(!usedNodes.has(node.label)) {
-  //     suggestions.push({
-  //       type: SuggestionType.info,
-  //       message: `Node [${node.label}] is not used, perhaps you can remove it.`,
-  //       nodeInfo: node,
-  //     });
-  //   }
-  // });
+  const communityResult = detectCommunities(graph.edges);
+  const { communities } = communityResult;
+
+  const extractableCommunities = communities.filter((community) => {
+    const nodes = Array.from(community.nodes);
+    if (nodes.length < 3 || nodes.length > 15) {
+      return false;
+    }
+
+    const hasUsedNode = nodes.some(node => usedNodes.has(node.label));
+    const hasUnusedNode = nodes.some(node => !usedNodes.has(node.label));
+
+    return hasUsedNode && hasUnusedNode;
+  });
+
+  extractableCommunities.forEach((community) => {
+    const nodes = Array.from(community.nodes);
+    const unusedNodes = nodes.filter(node => !usedNodes.has(node.label));
+
+    if (unusedNodes.length >= 2) {
+      suggestions.push({
+        type: SuggestionType.info,
+        message: `Nodes [${
+          (ellipsis && nodes.length > 10)
+            ? `${nodes.slice(0, 10).map(node => node.label).join(',')}...(${nodes.length})`
+            : nodes.map(node => node.label).join(',')
+        }] form a tightly coupled group, consider extracting them into a composable/hook.`,
+        nodeInfo: nodes,
+      });
+    }
+  });
+
+  if (communities.length > 3) {
+    const independentCommunities = communities.filter((community) => {
+      const nodes = Array.from(community.nodes);
+      return nodes.length >= 2 && nodes.every(node => !usedNodes.has(node.label) && !node.info?.used?.size);
+    });
+
+    if (independentCommunities.length >= 2) {
+      const allNodes = independentCommunities.flatMap(c => Array.from(c.nodes));
+      suggestions.push({
+        type: SuggestionType.info,
+        message: `Found ${independentCommunities.length} independent variable groups that are not used in template. Consider removing or extracting them.`,
+        nodeInfo: allNodes,
+      });
+    }
+  }
+
+  const largeCommunities = communities.filter(c => c.nodes.size > 10);
+  largeCommunities.forEach((community) => {
+    const nodes = Array.from(community.nodes);
+    const functionNodes = nodes.filter(n => n.type === NodeType.fun);
+
+    if (functionNodes.length > 5) {
+      suggestions.push({
+        type: SuggestionType.warning,
+        message: `Community with ${nodes.length} nodes has ${functionNodes.length} functions. This group is complex, consider splitting into smaller composables.`,
+        nodeInfo: nodes,
+      });
+    }
+  });
 
   return suggestions;
 }

@@ -4,7 +4,7 @@
 // Meta info
 export const publisher = 'zcf0508';
 export const name = 'vue-hook-optimizer-ext';
-export const version = '0.0.73';
+export const version = '0.0.80';
 export const displayName = 'vue-hook-optimizer';
 export const description = undefined;
 export const extensionId = `${publisher}.${name}`;
@@ -32,18 +32,21 @@ export const commands = {
 export type ConfigKey
   = | 'vho.theme'
     | 'vho.language'
-    | 'vho.highlight';
+    | 'vho.highlight'
+    | 'vho.communityColors';
 
 export interface ConfigKeyTypeMap {
   'vho.theme': ('auto' | 'light' | 'dark')
   'vho.language': ('vue' | 'react')
   'vho.highlight': boolean
+  'vho.communityColors': boolean
 }
 
 export interface ConfigShorthandMap {
   vhoTheme: 'vho.theme'
   vhoLanguage: 'vho.language'
   vhoHighlight: 'vho.highlight'
+  vhoCommunityColors: 'vho.communityColors'
 }
 
 export interface ConfigItem<T extends keyof ConfigKeyTypeMap> {
@@ -85,4 +88,14 @@ export const configs = {
     key: 'vho.highlight',
     default: true,
   } as ConfigItem<'vho.highlight'>,
+  /**
+   * Enable community-based variable coloring. Variables that belong to the same community (can be extracted as a hook together) will have similar colors.
+   * @key `vho.communityColors`
+   * @default `false`
+   * @type `boolean`
+   */
+  vhoCommunityColors: {
+    key: 'vho.communityColors',
+    default: false,
+  } as ConfigItem<'vho.communityColors'>,
 };

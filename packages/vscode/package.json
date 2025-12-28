@@ -68,6 +68,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable dependence highlight."
+        },
+        "vho.communityColors": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable community-based variable coloring. Variables that belong to the same community (can be extracted as a hook together) will have similar colors."
         }
       }
     },

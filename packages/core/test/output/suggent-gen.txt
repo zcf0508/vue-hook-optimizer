@@ -323,4 +323,58 @@
     },
     "type": "info",
   },
+  {
+    "message": "Found 3 independent variable groups that are not used in template. Consider removing or extracting them.",
+    "nodeInfo": [
+      {
+        "info": {
+          "column": 6,
+          "line": 76,
+        },
+        "label": "aaa1",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 82,
+        },
+        "label": "updateBBB",
+        "type": "fun",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 78,
+        },
+        "label": "bbb2",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 80,
+        },
+        "label": "cc333",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 88,
+        },
+        "label": "ddd4",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 6,
+          "line": 89,
+        },
+        "label": "eee5",
+        "type": "var",
+      },
+    ],
+    "type": "info",
+  },
 ]

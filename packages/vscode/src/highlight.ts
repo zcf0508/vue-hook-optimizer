@@ -1,7 +1,8 @@
 import { debounce } from 'lodash-es';
 import * as vscode from 'vscode';
+import { generateCommunityColorsRGBA } from '../../../packages/core/src';
 import { analyze } from './analyze';
-import { getHighlightConfig, getLauguageConfig } from './config';
+import { getCommunityColorsConfig, getHighlightConfig, getLauguageConfig } from './config';
 
 interface CacheEntry {
   hash: string
@@ -85,6 +86,43 @@ function clearDecorations(editor: vscode.TextEditor) {
   editor.setDecorations(dependentDecorationType, []);
 }
 
+const MAX_COMMUNITY_COLORS = 20;
+let communityDecorationTypes: vscode.TextEditorDecorationType[] = [];
+
+function createCommunityDecorationTypes(): vscode.TextEditorDecorationType[] {
+  disposeCommunityDecorationTypes();
+
+  const colors = generateCommunityColorsRGBA(MAX_COMMUNITY_COLORS);
+  communityDecorationTypes = colors.map((color, index) => {
+    return vscode.window.createTextEditorDecorationType({
+      backgroundColor: color.background,
+      borderWidth: '0 0 0 3px',
+      borderStyle: 'solid',
+      borderColor: color.border,
+      overviewRulerColor: color.foreground,
+      overviewRulerLane: vscode.OverviewRulerLane.Right,
+      before: {
+        contentText: '●',
+        color: color.foreground,
+        margin: '0 6px 0 0',
+      },
+    });
+  });
+
+  return communityDecorationTypes;
+}
+
+function disposeCommunityDecorationTypes() {
+  communityDecorationTypes.forEach(type => type.dispose());
+  communityDecorationTypes = [];
+}
+
+function clearCommunityDecorations(editor: vscode.TextEditor) {
+  communityDecorationTypes.forEach((type) => {
+    editor.setDecorations(type, []);
+  });
+}
+
 export function activateHighlighting(context: vscode.ExtensionContext) {
   let activeEditor = vscode.window.activeTextEditor;
 
@@ -94,6 +132,9 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
   /** 缓存上次高亮的行号，用于避免闪烁 */
   let lastDependencyLines = new Set<number>();
   let lastDependentLines = new Set<number>();
+
+  /** 缓存上次社区着色状态 */
+  let lastCommunityColorsEnabled = false;
 
   /** 是否已经显示过本次会话的首次提示 */
   let hasShownSessionNotification = false;
@@ -243,32 +284,111 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     }
   }
 
+  async function updateCommunityColors() {
+    const communityColorsEnabled = getCommunityColorsConfig();
+
+    if (!activeEditor) {
+      return;
+    }
+
+    if (!communityColorsEnabled) {
+      if (lastCommunityColorsEnabled) {
+        clearCommunityDecorations(activeEditor);
+        lastCommunityColorsEnabled = false;
+      }
+      return;
+    }
+
+    const analysisResult = await ensureAnalysisResult();
+    if (!analysisResult) {
+      return;
+    }
+
+    const { communities } = analysisResult.data;
+    if (!communities || communities.communities.length === 0) {
+      clearCommunityDecorations(activeEditor);
+      return;
+    }
+
+    if (communityDecorationTypes.length === 0) {
+      createCommunityDecorationTypes();
+    }
+
+    const communityDecorations: Map<number, vscode.Range[]> = new Map();
+
+    for (const community of communities.communities) {
+      const colorIndex = community.id % MAX_COMMUNITY_COLORS;
+      if (!communityDecorations.has(colorIndex)) {
+        communityDecorations.set(colorIndex, []);
+      }
+
+      for (const node of community.nodes) {
+        if (node.info?.line !== undefined) {
+          const line = node.info.line;
+          if (line >= 0 && line < activeEditor.document.lineCount) {
+            communityDecorations.get(colorIndex)!.push(
+              activeEditor.document.lineAt(line).range,
+            );
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < communityDecorationTypes.length; i++) {
+      const ranges = communityDecorations.get(i) || [];
+      activeEditor.setDecorations(communityDecorationTypes[i], ranges);
+    }
+
+    lastCommunityColorsEnabled = true;
+  }
+
   const triggerUpdateDecorations = debounce(updateDecorations, 300);
+  const triggerUpdateCommunityColors = debounce(updateCommunityColors, 500);
 
   if (activeEditor) {
     triggerUpdateDecorations();
+    triggerUpdateCommunityColors();
   }
 
   vscode.workspace.onDidChangeTextDocument((event) => {
     const fileUri = event.document.uri.toString();
     analysisCache.delete(fileUri);
-    currentAnalysisResult = null; // 清空内存中的分析结果
+    currentAnalysisResult = null;
+    if (activeEditor) {
+      triggerUpdateCommunityColors();
+    }
   }, null, context.subscriptions);
 
   vscode.window.onDidChangeActiveTextEditor((editor) => {
     activeEditor = editor;
-    currentAnalysisResult = null; // 切换文件时清空分析结果
+    currentAnalysisResult = null;
     lastDependencyLines.clear();
     lastDependentLines.clear();
     if (editor) {
       clearDecorations(activeEditor!);
+      clearCommunityDecorations(activeEditor!);
       triggerUpdateDecorations();
+      triggerUpdateCommunityColors();
     }
   }, null, context.subscriptions);
 
   vscode.window.onDidChangeTextEditorSelection((event) => {
     if (activeEditor && event.textEditor === activeEditor) {
-      triggerUpdateDecorations(); // 移除预先清空，让比较逻辑决定是否更新
+      triggerUpdateDecorations();
     }
   }, null, context.subscriptions);
+
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    if (event.affectsConfiguration('vho.communityColors')) {
+      if (activeEditor) {
+        triggerUpdateCommunityColors();
+      }
+    }
+  }, null, context.subscriptions);
+
+  context.subscriptions.push({
+    dispose: () => {
+      disposeCommunityDecorationTypes();
+    },
+  });
 }

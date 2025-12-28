@@ -1,4 +1,5 @@
 import type {
+  CommunityResult,
   RelationType,
   TypedNode,
 } from '../../../packages/core/src';
@@ -8,6 +9,7 @@ import {
   analyzeStyle,
   analyzeTemplate,
   analyzeTsx,
+  detectCommunities,
   gen,
   getMermaidText,
   getVisData,
@@ -83,9 +85,13 @@ export async function analyze(code: string, language: 'vue' | 'react') {
     nodesUsedInTemplate = res.nodesUsedInTemplate;
   }
 
+  const communityResult = detectCommunities(graph.edges);
+
   return { code: 0, data: {
     vis: getVisData(graph, nodesUsedInTemplate, nodesUsedInStyle),
     suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle),
     mermaid: getMermaidText(graph, nodesUsedInTemplate, nodesUsedInStyle),
+    communities: communityResult,
+    graph,
   }, msg: 'ok' };
 }
