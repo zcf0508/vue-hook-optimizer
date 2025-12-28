@@ -192,8 +192,8 @@ export function generateCommunityColorsRGBA(communityCount: number): Array<{
   for (let i = 0; i < communityCount; i++) {
     hue = (hue + goldenRatio) % 1;
     const h = hue * 360;
-    const s = 0.7;
-    const l = 0.5;
+    const s = 0.45;
+    const l = 0.55;
 
     const { r, g, b } = hslToRgb(h, s, l);
 
