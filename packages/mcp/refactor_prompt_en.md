@@ -12,7 +12,7 @@ description: Skill for Vue/React refactoring driven by VHO analysis. First call 
   - `framework`: `vue` or `react` (default `vue`)
 - Steps:
   - Invoke MCP tool `analyze` with the above parameters
-  - Parse the output `mermaid` code block (dependency graph) and the suggestion list
+  - Parse the output `mermaid` code block (dependency graph), suggestion list, and **variable communities**
   - Apply the results with sections 1–8 of this guide for decision and implementation
   - After refactoring, run type checking first:
     - Prefer checking your project `package.json` for an existing typecheck script (e.g. `typecheck`, `tsc`, `vue-tsc`), and run it (`pnpm run typecheck`, `npm run typecheck`, or `yarn typecheck`)
@@ -23,6 +23,7 @@ description: Skill for Vue/React refactoring driven by VHO analysis. First call 
 - Output:
   - `mermaid`: visualized node/edge dependency graph
   - Suggestions: hints for cycles, chain calls, isolated node groups, articulation points
+  - **Variable Communities**: tightly coupled variable groups detected via Label Propagation algorithm. Each community represents a set of variables that can be extracted together
 
 ## 1. Refactoring Decision Framework
 
@@ -36,6 +37,7 @@ description: Skill for Vue/React refactoring driven by VHO analysis. First call 
 #### **Key Metrics Identification**
 - **Articulation Points**: Nodes that, when removed, would split the dependency graph. These are typically core targets for refactoring
 - **Isolated Node Groups**: Sets of nodes that are interconnected but separated from the main logic. These are candidates for extraction and usually need to be modularized based on actual business meaning
+- **Variable Communities**: Tightly coupled variable groups detected by algorithm. Variables within the same community have frequent interdependencies and are ideal candidates for extraction into Composables/Hooks. Larger communities may need to be split
 - **Dependency Depth**: Long chain dependencies indicate mixed responsibilities, requiring layered processing
 - **Logical Independence**: Extracted code should be independent, complete, and meaningful logical blocks. It should neither be overly coupled with multiple modules nor be overly simple function definitions or variable re-exports
 
@@ -45,8 +47,35 @@ description: Skill for Vue/React refactoring driven by VHO analysis. First call 
 |---------|-----------|----------|
 | Articulation points + High node count | **Very High** | Immediately extract logic related to articulation points |
 | Multiple isolated node groups | **High** | Extract by functional domain grouping |
+| Large community (>8 members) | **High** | Extract as independent Composable following community boundaries |
+| Multiple small communities (2-5 members) | **Medium** | Evaluate business meaning, decide whether to merge or extract separately |
 | Long chain dependencies | **Medium** | Layered refactoring, establish clear data flow |
 | Circular dependencies | **Very High** | Break the cycle, redesign interfaces |
+
+### 1.3 Community-Based Refactoring Strategy
+
+#### **Interpreting Community Analysis**
+Community detection outputs results like:
+```
+### Community 1 (5 members)
+  - `userData` (variable, line 10)
+  - `loading` (variable, line 12)
+  - `fetchUser` (function, line 15)
+  - `updateUser` (function, line 25)
+  - `userError` (variable, line 35)
+```
+
+#### **Community Refactoring Decisions**
+1. **Single community + Clear responsibility** → Extract directly as one Composable
+2. **Single community + Mixed responsibilities** → Split by responsibility first, then extract separately
+3. **Multiple communities + Independent** → Extract each community as independent Composable
+4. **Multiple communities + Cross-references** → Analyze intersection points, may need to extract shared logic
+
+#### **Community Naming Suggestions**
+Name based on common characteristics of community members:
+- By data entity: `useUser`, `useOrder`, `useProduct`
+- By functionality: `useDataFetching`, `useFormValidation`
+- By business process: `useCheckout`, `useAuthentication`
 
 ## 2. Composable Extraction Decision Tree
 

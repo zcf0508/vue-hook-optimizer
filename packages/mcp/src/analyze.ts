@@ -8,6 +8,7 @@ import {
   analyzeStyle,
   analyzeTemplate,
   analyzeTsx,
+  detectCommunities,
   gen,
   getMermaidText,
   parse,
@@ -82,10 +83,32 @@ export async function analyze(code: string, language: 'vue' | 'react') {
     nodesUsedInTemplate = res.nodesUsedInTemplate;
   }
 
+  const communityResult = detectCommunities(graph.edges);
+
+  const communities = communityResult.communities
+    .filter(c => c.nodes.size > 1)
+    .map((c) => {
+      const nodes = Array.from(c.nodes).sort((a, b) => {
+        const lineA = a.info?.line ?? Infinity;
+        const lineB = b.info?.line ?? Infinity;
+        return lineA - lineB;
+      });
+      return {
+        id: c.id,
+        size: c.nodes.size,
+        members: nodes.map(n => ({
+          name: n.label,
+          type: n.type,
+          line: n.info?.line,
+        })),
+      };
+    });
+
   return {
     mermaid: getMermaidText(graph, nodesUsedInTemplate, nodesUsedInStyle),
     suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle, {
       ellipsis: false,
     }),
+    communities,
   };
 }

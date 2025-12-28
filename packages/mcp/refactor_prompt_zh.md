@@ -12,7 +12,7 @@ description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-op
   - `framework`：`vue` 或 `react`（默认 `vue`）
 - 操作步骤：
   - 调用 MCP 工具 `analyze`，传入上述参数
-  - 解析输出中的 `mermaid` 代码块（依赖图）与建议列表
+  - 解析输出中的 `mermaid` 代码块（依赖图）、建议列表和**变量社区**
   - 结合本指南第 1–8 章内容，将分析结果用于决策与实施
   - 重构完成后先进行类型检查：
     - 优先查看项目 `package.json` 是否存在类型检查脚本（如 `typecheck`、`tsc`、`vue-tsc`），若存在请运行该脚本（如 `pnpm run typecheck`、`npm run typecheck` 或 `yarn typecheck`）
@@ -23,6 +23,7 @@ description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-op
 - 输出说明：
   - `mermaid`：节点/边依赖关系可视化
   - 建议：包含循环依赖、链式调用、孤立节点群、关节点等提示
+  - **变量社区**：通过 Label Propagation 算法检测出的紧密耦合变量群组，每个社区代表一组可以一起提取的变量
 
 ## 1. 重构决策框架
 
@@ -36,6 +37,7 @@ description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-op
 #### **关键指标识别**
 - **关节点（Articulation Points）**：移除后会导致依赖图分裂的节点，通常是重构的核心目标
 - **孤立节点群**：相互关联但与主逻辑分离的节点集合，是提取的候选对象，通常需要根据实际业务含义进行模块分割
+- **变量社区（Variable Communities）**：通过算法检测出的紧密耦合变量群组。同一社区内的变量相互依赖频繁，是提取为 Composable/Hook 的理想候选。社区大小越大，越需要考虑是否应该拆分
 - **依赖深度**：长链式依赖表明职责混乱，需要分层处理
 - **逻辑独立**：提取的代码需要是独立的、完备的、有一定实际意义的逻辑块，不能是过于耦合的包含多模块的内容，也不能是过于简单的函数定义或变量声明的二次导出
 
@@ -45,8 +47,35 @@ description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-op
 |---------|-----------|----------|
 | 存在关节点 + 高节点数 | **极高** | 立即提取关节点相关逻辑 |
 | 多个孤立节点群 | **高** | 按功能域分组提取 |
+| 大型社区（>8个成员） | **高** | 按社区边界提取为独立 Composable |
+| 多个小型社区（2-5成员） | **中** | 评估业务含义后决定是否合并或分别提取 |
 | 长链式依赖 | **中** | 分层重构，建立清晰的数据流 |
 | 循环依赖 | **极高** | 打破循环，重新设计接口 |
+
+### 1.3 基于社区的重构策略
+
+#### **社区分析解读**
+社区检测会输出类似以下结果：
+```
+### Community 1 (5 members)
+  - `userData` (variable, line 10)
+  - `loading` (variable, line 12)
+  - `fetchUser` (function, line 15)
+  - `updateUser` (function, line 25)
+  - `userError` (variable, line 35)
+```
+
+#### **社区重构决策**
+1. **单一社区 + 明确职责** → 直接提取为一个 Composable
+2. **单一社区 + 混合职责** → 先按职责拆分，再分别提取
+3. **多个社区 + 各自独立** → 每个社区提取为独立 Composable
+4. **多个社区 + 存在交叉** → 分析交叉点，可能需要提取共享逻辑
+
+#### **社区命名建议**
+根据社区成员的共同特征命名：
+- 以数据实体命名：`useUser`、`useOrder`、`useProduct`
+- 以功能命名：`useDataFetching`、`useFormValidation`
+- 以业务流程命名：`useCheckout`、`useAuthentication`
 
 ## 2. Composable 提取决策树
 
