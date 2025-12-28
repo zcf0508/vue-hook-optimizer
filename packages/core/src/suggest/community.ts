@@ -133,8 +133,12 @@ function calculateSemanticSimilarityCached(
   const lowerB = labelB.toLowerCase();
 
   if (lowerA.includes(lowerB) || lowerB.includes(lowerA)) {
-    const shorter = lowerA.length < lowerB.length ? lowerA : lowerB;
-    const longer = lowerA.length < lowerB.length ? lowerB : lowerA;
+    const shorter = lowerA.length < lowerB.length
+      ? lowerA
+      : lowerB;
+    const longer = lowerA.length < lowerB.length
+      ? lowerB
+      : lowerA;
     return shorter.length / longer.length;
   }
 
