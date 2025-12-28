@@ -1,7 +1,7 @@
 {
   "name": "mcp-server-vue-hook-optimizer",
   "type": "module",
-  "version": "0.0.80",
+  "version": "0.0.81",
   "description": "MCP server for vue-hook-optimizer",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
