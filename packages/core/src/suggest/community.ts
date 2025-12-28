@@ -116,7 +116,56 @@ interface BuildWeightedGraphOptions {
 }
 
 /**
+ * Calculate semantic similarity using cached base words.
+ * Returns a value between 0 and 1.
+ */
+function calculateSemanticSimilarityCached(
+  labelA: string,
+  labelB: string,
+  wordsA: string[],
+  wordsB: string[],
+): number {
+  if (labelA === labelB) {
+    return 1;
+  }
+
+  const lowerA = labelA.toLowerCase();
+  const lowerB = labelB.toLowerCase();
+
+  if (lowerA.includes(lowerB) || lowerB.includes(lowerA)) {
+    const shorter = lowerA.length < lowerB.length ? lowerA : lowerB;
+    const longer = lowerA.length < lowerB.length ? lowerB : lowerA;
+    return shorter.length / longer.length;
+  }
+
+  if (wordsA.length === 0 || wordsB.length === 0) {
+    return 0;
+  }
+
+  const setA = new Set(wordsA);
+  const setB = new Set(wordsB);
+
+  let sharedCount = 0;
+  for (const word of setA) {
+    if (setB.has(word)) {
+      sharedCount++;
+    }
+  }
+
+  if (sharedCount === 0) {
+    return 0;
+  }
+
+  return sharedCount / (setA.size + setB.size - sharedCount);
+}
+
+/**
  * Build a weighted graph that combines structural connections with semantic similarity.
+ *
+ * Optimized algorithm:
+ * 1. Cache extractBaseWords results to avoid repeated computation
+ * 2. Build word-to-nodes bucket map, only compare nodes within same bucket
+ *    This reduces O(N²) to O(B × K²) where B = number of buckets, K = avg nodes per bucket
  */
 function buildWeightedGraph(
   graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
@@ -155,30 +204,65 @@ function buildWeightedGraph(
   }
 
   if (semanticWeight > 0) {
-    const nodeArray = Array.from(allNodes);
-    for (let i = 0; i < nodeArray.length; i++) {
-      for (let j = i + 1; j < nodeArray.length; j++) {
-        const nodeA = nodeArray[i];
-        const nodeB = nodeArray[j];
+    const nodeWordsCache = new Map<TypedNode, string[]>();
+    const wordToBucket = new Map<string, Set<TypedNode>>();
 
-        const pairKey = [nodeA.label, nodeB.label].sort().join('|');
-        const isConnected = connectedPairs.has(pairKey);
+    for (const node of allNodes) {
+      const words = extractBaseWords(node.label);
+      nodeWordsCache.set(node, words);
 
-        const similarity = calculateSemanticSimilarity(nodeA.label, nodeB.label);
-        if (similarity > similarityThreshold) {
-          const semanticEdgeWeight = similarity * semanticWeight;
+      for (const word of words) {
+        if (!wordToBucket.has(word)) {
+          wordToBucket.set(word, new Set());
+        }
+        wordToBucket.get(word)!.add(node);
+      }
+    }
 
-          const currentAB = weighted.get(nodeA)!.get(nodeB) || 0;
-          const newWeightAB = isConnected
-            ? Math.max(currentAB, semanticEdgeWeight)
-            : currentAB + semanticEdgeWeight;
-          weighted.get(nodeA)!.set(nodeB, Math.min(newWeightAB, 2.0));
+    const comparedPairs = new Set<string>();
 
-          const currentBA = weighted.get(nodeB)!.get(nodeA) || 0;
-          const newWeightBA = isConnected
-            ? Math.max(currentBA, semanticEdgeWeight)
-            : currentBA + semanticEdgeWeight;
-          weighted.get(nodeB)!.set(nodeA, Math.min(newWeightBA, 2.0));
+    for (const [_, bucket] of wordToBucket) {
+      if (bucket.size < 2) {
+        continue;
+      }
+
+      const bucketNodes = Array.from(bucket);
+      for (let i = 0; i < bucketNodes.length; i++) {
+        for (let j = i + 1; j < bucketNodes.length; j++) {
+          const nodeA = bucketNodes[i];
+          const nodeB = bucketNodes[j];
+
+          const comparedKey = [nodeA.label, nodeB.label].sort().join('|');
+          if (comparedPairs.has(comparedKey)) {
+            continue;
+          }
+          comparedPairs.add(comparedKey);
+
+          const wordsA = nodeWordsCache.get(nodeA)!;
+          const wordsB = nodeWordsCache.get(nodeB)!;
+          const similarity = calculateSemanticSimilarityCached(
+            nodeA.label,
+            nodeB.label,
+            wordsA,
+            wordsB,
+          );
+
+          if (similarity > similarityThreshold) {
+            const isConnected = connectedPairs.has(comparedKey);
+            const semanticEdgeWeight = similarity * semanticWeight;
+
+            const currentAB = weighted.get(nodeA)!.get(nodeB) || 0;
+            const newWeightAB = isConnected
+              ? Math.max(currentAB, semanticEdgeWeight)
+              : currentAB + semanticEdgeWeight;
+            weighted.get(nodeA)!.set(nodeB, Math.min(newWeightAB, 2.0));
+
+            const currentBA = weighted.get(nodeB)!.get(nodeA) || 0;
+            const newWeightBA = isConnected
+              ? Math.max(currentBA, semanticEdgeWeight)
+              : currentBA + semanticEdgeWeight;
+            weighted.get(nodeB)!.set(nodeA, Math.min(newWeightBA, 2.0));
+          }
         }
       }
     }
