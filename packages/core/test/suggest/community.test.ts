@@ -1,6 +1,6 @@
 import type { RelationType, TypedNode } from '@/analyze/utils';
 import { NodeType } from '@/analyze/utils';
-import { detectCommunities, generateCommunityColors, generateCommunityColorsRGBA } from '@/suggest/community';
+import { calculateSemanticSimilarity, detectCommunities, extractBaseWords, generateCommunityColors, generateCommunityColorsRGBA } from '@/suggest/community';
 
 const TEST_SEED = 42;
 
@@ -192,5 +192,111 @@ describe('generateCommunityColorsRGBA', () => {
     expect(colors[0].background).toContain('0.15');
     expect(colors[0].foreground).toContain('0.9');
     expect(colors[0].border).toContain('0.5');
+  });
+});
+
+describe('extractBaseWords', () => {
+  it('should extract base words from camelCase identifiers', () => {
+    expect(extractBaseWords('userName')).toEqual(['user']);
+    expect(extractBaseWords('userProfileData')).toEqual(['user', 'profile']);
+  });
+
+  it('should remove common prefixes', () => {
+    expect(extractBaseWords('handleClick')).toEqual(['click']);
+    expect(extractBaseWords('onClick')).toEqual(['click']);
+    expect(extractBaseWords('isVisible')).toEqual(['visible']);
+    expect(extractBaseWords('hasPermission')).toEqual(['permission']);
+    expect(extractBaseWords('getUser')).toEqual(['user']);
+    expect(extractBaseWords('setUser')).toEqual(['user']);
+  });
+
+  it('should remove common suffixes', () => {
+    expect(extractBaseWords('clickHandler')).toEqual(['click']);
+    expect(extractBaseWords('userCallback')).toEqual(['user']);
+  });
+
+  it('should handle snake_case', () => {
+    expect(extractBaseWords('user_name')).toEqual(['user']);
+  });
+
+  it('should return remaining tokens when all content words are stripped', () => {
+    expect(extractBaseWords('handleChange')).toEqual(['change']);
+    expect(extractBaseWords('onChange')).toEqual(['change']);
+  });
+
+  it('should handle identifiers with mixed prefix/suffix and content', () => {
+    expect(extractBaseWords('handleOpenChange')).toEqual(['open']);
+    expect(extractBaseWords('isModalOpen')).toEqual(['modal']);
+    expect(extractBaseWords('fetchUserData')).toEqual(['user']);
+  });
+});
+
+describe('calculateSemanticSimilarity', () => {
+  it('should return 1 for identical labels', () => {
+    expect(calculateSemanticSimilarity('open', 'open')).toBe(1);
+  });
+
+  it('should detect substring relationships', () => {
+    const similarity = calculateSemanticSimilarity('open', 'isOpen');
+    expect(similarity).toBeGreaterThan(0.5);
+  });
+
+  it('should detect shared base words', () => {
+    const similarity = calculateSemanticSimilarity('isOpen', 'handleOpenChange');
+    expect(similarity).toBeGreaterThan(0);
+  });
+
+  it('should return 0 for unrelated identifiers', () => {
+    expect(calculateSemanticSimilarity('userName', 'fetchProducts')).toBe(0);
+  });
+
+  it('should handle handler/state pairs', () => {
+    const similarity = calculateSemanticSimilarity('visible', 'handleVisibleChange');
+    expect(similarity).toBeGreaterThan(0);
+  });
+});
+
+describe('semantic community detection', () => {
+  it('should group semantically related nodes with substring relationships', () => {
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
+
+    const open: TypedNode = { label: 'open', type: NodeType.var };
+    const isOpen: TypedNode = { label: 'isOpen', type: NodeType.var };
+    const toggleOpen: TypedNode = { label: 'toggleOpen', type: NodeType.fun };
+
+    graph.set(open, new Set());
+    graph.set(isOpen, new Set());
+    graph.set(toggleOpen, new Set());
+
+    const result = detectCommunities(graph, { seed: TEST_SEED, semanticWeight: 0.5 });
+
+    const openCommunityId = result.nodeToCommuntiy.get(open);
+    const isOpenCommunityId = result.nodeToCommuntiy.get(isOpen);
+    const toggleOpenCommunityId = result.nodeToCommuntiy.get(toggleOpen);
+
+    expect(openCommunityId).toBe(isOpenCommunityId);
+    expect(openCommunityId).toBe(toggleOpenCommunityId);
+    expect(result.communities.length).toBe(1);
+  });
+
+  it('should increase similarity when base words match', () => {
+    const similarity1 = calculateSemanticSimilarity('open', 'isOpen');
+    const similarity2 = calculateSemanticSimilarity('open', 'userName');
+
+    expect(similarity1).toBeGreaterThan(similarity2);
+  });
+
+  it('should respect semanticWeight=0 to disable semantic grouping', () => {
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
+
+    const isOpen: TypedNode = { label: 'isOpen', type: NodeType.var };
+    const handleOpenChange: TypedNode = { label: 'handleOpenChange', type: NodeType.fun };
+
+    graph.set(isOpen, new Set());
+    graph.set(handleOpenChange, new Set());
+
+    const result = detectCommunities(graph, { seed: TEST_SEED, semanticWeight: 0 });
+
+    expect(result.communities.length).toBe(2);
   });
 });

@@ -328,42 +328,10 @@
     "nodeInfo": [
       {
         "info": {
-          "column": 9,
-          "line": 38,
-        },
-        "label": "funA",
-        "type": "fun",
-      },
-      {
-        "info": {
-          "column": 8,
-          "line": 45,
-        },
-        "label": "varB",
-        "type": "var",
-      },
-      {
-        "info": {
-          "column": 6,
-          "line": 47,
-        },
-        "label": "varB2",
-        "type": "var",
-      },
-      {
-        "info": {
           "column": 6,
           "line": 49,
         },
         "label": "ddd",
-        "type": "var",
-      },
-      {
-        "info": {
-          "column": 8,
-          "line": 61,
-        },
-        "label": "varD",
         "type": "var",
       },
       {
@@ -381,6 +349,22 @@
         },
         "label": "updateBBB",
         "type": "fun",
+      },
+      {
+        "info": {
+          "column": 10,
+          "line": 27,
+        },
+        "label": "restArr",
+        "type": "var",
+      },
+      {
+        "info": {
+          "column": 11,
+          "line": 28,
+        },
+        "label": "restObj",
+        "type": "var",
       },
       {
         "info": {

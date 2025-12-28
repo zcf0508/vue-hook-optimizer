@@ -10,6 +10,163 @@ export interface CommunityResult {
   nodeToCommuntiy: Map<TypedNode, number>
 }
 
+const COMMON_PREFIXES = ['handle', 'on', 'is', 'has', 'can', 'should', 'get', 'set', 'update', 'toggle', 'reset', 'clear', 'init', 'fetch', 'load', 'save', 'delete', 'remove', 'add', 'create', 'show', 'hide', 'open', 'close', 'enable', 'disable', 'validate', 'check', 'use'];
+const COMMON_SUFFIXES = ['change', 'changed', 'handler', 'callback', 'listener', 'state', 'value', 'data', 'list', 'items', 'count', 'index', 'id', 'name', 'type', 'status', 'error', 'loading', 'visible', 'disabled', 'enabled', 'active', 'selected', 'checked', 'open', 'closed'];
+
+/**
+ * Extract the base/root word from an identifier by removing common prefixes/suffixes.
+ * Only removes prefixes at the start and suffixes at the end.
+ * e.g., "handleOpenChange" -> ["open"]
+ *       "isVisible" -> ["visible"]
+ *       "userName" -> ["user", "name"]
+ */
+export function extractBaseWords(identifier: string): string[] {
+  const tokens = identifier
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+    .toLowerCase()
+    .split(/[_\-\s]+/)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    return [];
+  }
+
+  if (tokens.length === 1) {
+    return tokens;
+  }
+
+  let start = 0;
+  if (COMMON_PREFIXES.includes(tokens[0])) {
+    start = 1;
+  }
+
+  let end = tokens.length;
+  if (COMMON_SUFFIXES.includes(tokens[tokens.length - 1])) {
+    end = tokens.length - 1;
+  }
+
+  const words = tokens.slice(start, end);
+
+  if (words.length === 0) {
+    return tokens.slice(start > 0
+      ? start
+      : 0);
+  }
+
+  return words;
+}
+
+/**
+ * Calculate semantic similarity between two identifiers.
+ * Returns a value between 0 and 1.
+ *
+ * Considers:
+ * 1. Shared base words (e.g., "open" in "isOpen" and "handleOpenChange")
+ * 2. One identifier contains the other as a substring
+ * 3. Common naming patterns (handler/state pairs)
+ */
+export function calculateSemanticSimilarity(labelA: string, labelB: string): number {
+  if (labelA === labelB) {
+    return 1;
+  }
+
+  const lowerA = labelA.toLowerCase();
+  const lowerB = labelB.toLowerCase();
+
+  if (lowerA.includes(lowerB) || lowerB.includes(lowerA)) {
+    const shorter = lowerA.length < lowerB.length
+      ? lowerA
+      : lowerB;
+    const longer = lowerA.length < lowerB.length
+      ? lowerB
+      : lowerA;
+    return shorter.length / longer.length;
+  }
+
+  const wordsA = extractBaseWords(labelA);
+  const wordsB = extractBaseWords(labelB);
+
+  if (wordsA.length === 0 || wordsB.length === 0) {
+    return 0;
+  }
+
+  const setA = new Set(wordsA);
+  const setB = new Set(wordsB);
+
+  let sharedCount = 0;
+  for (const word of setA) {
+    if (setB.has(word)) {
+      sharedCount++;
+    }
+  }
+
+  if (sharedCount === 0) {
+    return 0;
+  }
+
+  const jaccardSimilarity = sharedCount / (setA.size + setB.size - sharedCount);
+
+  return jaccardSimilarity;
+}
+
+/**
+ * Build a weighted graph that combines structural connections with semantic similarity.
+ */
+function buildWeightedGraph(
+  graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
+  semanticWeight: number = 1.0,
+): Map<TypedNode, Map<TypedNode, number>> {
+  const weighted = new Map<TypedNode, Map<TypedNode, number>>();
+  const allNodes = new Set<TypedNode>();
+
+  for (const [node, edges] of graph) {
+    allNodes.add(node);
+    for (const edge of edges) {
+      allNodes.add(edge.node);
+    }
+  }
+
+  for (const node of allNodes) {
+    weighted.set(node, new Map());
+  }
+
+  const structuralWeight = 0.85;
+
+  for (const [node, edges] of graph) {
+    for (const edge of edges) {
+      const currentWeight = weighted.get(node)!.get(edge.node) || 0;
+      weighted.get(node)!.set(edge.node, Math.max(currentWeight, structuralWeight));
+
+      const reverseWeight = weighted.get(edge.node)!.get(node) || 0;
+      weighted.get(edge.node)!.set(node, Math.max(reverseWeight, structuralWeight));
+    }
+  }
+
+  if (semanticWeight > 0) {
+    const nodeArray = Array.from(allNodes);
+    for (let i = 0; i < nodeArray.length; i++) {
+      for (let j = i + 1; j < nodeArray.length; j++) {
+        const nodeA = nodeArray[i];
+        const nodeB = nodeArray[j];
+
+        const similarity = calculateSemanticSimilarity(nodeA.label, nodeB.label);
+        if (similarity > 0.3) {
+          const semanticEdgeWeight = similarity * semanticWeight;
+
+          const currentAB = weighted.get(nodeA)!.get(nodeB) || 0;
+          weighted.get(nodeA)!.set(nodeB, currentAB + semanticEdgeWeight);
+
+          const currentBA = weighted.get(nodeB)!.get(nodeA) || 0;
+          weighted.get(nodeB)!.set(nodeA, currentBA + semanticEdgeWeight);
+        }
+      }
+    }
+  }
+
+  return weighted;
+}
+
 function buildUndirectedGraph(
   graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
 ): Map<TypedNode, Set<TypedNode>> {
@@ -51,24 +208,40 @@ function shuffleArray<T>(array: T[], random: () => number = Math.random): T[] {
   return result;
 }
 
+export interface DetectCommunitiesOptions {
+  maxIterations?: number
+  seed?: number
+  /**
+   * Weight for semantic similarity (0-1).
+   * Higher values give more importance to naming patterns.
+   * Default: 0.8
+   */
+  semanticWeight?: number
+}
+
 /**
- * Label Propagation Algorithm for community detection.
+ * Label Propagation Algorithm for community detection with semantic awareness.
  *
  * Each node starts with its own unique label. In each iteration,
- * nodes adopt the most frequent label among their neighbors.
- * The algorithm converges when labels no longer change.
+ * nodes adopt the most frequent label among their neighbors,
+ * weighted by both structural connections and semantic similarity.
+ *
+ * Semantic similarity considers:
+ * - Shared base words (e.g., "open" in "isOpen" and "handleOpenChange")
+ * - Substring relationships
+ * - Common naming patterns (handler/state pairs)
  *
  * This helps identify groups of nodes that are tightly connected
  * and could potentially be extracted into separate hooks.
  */
 export function detectCommunities(
   graph: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>,
-  options: { maxIterations?: number, seed?: number } = {},
+  options: DetectCommunitiesOptions = {},
 ): CommunityResult {
-  const { maxIterations = 100 } = options;
+  const { maxIterations = 100, semanticWeight = 1.0 } = options;
   const random = createSeededRandom(options.seed);
-  const undirectedGraph = buildUndirectedGraph(graph);
-  const nodes = Array.from(undirectedGraph.keys());
+  const weightedGraph = buildWeightedGraph(graph, semanticWeight);
+  const nodes = Array.from(weightedGraph.keys());
 
   if (nodes.length === 0) {
     return { communities: [], nodeToCommuntiy: new Map() };
@@ -89,25 +262,25 @@ export function detectCommunities(
     const shuffledNodes = shuffleArray(nodes, random);
 
     for (const node of shuffledNodes) {
-      const neighbors = undirectedGraph.get(node);
+      const neighbors = weightedGraph.get(node);
       if (!neighbors || neighbors.size === 0) {
         continue;
       }
 
-      const labelCounts = new Map<number, number>();
-      for (const neighbor of neighbors) {
+      const labelWeights = new Map<number, number>();
+      for (const [neighbor, weight] of neighbors) {
         const neighborLabel = labels.get(neighbor)!;
-        labelCounts.set(neighborLabel, (labelCounts.get(neighborLabel) || 0) + 1);
+        labelWeights.set(neighborLabel, (labelWeights.get(neighborLabel) || 0) + weight);
       }
 
-      let maxCount = 0;
+      let maxWeight = 0;
       let maxLabels: number[] = [];
-      for (const [label, count] of labelCounts) {
-        if (count > maxCount) {
-          maxCount = count;
+      for (const [label, weight] of labelWeights) {
+        if (weight > maxWeight) {
+          maxWeight = weight;
           maxLabels = [label];
         }
-        else if (count === maxCount) {
+        else if (weight === maxWeight) {
           maxLabels.push(label);
         }
       }
