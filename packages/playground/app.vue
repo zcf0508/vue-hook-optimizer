@@ -63,7 +63,10 @@ const visData = ref<vis.Data>({
   edges: [],
 });
 
-const alerted = ref(false);
+const suggestions = ref<Array<{
+  type: 'info' | 'warning' | 'error'
+  message: string
+}>>([]);
 
 async function start() {
   if (!code.value) {
@@ -86,24 +89,7 @@ async function start() {
   });
   if (data) {
     visData.value = data;
-    suggests.forEach((suggest, idx) => {
-      switch (suggest.type) {
-        case 'info':
-          console.log(`%c${idx + 1}.${suggest.message}`, 'color: #3d7de4');
-          break;
-        case 'warning':
-          console.log(`%c${idx + 1}.${suggest.message}`, 'color: #f6c342');
-          break;
-        case 'error':
-          console.log(`%c${idx + 1}.${suggest.message}`, 'color: #f44336');
-          break;
-      }
-    });
-    if (!alerted.value) {
-      // eslint-disable-next-line no-alert
-      alert('Analyze Done! Please check the console for suggestions.');
-      alerted.value = true;
-    }
+    suggestions.value = suggests;
   }
   else {
     // alert(msg);
@@ -356,7 +342,7 @@ const {
         </label>
       </div>
       <!-- 图表容器 -->
-      <div class="h-full w-full relative bg-[#fafafa]">
+      <div class="flex-1 w-full relative bg-[#fafafa] min-h-0">
         <!-- 搜索框 -->
         <div v-if="showSearchInput" class="absolute right-4 top-4 z-50">
           <div class="relative flex items-center">
@@ -456,6 +442,48 @@ const {
               />
             </div>
             <span class="text-sm text-[#6b7280]">Function</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 建议面板 -->
+      <div
+        v-if="suggestions.length > 0"
+        class="
+          h-[30%] min-h-40 w-full flex-shrink-0
+          border-t border-[#e5e7eb]
+          bg-white
+          flex flex-col
+        "
+      >
+        <div class="px-4 py-2 border-b border-[#e5e7eb] bg-[#f8f9fa] flex items-center gap-2">
+          <span class="i-carbon:idea inline-block w-4 h-4 text-[#42b883]" />
+          <span class="text-sm font-semibold text-[#374151]">Suggestions</span>
+          <span class="text-xs text-[#6b7280] ml-auto">{{ suggestions.length }} items</span>
+        </div>
+        <div class="flex-1 overflow-y-auto p-3 space-y-2">
+          <div
+            v-for="(suggest, idx) in suggestions"
+            :key="idx"
+            class="
+              flex items-start gap-2 px-3 py-2 rounded-lg
+              text-sm
+            "
+            :class="{
+              'bg-[#eff6ff] text-[#3d7de4]': suggest.type === 'info',
+              'bg-[#fffbeb] text-[#b45309]': suggest.type === 'warning',
+              'bg-[#fef2f2] text-[#dc2626]': suggest.type === 'error',
+            }"
+          >
+            <span
+              class="flex-shrink-0 w-4 h-4 mt-0.5"
+              :class="{
+                'i-carbon:information': suggest.type === 'info',
+                'i-carbon:warning': suggest.type === 'warning',
+                'i-carbon:error': suggest.type === 'error',
+              }"
+            />
+            <span>{{ idx + 1 }}. {{ suggest.message }}</span>
           </div>
         </div>
       </div>
