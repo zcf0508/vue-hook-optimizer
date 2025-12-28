@@ -106,49 +106,58 @@ const {
   closeSearch,
 } = useSearch(searchInputRef, chartRef);
 
-onMounted(() => {
-  const visOption: vis.Options = {
-    physics: {
-      solver: 'forceAtlas2Based',
-      forceAtlas2Based: {
-        gravitationalConstant: -100,
-      },
+const highlightColor = computed(() => {
+  return framework.value === 'vue'
+    ? '#42b883'
+    : '#61dafb';
+});
+
+const visOption = computed<vis.Options>(() => ({
+  physics: {
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -100,
     },
-    groups: {
-      used: {
-        color: {
-          border: '#3d7de4',
-          background: '#9dc2f9',
-          highlight: {
-            border: '#3d7de4',
-            background: '#9dc2f9',
-          },
+  },
+  groups: {
+    used: {
+      color: {
+        border: highlightColor.value,
+        background: highlightColor.value,
+        highlight: {
+          border: highlightColor.value,
+          background: highlightColor.value,
         },
       },
-      normal: {
-        color: {
+    },
+    normal: {
+      color: {
+        border: '#ccc',
+        background: '#ddd',
+        highlight: {
           border: '#ccc',
           background: '#ddd',
-          highlight: {
-            border: '#ccc',
-            background: '#ddd',
-          },
         },
       },
     },
-  };
+  },
+}));
 
-  const network = new vis.Network(networkRef.value!, visData.value, visOption);
+const network = computed(() => {
+  return new vis.Network(networkRef.value!, visData.value, visOption.value);
+});
+
+onMounted(() => {
   watch(visData, (val) => {
-    network.setData(val);
+    network.value.setData(val);
   });
 
   watch(searchkey, (val) => {
     if (val) {
       // TODO: support fuzzy matching
-      network.selectNodes(network.findNode(val), true);
-      if (network.findNode(val).length > 0) {
-        network.focus(network.findNode(val)[0], {
+      network.value.selectNodes(network.value.findNode(val), true);
+      if (network.value.findNode(val).length > 0) {
+        network.value.focus(network.value.findNode(val)[0], {
           scale: 1.0,
           animation: {
             duration: 400,
@@ -340,6 +349,30 @@ const {
           >
           <span class="text-sm text-[#374151] font-medium">Auto Refresh</span>
         </label>
+
+        <div class="h-6 w-px bg-[#e5e7eb]" />
+
+        <!-- GitHub 仓库按钮 -->
+        <a
+          href="https://github.com/zcf0508/vue-hook-optimizer"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="
+            px-4 py-2
+            bg-white hover:bg-[#f3f4f6] active:bg-[#e5e7eb]
+            text-[#374151] font-medium
+            transition-all duration-200
+            shadow-sm hover:shadow-md
+            transform hover:scale-105 active:scale-95
+            border border-[#e5e7eb] rounded-lg outline-none
+            cursor-pointer
+            flex items-center gap-2
+            no-underline
+          "
+        >
+          <span class="i-carbon:logo-github inline-block w-4 h-4" />
+          GitHub
+        </a>
       </div>
       <!-- 图表容器 -->
       <div class="flex-1 w-full relative bg-[#fafafa] min-h-0">
