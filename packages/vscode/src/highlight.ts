@@ -102,11 +102,6 @@ function createCommunityDecorationTypes(): vscode.TextEditorDecorationType[] {
       borderColor: color.border,
       overviewRulerColor: color.foreground,
       overviewRulerLane: vscode.OverviewRulerLane.Right,
-      before: {
-        contentText: '●',
-        color: color.foreground,
-        margin: '0 6px 0 0',
-      },
     });
   });
 
