@@ -345,9 +345,283 @@ function useDataLoader() {
    - 代码复用的可能性
    - 测试覆盖的完整性
 
-## 7. 常见模式和反模式
+## 7. 数据流向管理原则
 
-### 7.1 推荐模式
+在复杂的 Composition API 开发中，清晰的数据流是可维护性的关键。本章介绍5大原则来确保重构后的代码遵循最佳的数据流实践。
+
+### 7.1 原则一：采用单向数据流管道模型 (Pipeline Pattern)
+
+避免数据在多个 ref 之间跳跃，而是利用 `computed` 构建单向的流水线。数据应该沿着单一方向流动，而不是形成环路。
+
+#### **反面示例：数据横向乱跳**
+```ts
+// 🚫 多个 ref 互相依赖，难以追踪
+const searchText = ref('');
+const filters = ref({});
+const sortOrder = ref('asc');
+
+// watch A 改 B，B 改 C...
+watch(searchText, () => {
+  filters.value = computeFilters();
+});
+
+watch(filters, () => {
+  sortOrder.value = 'asc'; // 手动重置
+  fetchData();
+});
+
+watch(sortOrder, () => {
+  fetchData(); // 冗余请求
+});
+```
+
+#### **正面示例：纵向流动的管道**
+```ts
+// ✅ 清晰的单向流水线
+const searchText = ref('');
+const pageNum = ref(1);
+
+// 第1步：格式化/清洗输入
+const normalizedText = computed(() => searchText.value.trim().toLowerCase());
+
+// 第2步：触发异步操作
+const { data, loading } = useDataFetching(normalizedText, pageNum);
+
+// 第3步：业务过滤/排序（不修改源数据）
+const processedData = computed(() => {
+  if (!data.value) { return []; }
+  return data.value
+    .filter(item => matchesText(item, normalizedText.value))
+    .sort((a, b) => a.priority - b.priority);
+});
+
+// 最终输出到模板
+return { processedData, loading };
+```
+
+#### **自检要点**
+- 数据流能否画成**不回头的箭头序列**？
+- 是否出现了**环路**（A变改B，B变又改A）？
+- 能否从上到下**直接读出流向**？
+
+### 7.2 原则二：显式标记副作用入口
+
+不要让副作用隐藏在各处，使用清晰的方法名和调试钩子显式标记。
+
+#### **副作用命名约定**
+```ts
+function useUserSearch() {
+  const state = ref({ });
+
+  // ✅ 动词化命名：表示这是修改数据的方法
+  const handleSearch = async (query: string) => { };
+  const handlePageChange = (page: number) => { };
+  const updateFilters = (filters: any) => { };
+
+  // ❌ 避免这样：模糊的名字
+  // const process = () => { ... };
+  // const change = () => { ... };
+
+  return {
+    state: readonly(state),
+    handleSearch,
+    handlePageChange,
+    updateFilters,
+  };
+}
+```
+
+### 7.3 原则三：区分"源头"和"波纹"
+
+**源头 (Source of Truth)**：用户点击、URL参数、WebSocket消息、外部API返回
+**波纹 (Derived State)**：通过 computed 或 watch 衍生出的状态（loading、filteredList、disabledButton等）
+
+#### **错误做法：把波纹当源头修改**
+```ts
+// 🚫 当用户类型改变时，手动修改 loading
+watch(userType, () => {
+  loading.value = true; // 这是波纹，不应该手动改
+  fetchData();
+});
+```
+
+#### **正确做法：只修改源头，让波纹自动扩散**
+```ts
+// ✅ 只有源头 userType 和 query 是 ref
+const userType = ref('');
+const query = ref('');
+
+// 所有其他都是 computed（波纹）
+const loading = computed(() => {
+  return isFetching.value || isProcessing.value;
+});
+
+const filteredUsers = computed(() => {
+  return users.value.filter(u => u.type === userType.value && u.name.includes(query.value));
+});
+
+const isEmpty = computed(() => filteredUsers.value.length === 0);
+
+// 副作用只在源头变化时触发
+watch([userType, query], async () => {
+  // 自动触发加载
+}, { debounce: 300 });
+```
+
+### 7.4 原则四：接口设计体现数据流向
+
+通过清晰的接口结构，让使用者一眼看出哪些是只读的（状态、派生值），哪些是操作入口（方法）。
+
+#### **分层接口设计**
+```ts
+export function useUserSearch() {
+  // === 内部状态（隐藏） ===
+  const _page = ref(1);
+  const _cache = new Map();
+  const _isRequesting = ref(false);
+
+  // === 源头（可以观察但需要通过方法修改） ===
+  const queryText = ref('');
+  const filters = ref({});
+
+  // === 派生状态（只读） ===
+  const isLoading = computed(() => _isRequesting.value);
+  const users = computed(() => _cache.get(cacheKey.value) || []);
+  const hasMore = computed(() => users.value.length < totalCount.value);
+  const pageInfo = computed(() => ({
+    current: _page.value,
+    hasMore: hasMore.value,
+  }));
+
+  // === 动作方法（修改数据的入口） ===
+  const search = async (text: string) => {
+    queryText.value = text;
+    _page.value = 1;
+    await _loadData();
+  };
+
+  const nextPage = async () => {
+    if (!hasMore.value) { return; }
+    _page.value++;
+    await _loadData();
+  };
+
+  const resetFilters = () => {
+    filters.value = {};
+  };
+
+  // === 清晰的返回接口 ===
+  return {
+    // 状态（只读）
+    users: readonly(users),
+    isLoading: readonly(isLoading),
+    pageInfo: readonly(pageInfo),
+
+    // 源头（可观察）
+    queryText,
+    filters,
+
+    // 动作（修改数据）
+    search,
+    nextPage,
+    resetFilters,
+  };
+}
+```
+
+#### **接口检查清单**
+- [ ] 状态都用 `readonly()` 或 computed 包装了吗？
+- [ ] 方法都是动词命名（search, update, reset）吗？
+- [ ] 返回值清晰分为：状态、源头、动作三层吗？
+- [ ] 是否有多余的内部细节暴露出来？
+
+### 7.5 原则五：限制修改入口，减少手动赋值
+
+好的 Hook 永远只让使用者通过明确的方法修改数据，避免直接暴露 ref 让外部乱改。
+
+#### **反面：暴露太多 ref，无法追踪修改**
+```ts
+// 🚫 这样会导致数据流混乱
+function useTodo() {
+  const todos = ref([]);
+  const selectedId = ref(null);
+  const filter = ref('all');
+  const loading = ref(false);
+
+  // ... 直接暴露所有 ref，外部可以任意改
+  return { todos, selectedId, filter, loading };
+}
+
+// 使用端随意修改，无法追踪
+todos.value = newList; // 直接赋值，可能跳过验证
+selectedId.value = 123; // 没人知道这会触发什么副作用
+```
+
+#### **正面：通过方法严格控制修改**
+```ts
+// ✅ 只暴露必要的方法，所有修改都可追踪
+function useTodo() {
+  const todos = ref<Todo[]>([]);
+  const selectedId = ref<number | null>(null);
+  const filter = ref<Filter>('all');
+  const loading = ref(false);
+
+  // 验证 + 修改的方法
+  const loadTodos = async () => {
+    loading.value = true;
+    try {
+      const data = await fetchTodos(filter.value);
+      todos.value = data; // 唯一修改入口
+    }
+    finally {
+      loading.value = false;
+    }
+  };
+
+  const selectTodo = (id: number) => {
+    // 可以加验证逻辑
+    if (todos.value.find(t => t.id === id)) {
+      selectedId.value = id;
+    }
+  };
+
+  const setFilter = (newFilter: Filter) => {
+    if (newFilter !== filter.value) {
+      filter.value = newFilter;
+      // 自动重新加载
+      loadTodos();
+    }
+  };
+
+  // 返回只读状态 + 控制方法
+  return {
+    todos: readonly(todos),
+    selectedId: readonly(selectedId),
+    filter: readonly(filter),
+    loading: readonly(loading),
+    loadTodos,
+    selectTodo,
+    setFilter,
+  };
+}
+```
+
+### 7.6 数据流清晰度自检
+
+在完成重构后，用以下问题检查数据流是否足够清晰：
+
+1. **源头识别** - 能否清楚列出所有数据源头（props、ref、store）？
+2. **流向追踪** - 从源头到渲染输出，能否用箭头画出完整流向？
+3. **修改入口** - 所有数据修改是否都通过明确的方法？
+4. **环路排查** - 是否存在 A→B→A 的依赖环？
+5. **冗余检测** - 是否有多个 watch 做相同的事？
+6. **粒度评估** - 一个组件是否监听了过多细粒度的状态变化？
+
+---
+
+## 8. 常见模式和反模式
+
+### 8.1 推荐模式
 
 #### **分层架构模式**
 ```ts
@@ -381,7 +655,7 @@ const { selectedItems, toggleSelection } = useSelection();
 const { exportData } = useDataExport(filteredData);
 ```
 
-### 7.2 避免的反模式
+### 8.2 避免的反模式
 
 #### **上帝对象反模式**
 ```ts
@@ -421,27 +695,35 @@ function useFeature(
 }
 ```
 
-## 8. 重构检查清单
+## 9. 重构检查清单
 
-### 8.1 结构检查
+### 9.1 结构检查
 - [ ] VHO 节点数 < 15
 - [ ] 无关节点存在
 - [ ] 孤立节点群 < 3个
 - [ ] 依赖链深度 < 4层
 
-### 8.2 设计检查
+### 9.2 设计检查
 - [ ] 所有 Composable 职责单一
 - [ ] 接口遵循最小暴露原则
 - [ ] 生命周期归属合理
 - [ ] 状态归属决策正确
 
-### 8.3 质量检查
-- [ ] 类型安全完整
-- [ ] 测试覆盖充分
-- [ ] 性能无明显退化
-- [ ] 可读性和可维护性提升
+### 9.3 数据流检查（新增）
+- [ ] 数据流为单向流水线，无环路
+- [ ] 只有 ref 作为源头被手动修改，computed 从不手动赋值
+- [ ] 所有副作用方法都是动词命名（handle/update/reset）
+- [ ] Composable 返回值清晰分为：状态、派生值、方法三层
+- [ ] 没有跨多个 watch 的传递修改（watch A 改 B，B 改 C）
+- [ ] 能从代码直接读出数据源头→转换→输出的完整链路
 
-### 8.4 业务检查
+### 9.4 质量检查
+ - [ ] 类型安全完整
+ - [ ] 测试覆盖充分
+ - [ ] 性能无明显退化
+ - [ ] 可读性和可维护性提升
+
+### 9.5 业务检查
 - [ ] 原有功能完整保留
 - [ ] 新增功能便于实现
 - [ ] 代码复用性良好

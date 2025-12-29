@@ -344,9 +344,283 @@ function useDataLoader() {
    - Potential for code reuse
    - Completeness of test coverage
 
-## 7. Common Patterns and Anti-patterns
+## 7. Data Flow Management Principles
 
-### 7.1 Recommended Patterns
+In complex Composition API development, clear data flow is key to maintainability. This section introduces 5 principles to ensure refactored code follows best practices for data flow management.
+
+### 7.1 Principle One: Adopt Unidirectional Data Flow Pipeline Pattern
+
+Avoid data jumping across multiple refs. Instead, use `computed` to build a single-directional pipeline. Data should flow in a single direction, not form cycles.
+
+#### **Anti-pattern Example: Data Jumping Horizontally**
+```ts
+// 🚫 Multiple refs dependent on each other, hard to trace
+const searchText = ref('');
+const filters = ref({});
+const sortOrder = ref('asc');
+
+// watch A modifies B, B modifies C...
+watch(searchText, () => {
+  filters.value = computeFilters();
+});
+
+watch(filters, () => {
+  sortOrder.value = 'asc'; // Manual reset
+  fetchData();
+});
+
+watch(sortOrder, () => {
+  fetchData(); // Redundant request
+});
+```
+
+#### **Best Practice Example: Vertical Pipeline Flow**
+```ts
+// ✅ Clear unidirectional pipeline
+const searchText = ref('');
+const pageNum = ref(1);
+
+// Step 1: Normalize/Clean input
+const normalizedText = computed(() => searchText.value.trim().toLowerCase());
+
+// Step 2: Trigger async operation
+const { data, loading } = useDataFetching(normalizedText, pageNum);
+
+// Step 3: Business filtering/sorting (don't modify source data)
+const processedData = computed(() => {
+  if (!data.value) { return []; }
+  return data.value
+    .filter(item => matchesText(item, normalizedText.value))
+    .sort((a, b) => a.priority - b.priority);
+});
+
+// Final output to template
+return { processedData, loading };
+```
+
+#### **Self-Check Questions**
+- Can the data flow be drawn as a **non-returning arrow sequence**?
+- Are there any **cycles** (A changes B, B changes A)?
+- Can you **read the flow directly from top to bottom**?
+
+### 7.2 Principle Two: Explicitly Mark Side Effect Entries
+
+Don't hide side effects scattered throughout the code. Use clear method names and debug hooks to mark them explicitly.
+
+#### **Side Effect Naming Convention**
+```ts
+function useUserSearch() {
+  const state = ref({});
+
+  // ✅ Verb-based naming: indicates this method modifies data
+  const handleSearch = async (query: string) => {};
+  const handlePageChange = (page: number) => {};
+  const updateFilters = (filters: any) => {};
+
+  // ❌ Avoid ambiguous names like:
+  // const process = () => { ... };
+  // const change = () => { ... };
+
+  return {
+    state: readonly(state),
+    handleSearch,
+    handlePageChange,
+    updateFilters,
+  };
+}
+```
+
+### 7.3 Principle Three: Distinguish "Source of Truth" from "Derived State"
+
+**Source of Truth**: User clicks, URL parameters, WebSocket messages, external API returns
+**Derived State**: State derived via `computed` or `watch` (loading, filteredList, disabledButton, etc.)
+
+#### **Wrong: Treating Derived State as Source**
+```ts
+// 🚫 Manually modifying loading when userType changes
+watch(userType, () => {
+  loading.value = true; // This is derived state, shouldn't be manually modified
+  fetchData();
+});
+```
+
+#### **Correct: Only Modify Source, Let Derived State Auto-Propagate**
+```ts
+// ✅ Only source userType and query are refs
+const userType = ref('');
+const query = ref('');
+
+// Everything else is computed (derived state)
+const loading = computed(() => {
+  return isFetching.value || isProcessing.value;
+});
+
+const filteredUsers = computed(() => {
+  return users.value.filter(u => u.type === userType.value && u.name.includes(query.value));
+});
+
+const isEmpty = computed(() => filteredUsers.value.length === 0);
+
+// Side effects only trigger on source changes
+watch([userType, query], async () => {
+  // Automatically triggers loading
+}, { debounce: 300 });
+```
+
+### 7.4 Principle Four: Interface Design Reflects Data Flow
+
+Through clear interface structure, users can immediately see which are read-only (states, derived values) and which are action entry points (methods).
+
+#### **Layered Interface Design**
+```ts
+export function useUserSearch() {
+  // === Internal states (hidden) ===
+  const _page = ref(1);
+  const _cache = new Map();
+  const _isRequesting = ref(false);
+
+  // === Source of truth (observable but modify via methods) ===
+  const queryText = ref('');
+  const filters = ref({});
+
+  // === Derived states (read-only) ===
+  const isLoading = computed(() => _isRequesting.value);
+  const users = computed(() => _cache.get(cacheKey.value) || []);
+  const hasMore = computed(() => users.value.length < totalCount.value);
+  const pageInfo = computed(() => ({
+    current: _page.value,
+    hasMore: hasMore.value,
+  }));
+
+  // === Action methods (data modification entry points) ===
+  const search = async (text: string) => {
+    queryText.value = text;
+    _page.value = 1;
+    await _loadData();
+  };
+
+  const nextPage = async () => {
+    if (!hasMore.value) { return; }
+    _page.value++;
+    await _loadData();
+  };
+
+  const resetFilters = () => {
+    filters.value = {};
+  };
+
+  // === Clear return interface ===
+  return {
+    // States (read-only)
+    users: readonly(users),
+    isLoading: readonly(isLoading),
+    pageInfo: readonly(pageInfo),
+
+    // Source of truth (observable)
+    queryText,
+    filters,
+
+    // Actions (data modification)
+    search,
+    nextPage,
+    resetFilters,
+  };
+}
+```
+
+#### **Interface Checklist**
+- [ ] Are all states wrapped with `readonly()` or computed?
+- [ ] Are all methods verb-named (search, update, reset)?
+- [ ] Is the return value clearly divided into: states, sources, actions?
+- [ ] Are there unnecessary internal details exposed?
+
+### 7.5 Principle Five: Limit Modification Entry Points, Reduce Direct Assignments
+
+Good Hooks only allow callers to modify data through explicit methods, avoiding direct ref exposure that leads to uncontrolled mutations.
+
+#### **Anti-pattern: Exposing Too Many Refs**
+```ts
+// 🚫 This causes data flow chaos
+function useTodo() {
+  const todos = ref([]);
+  const selectedId = ref(null);
+  const filter = ref('all');
+  const loading = ref(false);
+
+  // ... Expose all refs directly, allowing arbitrary modifications
+  return { todos, selectedId, filter, loading };
+}
+
+// Callers can modify at will, making changes untraceable
+todos.value = newList; // Direct assignment, may skip validation
+selectedId.value = 123; // Who knows what side effects this triggers?
+```
+
+#### **Best Practice: Strict Control via Methods**
+```ts
+// ✅ Only expose necessary methods, all modifications are traceable
+function useTodo() {
+  const todos = ref<Todo[]>([]);
+  const selectedId = ref<number | null>(null);
+  const filter = ref<Filter>('all');
+  const loading = ref(false);
+
+  // Validation + modification methods
+  const loadTodos = async () => {
+    loading.value = true;
+    try {
+      const data = await fetchTodos(filter.value);
+      todos.value = data; // Single modification entry point
+    }
+    finally {
+      loading.value = false;
+    }
+  };
+
+  const selectTodo = (id: number) => {
+    // Can add validation logic
+    if (todos.value.find(t => t.id === id)) {
+      selectedId.value = id;
+    }
+  };
+
+  const setFilter = (newFilter: Filter) => {
+    if (newFilter !== filter.value) {
+      filter.value = newFilter;
+      // Auto-reload
+      loadTodos();
+    }
+  };
+
+  // Return read-only states + control methods
+  return {
+    todos: readonly(todos),
+    selectedId: readonly(selectedId),
+    filter: readonly(filter),
+    loading: readonly(loading),
+    loadTodos,
+    selectTodo,
+    setFilter,
+  };
+}
+```
+
+### 7.6 Data Flow Clarity Self-Check
+
+After completing refactoring, use these questions to verify data flow clarity:
+
+1. **Source Identification** - Can you clearly list all data sources (props, refs, store)?
+2. **Flow Tracing** - From source to rendering output, can you draw the complete flow with arrows?
+3. **Modification Entry** - Are all data modifications made through explicit methods?
+4. **Cycle Detection** - Are there any A→B→A dependency cycles?
+5. **Redundancy Detection** - Are there multiple watches doing the same thing?
+6. **Granularity Assessment** - Is a component watching too many fine-grained state changes?
+
+---
+
+## 8. Common Patterns and Anti-patterns
+
+### 8.1 Recommended Patterns
 
 #### **Layered Architecture Pattern**
 ```ts
@@ -380,7 +654,7 @@ const { selectedItems, toggleSelection } = useSelection();
 const { exportData } = useDataExport(filteredData);
 ```
 
-### 7.2 Anti-patterns to Avoid
+### 8.2 Anti-patterns to Avoid
 
 #### **God Object Anti-pattern**
 ```ts
@@ -420,27 +694,35 @@ function useFeature(
 }
 ```
 
-## 8. Refactoring Checklist
+## 9. Refactoring Checklist
 
-### 8.1 Structural Check
+### 9.1 Structural Check
 - [ ] VHO node count < 15
 - [ ] No articulation points exist
 - [ ] Isolated node groups < 3
 - [ ] Dependency chain depth < 4 layers
 
-### 8.2 Design Check
+### 9.2 Design Check
 - [ ] All Composables have single responsibility
 - [ ] Interfaces follow minimal exposure principle
 - [ ] Lifecycle ownership is appropriate
 - [ ] State ownership decisions are correct
 
-### 8.3 Quality Check
-- [ ] Type safety is complete
-- [ ] Test coverage is sufficient
-- [ ] No significant performance degradation
-- [ ] Readability and maintainability improved
+### 9.3 Data Flow Check (NEW)
+- [ ] Data flow is a unidirectional pipeline with no cycles
+- [ ] Only refs as sources are manually modified, computed values are never directly assigned
+- [ ] All side effect methods use verb-based naming (handle/update/reset)
+- [ ] Composable return values clearly separate into: states, derived values, methods
+- [ ] No cascading modifications across multiple watches (watch A modifies B, watch B modifies C)
+- [ ] Complete source→transform→output chain is directly readable from code
 
-### 8.4 Business Check
+### 9.4 Quality Check
+ - [ ] Type safety is complete
+ - [ ] Test coverage is sufficient
+ - [ ] No significant performance degradation
+ - [ ] Readability and maintainability improved
+
+### 9.5 Business Check
 - [ ] All original functionality preserved
 - [ ] New features easy to implement
 - [ ] Good code reusability
