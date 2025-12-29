@@ -179,7 +179,6 @@ function buildWeightedGraph(
 
   const weighted = new Map<TypedNode, Map<TypedNode, number>>();
   const allNodes = new Set<TypedNode>();
-  const connectedPairs = new Set<string>();
 
   for (const [node, edges] of graph) {
     allNodes.add(node);
@@ -201,9 +200,6 @@ function buildWeightedGraph(
 
       const reverseWeight = weighted.get(edge.node)!.get(node) || 0;
       weighted.get(edge.node)!.set(node, Math.max(reverseWeight, structuralWeight));
-
-      const pairKey = [node.label, edge.node.label].sort().join('|');
-      connectedPairs.add(pairKey);
     }
   }
 
@@ -252,20 +248,19 @@ function buildWeightedGraph(
           );
 
           if (similarity > similarityThreshold) {
-            const isConnected = connectedPairs.has(comparedKey);
             const semanticEdgeWeight = similarity * semanticWeight;
 
-            const currentAB = weighted.get(nodeA)!.get(nodeB) || 0;
-            const newWeightAB = isConnected
-              ? Math.max(currentAB, semanticEdgeWeight)
-              : currentAB + semanticEdgeWeight;
-            weighted.get(nodeA)!.set(nodeB, Math.min(newWeightAB, 2.0));
+            // Only enhance existing structural connections with semantic weight
+            // Check actual edge existence in weighted graph, not by label
+            const currentAB = weighted.get(nodeA)!.get(nodeB);
+            if (typeof currentAB === 'number') {
+              weighted.get(nodeA)!.set(nodeB, Math.min(Math.max(currentAB, semanticEdgeWeight), 2.0));
+            }
 
-            const currentBA = weighted.get(nodeB)!.get(nodeA) || 0;
-            const newWeightBA = isConnected
-              ? Math.max(currentBA, semanticEdgeWeight)
-              : currentBA + semanticEdgeWeight;
-            weighted.get(nodeB)!.set(nodeA, Math.min(newWeightBA, 2.0));
+            const currentBA = weighted.get(nodeB)!.get(nodeA);
+            if (typeof currentBA === 'number') {
+              weighted.get(nodeB)!.set(nodeA, Math.min(Math.max(currentBA, semanticEdgeWeight), 2.0));
+            }
           }
         }
       }
@@ -326,8 +321,10 @@ export interface DetectCommunitiesOptions {
    */
   semanticWeight?: number
   /**
-   * Minimum semantic similarity threshold to create an edge (0-1).
-   * Only node pairs with similarity above this threshold will be connected.
+   * Minimum semantic similarity threshold for enhancing existing edges (0-1).
+   * Only structurally connected node pairs with similarity above this threshold
+   * will have their edge weight enhanced by semantic similarity.
+   * Note: Semantic similarity alone does not create new edges.
    * Default: 0.3
    */
   similarityThreshold?: number

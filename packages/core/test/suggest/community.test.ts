@@ -257,19 +257,40 @@ describe('calculateSemanticSimilarity', () => {
 });
 
 describe('semantic community detection', () => {
-  it('should group semantically related nodes with substring relationships', () => {
+  it('should not group isolated nodes even with semantic similarity', () => {
     const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
 
     const open: TypedNode = { label: 'open', type: NodeType.var };
     const isOpen: TypedNode = { label: 'isOpen', type: NodeType.var };
     const toggleOpen: TypedNode = { label: 'toggleOpen', type: NodeType.fun };
 
+    // No structural connections - all isolated nodes
     graph.set(open, new Set());
     graph.set(isOpen, new Set());
     graph.set(toggleOpen, new Set());
 
     const result = detectCommunities(graph, { seed: TEST_SEED, semanticWeight: 0.5 });
 
+    // Isolated nodes should each be in their own community
+    // Semantic similarity alone should not create connections
+    expect(result.communities.length).toBe(3);
+  });
+
+  it('should enhance connected nodes with semantic similarity', () => {
+    const graph = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
+
+    const open: TypedNode = { label: 'open', type: NodeType.var };
+    const isOpen: TypedNode = { label: 'isOpen', type: NodeType.var };
+    const toggleOpen: TypedNode = { label: 'toggleOpen', type: NodeType.fun };
+
+    // Create structural connections
+    graph.set(open, new Set([{ node: isOpen, type: 'dep' as RelationType }]));
+    graph.set(isOpen, new Set([{ node: toggleOpen, type: 'dep' as RelationType }]));
+    graph.set(toggleOpen, new Set());
+
+    const result = detectCommunities(graph, { seed: TEST_SEED, semanticWeight: 0.5 });
+
+    // Connected nodes with semantic similarity should be grouped together
     const openCommunityId = result.nodeToCommuntiy.get(open);
     const isOpenCommunityId = result.nodeToCommuntiy.get(isOpen);
     const toggleOpenCommunityId = result.nodeToCommuntiy.get(toggleOpen);
