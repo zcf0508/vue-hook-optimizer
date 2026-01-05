@@ -28,6 +28,7 @@ const selectedExample = ref<string>('optionsBase');
 const code = ref(optionsBase);
 const autoRefresh = ref(false);
 const framework = ref<'vue' | 'react'>('vue');
+const currentFramework = ref<'vue' | 'react'>('vue');
 
 // 监听框架切换，自动选择第一个示例
 watch(framework, (newFramework) => {
@@ -90,6 +91,7 @@ async function start() {
   if (data) {
     visData.value = data;
     suggestions.value = suggests;
+    currentFramework.value = framework.value;
   }
   else {
     // alert(msg);
@@ -106,11 +108,19 @@ const {
   closeSearch,
 } = useSearch(searchInputRef, chartRef);
 
-const highlightColor = computed(() => {
-  return framework.value === 'vue'
-    ? '#42b883'
-    : '#61dafb';
+const chartThemeColors = computed(() => {
+  return currentFramework.value === 'vue'
+    ? {
+      base: '#42b883',
+      ring: '#42b88333',
+    }
+    : {
+      base: '#61dafb',
+      ring: '#61dafb33',
+    };
 });
+
+const highlightColor = computed(() => chartThemeColors.value.base);
 
 const visOption = computed<vis.Options>(() => ({
   physics: {
@@ -149,7 +159,9 @@ const network = computed(() => {
 
 onMounted(() => {
   watch(visData, (val) => {
-    network.value.setData(val);
+    nextTick(() => {
+      network.value.setData(val);
+    });
   });
 
   watch(searchkey, (val) => {
@@ -251,8 +263,7 @@ const {
             flex-1 px-3 py-1.5 rounded-lg
             bg-white border border-[#e5e7eb]
             text-sm text-[#374151] font-medium
-            hover:border-[#42b883]
-            focus:outline-none focus:border-[#42b883] focus:ring-2 focus:ring-[#42b883]/20
+            focus:outline-none
             cursor-pointer transition-all duration-200
           "
         >
@@ -390,10 +401,15 @@ const {
                 shadow-lg
                 bg-white/95 backdrop-blur-sm
                 text-sm text-[#374151] placeholder:text-[#9ca3af]
-                focus:outline-none focus:border-[#42b883] focus:ring-2 focus:ring-[#42b883]/20
+                focus:outline-none focus:ring-2
                 transition-all duration-200
                 outlinte-none
+                focus:border-[var(--theme-base)] focus:ring-[var(--theme-ring)]
               "
+              :style="{
+                '--theme-base': chartThemeColors.base,
+                '--theme-ring': chartThemeColors.ring,
+              }"
             >
             <button
               class="
@@ -433,9 +449,9 @@ const {
             <div
               class="
                 w-3 h-3 rounded-sm
-                bg-[#42b883]
                 shadow-sm
               "
+              :style="{ backgroundColor: chartThemeColors.base }"
             />
             <span class="text-sm text-[#374151] font-medium">Used</span>
           </div>
