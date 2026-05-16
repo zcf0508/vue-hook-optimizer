@@ -1,0 +1,144 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 25,
+      },
+      "label": "user",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 26,
+      },
+      "label": "token",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 28,
+      },
+      "label": "isLoggedIn",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 26,
+          },
+          "label": "token",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 30,
+      },
+      "label": "login",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 26,
+          },
+          "label": "token",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 25,
+          },
+          "label": "user",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 35,
+      },
+      "label": "logout",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 26,
+          },
+          "label": "token",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 25,
+          },
+          "label": "user",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 25,
+      },
+      "label": "user",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 26,
+      },
+      "label": "token",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 28,
+      },
+      "label": "isLoggedIn",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 30,
+      },
+      "label": "login",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 35,
+      },
+      "label": "logout",
+      "type": "fun",
+    },
+  },
+}

@@ -1,0 +1,239 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 26,
+        "line": 2,
+      },
+      "label": "fetchFn",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "query",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "results",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "loading",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 6,
+      },
+      "label": "error",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 8,
+        "used": Set {
+          "setTimeout",
+        },
+      },
+      "label": "debouncedQuery",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 6,
+        "line": 9,
+        "used": Set {
+          "clearTimeout",
+        },
+      },
+      "label": "timer",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 41,
+      },
+      "label": "hasResults",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "results",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 43,
+      },
+      "label": "setQuery",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "query",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 47,
+      },
+      "label": "clearResults",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "results",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "query",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 8,
+            "used": Set {
+              "setTimeout",
+            },
+          },
+          "label": "debouncedQuery",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 26,
+        "line": 2,
+      },
+      "label": "fetchFn",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "query",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "results",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "loading",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 6,
+      },
+      "label": "error",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 8,
+        "used": Set {
+          "setTimeout",
+        },
+      },
+      "label": "debouncedQuery",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 6,
+        "line": 9,
+        "used": Set {
+          "clearTimeout",
+        },
+      },
+      "label": "timer",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 41,
+      },
+      "label": "hasResults",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 43,
+      },
+      "label": "setQuery",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 47,
+      },
+      "label": "clearResults",
+      "type": "fun",
+    },
+  },
+}

@@ -1,0 +1,9 @@
+Set {
+  "query",
+  "results",
+  "loading",
+  "error",
+  "hasResults",
+  "setQuery",
+  "clearResults",
+}

@@ -1,0 +1,77 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "x",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "y",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "update",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "x",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "y",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "x",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "y",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "update",
+      "type": "fun",
+    },
+  },
+}

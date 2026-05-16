@@ -1,0 +1,169 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 12,
+      },
+      "label": "rpc",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 11,
+        "line": 14,
+      },
+      "label": "isCacheFresh",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 17,
+        "line": 18,
+      },
+      "label": "refresh",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 12,
+          },
+          "label": "rpc",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 14,
+          },
+          "label": "isCacheFresh",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 46,
+      },
+      "label": "remove",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 12,
+          },
+          "label": "rpc",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 53,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "invalidate",
+      "type": "fun",
+    } => Set {},
+    {
+      "info": {
+        "column": 17,
+        "line": 57,
+      },
+      "label": "handleChanged",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 53,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "invalidate",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 17,
+            "line": 18,
+          },
+          "label": "refresh",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 12,
+      },
+      "label": "rpc",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 14,
+      },
+      "label": "isCacheFresh",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 18,
+      },
+      "label": "refresh",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 46,
+      },
+      "label": "remove",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 53,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "invalidate",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 57,
+      },
+      "label": "handleChanged",
+      "type": "fun",
+    },
+  },
+}

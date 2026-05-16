@@ -1,0 +1,6 @@
+Set {
+  "isDark",
+  "themeClass",
+  "toggle",
+  "setDark",
+}

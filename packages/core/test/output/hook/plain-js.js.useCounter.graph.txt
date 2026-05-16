@@ -1,0 +1,106 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 27,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 27,
+            "line": 2,
+          },
+          "label": "initialValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "doubled",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "increment",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 27,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "doubled",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "increment",
+      "type": "fun",
+    },
+  },
+}

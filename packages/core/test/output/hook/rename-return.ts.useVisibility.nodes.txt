@@ -1,0 +1,7 @@
+Set {
+  "visible",
+  "show",
+  "hide",
+  "toggle",
+  "setVisible",
+}

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import fg from 'fast-glob';
-import { analyzeOptions, analyzeSetupScript, analyzeStyle, analyzeTemplate, analyzeTsx, parse } from '@/index';
+import { analyzeHook, analyzeOptions, analyzeSetupScript, analyzeStyle, analyzeTemplate, analyzeTsx, parse } from '@/index';
 
 describe('fixtures', async () => {
   const frameworks = ['vue', 'react'] as const;
@@ -77,5 +77,24 @@ describe('fixtures', async () => {
         }
       });
     }
+  }
+});
+
+describe('hook fixtures', async () => {
+  const tests = await fg('../../fixtures/hook/**/*');
+  for (const test of tests) {
+    const testName = `hook/${basename(test)}`;
+    it(testName, async () => {
+      const source = readFileSync(test, 'utf-8');
+      const results = analyzeHook(source, 0, test.endsWith('.tsx') || test.endsWith('.jsx'));
+      for (const result of results) {
+        const hookName = result.hookName || 'anonymous';
+        await expect(result.graph)
+          .toMatchFileSnapshot(`./output/${testName}.${hookName}.graph.txt`);
+
+        await expect(result.nodesUsedInReturn)
+          .toMatchFileSnapshot(`./output/${testName}.${hookName}.nodes.txt`);
+      }
+    });
   }
 });

@@ -3,6 +3,7 @@ import * as vis from 'vis-network';
 import CodeMirror from './components/codemirror/CodeMirror.vue';
 import complexComponent from './default-codes/complexComponent.vue?raw';
 import compositionBase from './default-codes/compositionBase.vue?raw';
+import hookExample from './default-codes/hookExample.ts?raw';
 import optionsBase from './default-codes/optionsBase.vue?raw';
 import reactClass from './default-codes/reactClass.jsx?raw';
 import reactFunction from './default-codes/reactFunction.jsx?raw';
@@ -22,13 +23,22 @@ const exampleCode = {
     reactFunction,
     reactHooks,
   },
+  hook: {
+    hookExample,
+  },
+};
+
+const allExamples: Record<string, string> = {
+  ...exampleCode.vue,
+  ...exampleCode.react,
+  ...exampleCode.hook,
 };
 
 const selectedExample = ref<string>('optionsBase');
 const code = ref(optionsBase);
 const autoRefresh = ref(false);
 const framework = ref<'vue' | 'react'>('vue');
-const currentFramework = ref<'vue' | 'react'>('vue');
+const currentFramework = ref<'vue' | 'react' | 'hook'>('vue');
 
 // 监听框架切换，自动选择第一个示例
 watch(framework, (newFramework) => {
@@ -40,15 +50,21 @@ watch(framework, (newFramework) => {
 
 // 监听示例切换
 watch(selectedExample, (example) => {
-  const examples = exampleCode[framework.value];
-  code.value = examples[example as keyof typeof examples] || Object.values(examples)[0];
+  const next = allExamples[example];
+  if (next) {
+    code.value = next;
+  }
 });
 
 provide('autoresize', true);
 
+// Auto-detect if code contains hook functions
+function isHookCode(code: string): boolean {
+  return /export\s+(?:function|const|let|var)\s+use[A-Z]/.test(code);
+}
+
 function codeChange(value: string) {
   code.value = value;
-  // autoRefresh.value && start();
 }
 
 watch(() => [autoRefresh.value, code.value, framework.value], () => {
@@ -69,35 +85,82 @@ const suggestions = ref<Array<{
   message: string
 }>>([]);
 
+// Hook analysis results
+interface HookResult {
+  hookName: string
+  data: vis.Data
+  suggests: Array<{
+    type: 'info' | 'warning' | 'error'
+    message: string
+  }>
+}
+
+const hookResults = ref<HookResult[]>([]);
+const activeHookTab = ref<string>('');
+
 async function start() {
   if (!code.value) {
     return;
   }
 
-  const { msg, data, suggests } = await $fetch<{
-    msg: string
-    data: vis.Data
-    suggests: Array<{
-      type: 'info' | 'warning' | 'error'
-      message: string
-    }>
-  }>('/api/analyze', {
-    method: 'post',
-    body: JSON.stringify({
-      code: code.value,
-      framework: framework.value,
-    }),
-  });
-  if (data) {
-    visData.value = data;
-    suggestions.value = suggests;
-    currentFramework.value = framework.value;
+  // Auto-detect hook code (not .vue file and contains use* functions)
+  const isHook = !code.value.trim().startsWith('<') && isHookCode(code.value);
+
+  if (isHook) {
+    const { hooks } = await $fetch<{
+      msg: string
+      hooks: HookResult[]
+    }>('/api/analyze', {
+      method: 'post',
+      body: JSON.stringify({
+        code: code.value,
+        framework: 'hook',
+      }),
+    });
+    if (hooks && hooks.length > 0) {
+      hookResults.value = hooks;
+      activeHookTab.value = hooks[0].hookName;
+      currentFramework.value = 'hook';
+    }
+    else {
+      hookResults.value = [];
+      activeHookTab.value = '';
+    }
   }
   else {
-    // alert(msg);
-    console.log(msg);
+    const { msg, data, suggests } = await $fetch<{
+      msg: string
+      data: vis.Data
+      suggests: Array<{
+        type: 'info' | 'warning' | 'error'
+        message: string
+      }>
+    }>('/api/analyze', {
+      method: 'post',
+      body: JSON.stringify({
+        code: code.value,
+        framework: framework.value,
+      }),
+    });
+    if (data) {
+      hookResults.value = [];
+      activeHookTab.value = '';
+      visData.value = data;
+      suggestions.value = suggests;
+      currentFramework.value = framework.value;
+    }
+    else {
+      console.log(msg);
+    }
   }
 }
+
+const currentHookResult = computed(() => {
+  if (activeHookTab.value && hookResults.value.length > 0) {
+    return hookResults.value.find(r => r.hookName === activeHookTab.value);
+  }
+  return null;
+});
 
 const searchInputRef = ref<HTMLInputElement>();
 const chartRef = ref<HTMLElement>();
@@ -109,18 +172,41 @@ const {
 } = useSearch(searchInputRef, chartRef);
 
 const chartThemeColors = computed(() => {
-  return currentFramework.value === 'vue'
-    ? {
+  if (currentFramework.value === 'vue') {
+    return {
       base: '#42b883',
       ring: '#42b88333',
-    }
-    : {
+    };
+  }
+  else if (currentFramework.value === 'react') {
+    return {
       base: '#61dafb',
       ring: '#61dafb33',
     };
+  }
+  else {
+    return {
+      base: '#f59e0b',
+      ring: '#f59e0b33',
+    };
+  }
 });
 
 const highlightColor = computed(() => chartThemeColors.value.base);
+
+const activeVisData = computed(() => {
+  if (currentFramework.value === 'hook' && currentHookResult.value) {
+    return currentHookResult.value.data;
+  }
+  return visData.value;
+});
+
+const activeSuggestions = computed(() => {
+  if (currentFramework.value === 'hook' && currentHookResult.value) {
+    return currentHookResult.value.suggests;
+  }
+  return suggestions.value;
+});
 
 const visOption = computed<vis.Options>(() => ({
   physics: {
@@ -154,13 +240,21 @@ const visOption = computed<vis.Options>(() => ({
 }));
 
 const network = computed(() => {
-  return new vis.Network(networkRef.value!, visData.value, visOption.value);
+  return new vis.Network(networkRef.value!, activeVisData.value, visOption.value);
 });
 
 onMounted(() => {
-  watch(visData, (val) => {
+  watch(activeVisData, (val) => {
     nextTick(() => {
       network.value.setData(val);
+    });
+  });
+
+  watch(activeHookTab, () => {
+    nextTick(() => {
+      if (currentHookResult.value) {
+        network.value.setData(currentHookResult.value.data);
+      }
     });
   });
 
@@ -280,6 +374,9 @@ const {
             <option value="tsx">
               TSX
             </option>
+            <option value="hookExample">
+              Composables
+            </option>
           </optgroup>
           <optgroup v-if="framework === 'react'" label="React Examples">
             <option value="reactClass">
@@ -290,6 +387,11 @@ const {
             </option>
             <option value="reactHooks">
               Hooks Component
+            </option>
+          </optgroup>
+          <optgroup v-if="framework === 'vue'" label="Hooks (auto-detect)">
+            <option value="hookExample">
+              Multiple Hooks
             </option>
           </optgroup>
         </select>
@@ -385,6 +487,35 @@ const {
           GitHub
         </a>
       </div>
+      <!-- Hook Tabs -->
+      <div
+        v-if="currentFramework === 'hook' && hookResults.length > 0"
+        class="
+          flex items-center gap-1 px-4 py-2
+          border-b border-[#e5e7eb]
+          bg-[#f8f9fa]
+          overflow-x-auto
+        "
+      >
+        <button
+          v-for="hook in hookResults"
+          :key="hook.hookName"
+          class="
+            px-4 py-1.5 rounded-lg
+            text-sm font-medium
+            transition-all duration-200
+            cursor-pointer
+            border-none
+          "
+          :class="activeHookTab === hook.hookName
+            ? 'bg-[#f59e0b] text-white shadow-sm'
+            : 'bg-white text-[#6b7280] hover:text-[#374151] hover:bg-[#f3f4f6]'"
+          @click="activeHookTab = hook.hookName"
+        >
+          {{ hook.hookName }}
+        </button>
+      </div>
+
       <!-- 图表容器 -->
       <div class="flex-1 w-full relative bg-[#fafafa] min-h-0">
         <!-- 搜索框 -->
@@ -430,7 +561,7 @@ const {
 
         <!-- 图例 -->
         <div
-          v-if="visData.nodes!.length > 0"
+          v-if="activeVisData.nodes!.length > 0"
           class="
             absolute right-4 p-4 rounded-xl
             bg-white/95 backdrop-blur-sm
@@ -497,7 +628,7 @@ const {
 
       <!-- 建议面板 -->
       <div
-        v-if="suggestions.length > 0"
+        v-if="activeSuggestions.length > 0"
         class="
           h-[30%] min-h-40 w-full flex-shrink-0
           border-t border-[#e5e7eb]
@@ -508,11 +639,11 @@ const {
         <div class="px-4 py-2 border-b border-[#e5e7eb] bg-[#f8f9fa] flex items-center gap-2">
           <span class="i-carbon:idea inline-block w-4 h-4 text-[#42b883]" />
           <span class="text-sm font-semibold text-[#374151]">Suggestions</span>
-          <span class="text-xs text-[#6b7280] ml-auto">{{ suggestions.length }} items</span>
+          <span class="text-xs text-[#6b7280] ml-auto">{{ activeSuggestions.length }} items</span>
         </div>
         <div class="flex-1 overflow-y-auto p-3 space-y-2">
           <div
-            v-for="(suggest, idx) in suggestions"
+            v-for="(suggest, idx) in activeSuggestions"
             :key="idx"
             class="
               flex items-start gap-2 px-3 py-2 rounded-lg

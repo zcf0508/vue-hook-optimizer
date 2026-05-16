@@ -20,6 +20,7 @@ export function getVisData(
   },
   nodesUsedInTemplate: Set<string>,
   nodesUsedInStyle: Set<string> = new Set(),
+  usedLabel?: string,
 ) {
   const usedNodes = new Set([...nodesUsedInTemplate, ...nodesUsedInStyle]);
 
@@ -65,7 +66,7 @@ export function getVisData(
                 ? 'style'
                 : '',
               nodesUsedInTemplate.has(node.label)
-                ? 'template'
+                ? usedLabel || 'template'
                 : '',
             ].filter(Boolean).join(' and ')
           }\n\n`

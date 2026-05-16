@@ -1,0 +1,429 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 55,
+        "line": 2,
+      },
+      "label": "initialValues",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "values",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 55,
+            "line": 2,
+          },
+          "label": "initialValues",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "errors",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "touched",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 6,
+      },
+      "label": "isSubmitting",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "unusedHelper",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 11,
+        "line": 11,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "validate",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "errors",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 18,
+      },
+      "label": "setFieldValue",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "values",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 5,
+          },
+          "label": "touched",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 23,
+      },
+      "label": "setFieldError",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "errors",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 27,
+      },
+      "label": "resetForm",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "values",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 55,
+            "line": 2,
+          },
+          "label": "initialValues",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "errors",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 5,
+          },
+          "label": "touched",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 6,
+          },
+          "label": "isSubmitting",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 34,
+      },
+      "label": "isValid",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "errors",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 35,
+      },
+      "label": "isDirty",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "values",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 55,
+            "line": 2,
+          },
+          "label": "initialValues",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 44,
+      },
+      "label": "handleSubmit",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 6,
+          },
+          "label": "isSubmitting",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 5,
+          },
+          "label": "touched",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 55,
+            "line": 2,
+          },
+          "label": "initialValues",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 11,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "validate",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "values",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 55,
+        "line": 2,
+      },
+      "label": "initialValues",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "values",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "errors",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "touched",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 6,
+      },
+      "label": "isSubmitting",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "unusedHelper",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 11,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "validate",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 18,
+      },
+      "label": "setFieldValue",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 23,
+      },
+      "label": "setFieldError",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 27,
+      },
+      "label": "resetForm",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 34,
+      },
+      "label": "isValid",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 35,
+      },
+      "label": "isDirty",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 44,
+      },
+      "label": "handleSubmit",
+      "type": "fun",
+    },
+  },
+}

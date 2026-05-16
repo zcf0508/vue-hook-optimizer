@@ -1,0 +1,7 @@
+Set {
+  "count",
+  "doubled",
+  "increment",
+  "decrement",
+  "reset",
+}

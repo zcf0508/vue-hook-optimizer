@@ -1,4 +1,7 @@
 export {
+  analyzeHook,
+} from './hook';
+export {
   analyze as analyzeOptions,
 } from './options';
 export {

@@ -1,0 +1,150 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "name",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 7,
+      },
+      "label": "doubleCount",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 9,
+      },
+      "label": "increment",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 13,
+      },
+      "label": "decrement",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 17,
+      },
+      "label": "reset",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "name",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 7,
+      },
+      "label": "doubleCount",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 9,
+      },
+      "label": "increment",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 13,
+      },
+      "label": "decrement",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 17,
+      },
+      "label": "reset",
+      "type": "fun",
+    },
+  },
+}

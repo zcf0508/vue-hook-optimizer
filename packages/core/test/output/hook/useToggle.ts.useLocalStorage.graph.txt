@@ -1,0 +1,155 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 35,
+        "line": 20,
+      },
+      "label": "key",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 48,
+        "line": 20,
+      },
+      "label": "defaultValue",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 21,
+      },
+      "label": "stored",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 35,
+            "line": 20,
+          },
+          "label": "key",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 22,
+      },
+      "label": "data",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 21,
+          },
+          "label": "stored",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 48,
+            "line": 20,
+          },
+          "label": "defaultValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 28,
+      },
+      "label": "remove",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 35,
+            "line": 20,
+          },
+          "label": "key",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 22,
+          },
+          "label": "data",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 48,
+            "line": 20,
+          },
+          "label": "defaultValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 35,
+        "line": 20,
+      },
+      "label": "key",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 48,
+        "line": 20,
+      },
+      "label": "defaultValue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 21,
+      },
+      "label": "stored",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 22,
+      },
+      "label": "data",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 28,
+      },
+      "label": "remove",
+      "type": "fun",
+    },
+  },
+}

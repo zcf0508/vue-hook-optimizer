@@ -1,0 +1,6 @@
+Set {
+  "seconds",
+  "text",
+  "start",
+  "stop",
+}

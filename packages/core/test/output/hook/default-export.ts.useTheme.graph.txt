@@ -1,0 +1,106 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "isDark",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "themeClass",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "isDark",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "toggle",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "isDark",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 10,
+      },
+      "label": "setDark",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "isDark",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "isDark",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "themeClass",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "toggle",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 10,
+      },
+      "label": "setDark",
+      "type": "fun",
+    },
+  },
+}

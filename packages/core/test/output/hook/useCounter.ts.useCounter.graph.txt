@@ -1,0 +1,173 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 27,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 27,
+            "line": 2,
+          },
+          "label": "initialValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "doubled",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "increment",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 10,
+      },
+      "label": "decrement",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 14,
+      },
+      "label": "reset",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "set",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 27,
+            "line": 2,
+          },
+          "label": "initialValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 27,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "doubled",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 6,
+      },
+      "label": "increment",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 10,
+      },
+      "label": "decrement",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 14,
+      },
+      "label": "reset",
+      "type": "fun",
+    },
+  },
+}

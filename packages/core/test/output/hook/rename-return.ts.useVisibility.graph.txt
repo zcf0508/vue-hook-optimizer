@@ -1,0 +1,134 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 31,
+      },
+      "label": "visible",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 11,
+        "line": 33,
+      },
+      "label": "show",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 31,
+          },
+          "label": "visible",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 34,
+      },
+      "label": "hide",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 31,
+          },
+          "label": "visible",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 35,
+      },
+      "label": "toggle",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 31,
+          },
+          "label": "visible",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 37,
+      },
+      "label": "setVisible",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 31,
+          },
+          "label": "visible",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 31,
+      },
+      "label": "visible",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 33,
+      },
+      "label": "show",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 34,
+      },
+      "label": "hide",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 35,
+      },
+      "label": "toggle",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 37,
+      },
+      "label": "setVisible",
+      "type": "fun",
+    },
+  },
+}

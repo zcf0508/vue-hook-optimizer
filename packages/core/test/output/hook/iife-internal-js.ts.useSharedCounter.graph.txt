@@ -1,0 +1,66 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 10,
+        "line": 40,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 17,
+        "line": 40,
+      },
+      "label": "increment",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 41,
+      },
+      "label": "doubled",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 40,
+          },
+          "label": "count",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 10,
+        "line": 40,
+      },
+      "label": "count",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 40,
+      },
+      "label": "increment",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 41,
+      },
+      "label": "doubled",
+      "type": "var",
+    },
+  },
+}

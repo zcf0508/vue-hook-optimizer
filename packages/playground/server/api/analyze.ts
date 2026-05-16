@@ -3,6 +3,7 @@ import type {
   TypedNode,
 } from 'vue-hook-optimizer';
 import {
+  analyzeHook,
   analyzeOptions,
   analyzeSetupScript,
   analyzeStyle,
@@ -13,8 +14,17 @@ import {
   parse,
 } from 'vue-hook-optimizer';
 
+interface HookResult {
+  hookName: string
+  data: vis.Data
+  suggests: Array<{
+    type: 'info' | 'warning' | 'error'
+    message: string
+  }>
+}
+
 export default defineEventHandler(async (ctx) => {
-  const { code, framework } = await readBody<{ code: string, framework: 'vue' | 'react' }>(ctx);
+  const { code, framework } = await readBody<{ code: string, framework: 'vue' | 'react' | 'hook' }>(ctx);
   let graph = {
     nodes: new Set<TypedNode>(),
     edges: new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>(),
@@ -23,6 +33,20 @@ export default defineEventHandler(async (ctx) => {
   let nodesUsedInStyle = new Set<string>();
 
   try {
+    if (framework === 'hook') {
+      const results = analyzeHook(code, 0, false);
+      const hookResults: HookResult[] = results.map(result => ({
+        hookName: result.hookName || 'anonymous',
+        data: getVisData(result.graph, result.nodesUsedInReturn, undefined, 'return'),
+        suggests: gen(result.graph, result.nodesUsedInReturn),
+      }));
+
+      return {
+        msg: '',
+        hooks: hookResults,
+      };
+    }
+
     if (framework === 'vue') {
       const sfc = parse(code);
 

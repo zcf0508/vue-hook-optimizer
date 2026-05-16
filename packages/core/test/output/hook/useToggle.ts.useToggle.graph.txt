@@ -1,0 +1,134 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 26,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "value",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 26,
+            "line": 2,
+          },
+          "label": "initialValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 5,
+      },
+      "label": "toggle",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "value",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 9,
+      },
+      "label": "setTrue",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "value",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 13,
+      },
+      "label": "setFalse",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 3,
+          },
+          "label": "value",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 26,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "value",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 5,
+      },
+      "label": "toggle",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 9,
+      },
+      "label": "setTrue",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 13,
+      },
+      "label": "setFalse",
+      "type": "fun",
+    },
+  },
+}
