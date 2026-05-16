@@ -1,0 +1,382 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 10,
+        "line": 5,
+      },
+      "label": "rpc",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 19,
+        "line": 6,
+      },
+      "label": "refreshFolderPicker",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 7,
+      },
+      "label": "files",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 11,
+        "line": 9,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "addFiles",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 7,
+          },
+          "label": "files",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 20,
+      },
+      "label": "selectFiles",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 5,
+          },
+          "label": "rpc",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 9,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "addFiles",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 26,
+      },
+      "label": "selectFolders",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 5,
+          },
+          "label": "rpc",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 9,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "addFiles",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 19,
+            "line": 6,
+          },
+          "label": "refreshFolderPicker",
+          "type": "var",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 33,
+      },
+      "label": "removeFile",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 7,
+          },
+          "label": "files",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 38,
+      },
+      "label": "clearFiles",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 7,
+          },
+          "label": "files",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 42,
+      },
+      "label": "setFiles",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 7,
+          },
+          "label": "files",
+          "type": "var",
+        },
+        "type": "set",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 46,
+      },
+      "label": "handleDrop",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 5,
+          },
+          "label": "rpc",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 9,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "addFiles",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 52,
+      },
+      "label": "addPastedImage",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 5,
+          },
+          "label": "rpc",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 9,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "addFiles",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 60,
+      },
+      "label": "attachFolder",
+      "type": "fun",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 11,
+            "line": 9,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "addFiles",
+          "type": "fun",
+        },
+        "type": "call",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 10,
+        "line": 5,
+      },
+      "label": "rpc",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 19,
+        "line": 6,
+      },
+      "label": "refreshFolderPicker",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 7,
+      },
+      "label": "files",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 9,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "addFiles",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 20,
+      },
+      "label": "selectFiles",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 26,
+      },
+      "label": "selectFolders",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 33,
+      },
+      "label": "removeFile",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 38,
+      },
+      "label": "clearFiles",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 11,
+        "line": 42,
+      },
+      "label": "setFiles",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 46,
+      },
+      "label": "handleDrop",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 52,
+      },
+      "label": "addPastedImage",
+      "type": "fun",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 60,
+      },
+      "label": "attachFolder",
+      "type": "fun",
+    },
+  },
+}

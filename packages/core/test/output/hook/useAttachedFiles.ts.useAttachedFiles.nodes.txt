@@ -1,0 +1,10 @@
+Set {
+  "selectFiles",
+  "selectFolders",
+  "attachFolder",
+  "removeFile",
+  "clearFiles",
+  "setFiles",
+  "handleDrop",
+  "addPastedImage",
+}

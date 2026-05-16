@@ -479,6 +479,9 @@ function processHookFunction(
         const name = path.node.key.name;
         traverse(path.node.value, {
           Identifier(path1) {
+            if (path1.node.name === name) {
+              return;
+            }
             const binding = path1.scope.getBinding(path1.node.name);
             if (
               graph.nodes.has(path1.node.name)
