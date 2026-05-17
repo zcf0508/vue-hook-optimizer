@@ -170,8 +170,16 @@ export function activate(context: vscode.ExtensionContext) {
       window.showErrorMessage(res.msg);
       return;
     }
+    const data = res.data!;
     const filePath = document.fileName;
     const fileName = filePath.split('/').pop();
+
+    interface HookItem {
+      hookName: string
+      mermaid: string
+      suggests: Array<{ type: string, message: string }>
+    }
+    const allHooks = (data as any)._allHooks as HookItem[] | undefined;
     const panel = window.createWebviewPanel(
       'vueHookOptimizerAnalyze', // viewType
       `Analyze ${fileName}`, // 视图标题
@@ -190,7 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
       visStyle: getWebviewUri(panel.webview, context.extensionPath, 'vis-network.min.css'),
       libTailwind: getWebviewUri(panel.webview, context.extensionPath, 'tailwindcss.min.js'),
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
-      data: btoa(encodeURIComponent(JSON.stringify(res.data.vis))),
+      data: btoa(encodeURIComponent(JSON.stringify(data.vis))),
       config: btoa(encodeURIComponent(JSON.stringify(config?.vis))),
       legend_used: config?.legend.used,
       legend_normal: config?.legend.normal,
@@ -218,8 +226,8 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     outputChannel.append(`${fileName}: \n`);
-    outputChannel.append(`Mermaid: \n${res.data.mermaid}\n`);
-    res.data.suggests.forEach((suggest) => {
+    outputChannel.append(`Mermaid: \n${data.mermaid}\n`);
+    data.suggests.forEach((suggest) => {
       outputChannel.append(`[${
         suggest.type === 'info'
           ? 'Info'
@@ -230,6 +238,17 @@ export function activate(context: vscode.ExtensionContext) {
               : 'Unknown'
       }] ${suggest.message} \n`);
     });
+
+    if (allHooks && allHooks.length > 1) {
+      outputChannel.append(`\n--- All ${allHooks.length} hooks ---\n`);
+      for (const hook of allHooks) {
+        outputChannel.append(`\n## ${hook.hookName}\n`);
+        outputChannel.append(`Mermaid: \n${hook.mermaid}\n`);
+        hook.suggests.forEach((s) => {
+          outputChannel.append(`[${s.type}] ${s.message}\n`);
+        });
+      }
+    }
     outputChannel.append('\n');
 
     if (!alerted) {

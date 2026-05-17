@@ -2,7 +2,9 @@ import type {
   RelationType,
   TypedNode,
 } from 'vue-hook-optimizer';
+import type { Suggestion } from '../../../packages/core/src/suggest';
 import {
+  analyzeHook,
   analyzeOptions,
   analyzeSetupScript,
   analyzeStyle,
@@ -14,7 +16,83 @@ import {
   parse,
 } from 'vue-hook-optimizer';
 
-export async function analyze(code: string, language: 'vue' | 'react') {
+interface CommunityInfo {
+  id: number
+  size: number
+  members: Array<{ name: string, type: string, line?: number }>
+}
+
+function formatCommunities(
+  communityResult: { communities: Array<{ id: number, nodes: Set<TypedNode> }> },
+): CommunityInfo[] {
+  return communityResult.communities
+    .filter(c => c.nodes.size > 1)
+    .map((c) => {
+      const nodes = Array.from(c.nodes).sort((a, b) => {
+        const lineA = a.info?.line ?? Infinity;
+        const lineB = b.info?.line ?? Infinity;
+        return lineA - lineB;
+      });
+      return {
+        id: c.id,
+        size: c.nodes.size,
+        members: nodes.map(n => ({
+          name: n.label,
+          type: n.type,
+          line: n.info?.line,
+        })),
+      };
+    });
+}
+
+interface ComponentResult {
+  type: 'component'
+  mermaid: string
+  suggests: Suggestion[]
+  communities: CommunityInfo[]
+}
+
+interface HookItem {
+  name: string
+  mermaid: string
+  suggests: Suggestion[]
+  communities: CommunityInfo[]
+}
+
+interface HookFileResult {
+  type: 'hook-file'
+  hooks: HookItem[]
+}
+
+export type AnalyzeResult = ComponentResult | HookFileResult;
+
+function isHookCode(code: string): boolean {
+  return /export\s+(?:function|const|let|var)\s+use[A-Z]/.test(code);
+}
+
+function analyzeOne(
+  graph: { nodes: Set<TypedNode>, edges: Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>> },
+  used: Set<string>,
+) {
+  const communities = formatCommunities(detectCommunities(graph.edges));
+  return {
+    mermaid: getMermaidText(graph, used),
+    suggests: gen(graph, used, undefined, { ellipsis: false }),
+    communities,
+  };
+}
+
+export async function analyze(code: string, language: 'vue' | 'react'): Promise<AnalyzeResult> {
+  if (!code.trim().startsWith('<') && isHookCode(code)) {
+    const results = analyzeHook(code, 0);
+    const hooks: HookItem[] = results.map(result => ({
+      name: result.hookName,
+      ...analyzeOne(result.graph, result.nodesUsedInReturn),
+    }));
+
+    return { type: 'hook-file', hooks };
+  }
+
   let graph = {
     nodes: new Set<TypedNode>(),
     edges: new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>(),
@@ -83,32 +161,8 @@ export async function analyze(code: string, language: 'vue' | 'react') {
     nodesUsedInTemplate = res.nodesUsedInTemplate;
   }
 
-  const communityResult = detectCommunities(graph.edges);
-
-  const communities = communityResult.communities
-    .filter(c => c.nodes.size > 1)
-    .map((c) => {
-      const nodes = Array.from(c.nodes).sort((a, b) => {
-        const lineA = a.info?.line ?? Infinity;
-        const lineB = b.info?.line ?? Infinity;
-        return lineA - lineB;
-      });
-      return {
-        id: c.id,
-        size: c.nodes.size,
-        members: nodes.map(n => ({
-          name: n.label,
-          type: n.type,
-          line: n.info?.line,
-        })),
-      };
-    });
-
   return {
-    mermaid: getMermaidText(graph, nodesUsedInTemplate, nodesUsedInStyle),
-    suggests: gen(graph, nodesUsedInTemplate, nodesUsedInStyle, {
-      ellipsis: false,
-    }),
-    communities,
+    type: 'component',
+    ...analyzeOne(graph, new Set([...nodesUsedInTemplate, ...nodesUsedInStyle])),
   };
 }

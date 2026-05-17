@@ -4,6 +4,7 @@ import type {
   TypedNode,
 } from '../../../packages/core/src';
 import {
+  analyzeHook,
   analyzeOptions,
   analyzeSetupScript,
   analyzeStyle,
@@ -16,6 +17,10 @@ import {
   parse,
 } from '../../../packages/core/src';
 
+function isHookCode(code: string): boolean {
+  return /export\s+(?:function|const|let|var)\s+use[A-Z]/.test(code);
+}
+
 export async function analyze(code: string, language: 'vue' | 'react') {
   let graph = {
     nodes: new Set<TypedNode>(),
@@ -23,6 +28,32 @@ export async function analyze(code: string, language: 'vue' | 'react') {
   };
   let nodesUsedInTemplate = new Set<string>();
   let nodesUsedInStyle = new Set<string>();
+
+  // Auto-detect hook code: non-vue content with use* exports
+  if (!code.trim().startsWith('<') && isHookCode(code)) {
+    const results = analyzeHook(code, 0);
+    const first = results[0];
+
+    if (!first) {
+      return { code: 1, data: null, msg: 'No hooks found' };
+    }
+
+    const allUsed = first.nodesUsedInReturn;
+    const communityResult = detectCommunities(first.graph.edges);
+
+    return { code: 0, data: {
+      vis: getVisData(first.graph, allUsed, undefined, 'return'),
+      suggests: gen(first.graph, allUsed),
+      mermaid: getMermaidText(first.graph, allUsed),
+      communities: communityResult,
+      graph: first.graph,
+      _allHooks: results.map(r => ({
+        hookName: r.hookName,
+        mermaid: getMermaidText(r.graph, r.nodesUsedInReturn),
+        suggests: gen(r.graph, r.nodesUsedInReturn),
+      })),
+    }, msg: `Found ${results.length} hook(s): ${results.map(r => r.hookName).join(', ')}` };
+  }
 
   if (language === 'vue') {
     const sfc = parse(code);

@@ -393,7 +393,7 @@ function processHookFunction(
               const isValidNode = name && graph.nodes.has(name) && path.node.init
                 && path.scope.getBinding(name)?.scope === functionScope;
               if (isValidNode) {
-                traverse(path.node.init, {
+                traverse(path.node.init!, {
                   Identifier(path1) {
                     const binding = path1.scope.getBinding(path1.node.name);
                     if (
@@ -423,7 +423,7 @@ function processHookFunction(
               const isValidNode = name && graph.nodes.has(name) && path.node.init
                 && path.scope.getBinding(name)?.scope === functionScope;
               if (isValidNode) {
-                traverse(path.node.init, {
+                traverse(path.node.init!, {
                   Identifier(path1) {
                     const binding = path1.scope.getBinding(path1.node.name);
                     if (
@@ -564,13 +564,10 @@ function processHookFunction(
 export function analyzeHook(
   content: string,
   lineOffset = 0,
-  jsx = false,
 ) {
   const ast = babelParse(content, { sourceType: 'module', plugins: [
     'typescript',
-    ...jsx
-      ? ['jsx' as const]
-      : [],
+    'jsx',
   ] });
 
   const results: HookAnalysisResult[] = [];
@@ -643,7 +640,8 @@ export function analyzeHook(
           if (decl.id.type === 'Identifier' && decl.id.name.startsWith('use')) {
             const varPath = path.get('declaration.declarations').find((p) => {
               const node = p.node as t.VariableDeclarator;
-              return node.id.type === 'Identifier' && node.id.name === decl.id.name;
+              const nodeId = node.id as t.Identifier;
+              return nodeId.type === 'Identifier' && nodeId.name === (decl.id as t.Identifier).name;
             }) as NodePath<t.VariableDeclarator> | undefined;
             if (varPath) {
               extractHookFromDeclarator(decl, varPath);
@@ -661,9 +659,11 @@ export function analyzeHook(
       if (path.parent.type === 'Program') {
         path.node.declarations.forEach((decl) => {
           if (decl.id.type === 'Identifier' && decl.id.name.startsWith('use')) {
+            const declName = (decl.id as t.Identifier).name;
             const varPath = path.get('declarations').find((p) => {
               const node = p.node as t.VariableDeclarator;
-              return node.id.type === 'Identifier' && node.id.name === decl.id.name;
+              const nodeId = node.id as t.Identifier;
+              return nodeId.type === 'Identifier' && nodeId.name === declName;
             }) as NodePath<t.VariableDeclarator> | undefined;
             if (varPath) {
               extractHookFromDeclarator(decl, varPath);

@@ -211,7 +211,7 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
 
     // 确保有分析结果
     const analysisResult = await ensureAnalysisResult();
-    if (!analysisResult) {
+    if (!analysisResult || !analysisResult.data) {
       return;
     }
 
@@ -293,7 +293,7 @@ export function activateHighlighting(context: vscode.ExtensionContext) {
     }
 
     const analysisResult = await ensureAnalysisResult();
-    if (!analysisResult) {
+    if (!analysisResult || !analysisResult.data) {
       return;
     }
 

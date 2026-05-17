@@ -86,7 +86,7 @@ describe('hook fixtures', async () => {
     const testName = `hook/${basename(test)}`;
     it(testName, async () => {
       const source = readFileSync(test, 'utf-8');
-      const results = analyzeHook(source, 0, test.endsWith('.tsx') || test.endsWith('.jsx'));
+      const results = analyzeHook(source, 0);
       for (const result of results) {
         const hookName = result.hookName || 'anonymous';
         await expect(result.graph)

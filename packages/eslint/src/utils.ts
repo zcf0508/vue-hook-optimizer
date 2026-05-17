@@ -4,6 +4,7 @@ import type { Rule } from 'eslint';
 import type { RelationType, TypedNode } from 'vue-hook-optimizer';
 import type { PluginOptions } from './types';
 import {
+  analyzeHook,
   analyzeOptions,
   analyzeSetupScript,
   analyzeStyle,
@@ -110,6 +111,33 @@ export function warnOnce(message: string) {
 export function analyze<TMessageIds extends string>(context: Readonly<RuleContext<TMessageIds, PluginOptions>>) {
   const code = context.sourceCode.text;
   const framework = context.options[0]?.framework || 'vue';
+
+  // Auto-detect hook code
+  if (!code.trim().startsWith('<') && /export\s+(?:function|const|let|var)\s+use[A-Z]/.test(code)) {
+    const results = analyzeHook(code, 0);
+    const allNodes = new Set<TypedNode>();
+    const allEdges = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
+    const allUsed = new Set<string>();
+
+    for (const result of results) {
+      for (const node of result.graph.nodes) {
+        allNodes.add(node);
+      }
+      for (const [from, to] of result.graph.edges) {
+        if (!allEdges.has(from)) {
+          allEdges.set(from, new Set());
+        }
+        for (const edge of to) {
+          allEdges.get(from)?.add(edge);
+        }
+      }
+      for (const name of result.nodesUsedInReturn) {
+        allUsed.add(name);
+      }
+    }
+
+    return gen({ nodes: allNodes, edges: allEdges }, allUsed);
+  }
 
   let graph = {
     nodes: new Set<TypedNode>(),

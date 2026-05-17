@@ -123,8 +123,8 @@ Consider merging two Composables if ANY of these are true:
 ### Isolated Node Group Integration
 ```ts
 // 🚫 Scattered          →  ✅ Integrated by domain
-const userProfile = ref({});    const { profile, update } = useUserProfile();
-const orderHistory = ref([]);   const { orders, load } = useOrderHistory();
+const userProfile = ref({}); const { profile, update } = useUserProfile();
+const orderHistory = ref([]); const { orders, load } = useOrderHistory();
 ```
 
 ## 5. Interface Design
@@ -153,8 +153,8 @@ In `<script setup>`, Composable call order must follow dependency topological so
 
 ```ts
 // ✅ Correct order
-const { user } = useUser();                    // 1. State provider
-const { orders } = useOrders(user);            // 2. Consumer
+const { user } = useUser(); // 1. State provider
+const { orders } = useOrders(user); // 2. Consumer
 const { checkout } = useCheckout(user, orders); // 3. Aggregation layer
 ```
 

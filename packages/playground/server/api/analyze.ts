@@ -34,7 +34,7 @@ export default defineEventHandler(async (ctx) => {
 
   try {
     if (framework === 'hook') {
-      const results = analyzeHook(code, 0, false);
+      const results = analyzeHook(code, 0);
       const hookResults: HookResult[] = results.map(result => ({
         hookName: result.hookName || 'anonymous',
         data: getVisData(result.graph, result.nodesUsedInReturn, undefined, 'return'),

@@ -35,6 +35,48 @@ server.registerTool(
       const code = await readFile(absolutePath, 'utf-8');
       const res = await analyze(code, framework);
 
+      if (res.type === 'hook-file') {
+        const sections = res.hooks.map((hook, i) => {
+          const communitySection = hook.communities.length > 0
+            ? [
+              '',
+              '### Variable Communities',
+              ...hook.communities.map((c) => {
+                const memberList = c.members
+                  .map(m => `  - \`${m.name}\` (${m.type === 'fun'
+                    ? 'function'
+                    : 'variable'}${m.line !== undefined
+                    ? `, line ${m.line + 1}`
+                    : ''})`)
+                  .join('\n');
+                return `- Community ${c.id + 1} (${c.size} members)\n${memberList}`;
+              }),
+            ]
+            : [];
+
+          return [
+            i > 0
+              ? '---'
+              : '',
+            `## ${hook.name}`,
+            '```mermaid',
+            hook.mermaid,
+            '```',
+            '',
+            '### Suggestions',
+            ...hook.suggests.map(s => `- ${s.message}`),
+            ...communitySection,
+          ].join('\n');
+        });
+
+        return {
+          content: [{
+            type: 'text',
+            text: sections.join('\n\n'),
+          }],
+        };
+      }
+
       const communitySection = res.communities.length > 0
         ? [
           '',

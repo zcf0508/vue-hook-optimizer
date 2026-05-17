@@ -80,13 +80,13 @@
       "commandPalette": [
         {
           "command": "vho.action.analyze",
-          "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact"
+          "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == typescript || editorLangId == javascript"
         }
       ],
       "editor/title": [
         {
           "command": "vho.action.analyze",
-          "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact",
+          "when": "editorLangId == vue || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == typescript || editorLangId == javascript",
           "group": "navigation"
         }
       ],

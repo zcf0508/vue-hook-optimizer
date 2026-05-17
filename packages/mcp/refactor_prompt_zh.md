@@ -123,8 +123,8 @@ description: 基于 VHO 的 Vue/React 组件重构技能。先调用 vue-hook-op
 ### 孤立节点群整合
 ```ts
 // 🚫 分散          →  ✅ 按域整合
-const userProfile = ref({});    const { profile, update } = useUserProfile();
-const orderHistory = ref([]);   const { orders, load } = useOrderHistory();
+const userProfile = ref({}); const { profile, update } = useUserProfile();
+const orderHistory = ref([]); const { orders, load } = useOrderHistory();
 ```
 
 ## 5. 接口设计
@@ -153,8 +153,8 @@ const orderHistory = ref([]);   const { orders, load } = useOrderHistory();
 
 ```ts
 // ✅ 正确顺序
-const { user } = useUser();                    // 1. 状态提供者
-const { orders } = useOrders(user);            // 2. 消费者
+const { user } = useUser(); // 1. 状态提供者
+const { orders } = useOrders(user); // 2. 消费者
 const { checkout } = useCheckout(user, orders); // 3. 聚合层
 ```
 
