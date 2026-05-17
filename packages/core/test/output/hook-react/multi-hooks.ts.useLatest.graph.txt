@@ -1,0 +1,50 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 29,
+        "line": 2,
+      },
+      "label": "value",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "ref",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 29,
+            "line": 2,
+          },
+          "label": "value",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 29,
+        "line": 2,
+      },
+      "label": "value",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "ref",
+      "type": "var",
+    },
+  },
+}

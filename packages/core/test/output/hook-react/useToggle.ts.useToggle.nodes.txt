@@ -1,0 +1,6 @@
+Set {
+  "value",
+  "toggle",
+  "setTrue",
+  "setFalse",
+}

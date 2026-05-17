@@ -1,0 +1,181 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 4,
+        "line": 3,
+      },
+      "label": "a",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 7,
+        "line": 3,
+      },
+      "label": "b",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 2,
+        "line": 4,
+      },
+      "label": "initial",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 10,
+        "line": 7,
+      },
+      "label": "x",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 10,
+            "line": 7,
+          },
+          "label": "x",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 16,
+        "line": 7,
+      },
+      "label": "rest",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 8,
+      },
+      "label": "sum",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 4,
+            "line": 3,
+          },
+          "label": "a",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 7,
+            "line": 3,
+          },
+          "label": "b",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "methodResult",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 21,
+      },
+      "label": "obj",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 8,
+          },
+          "label": "sum",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 4,
+        "line": 3,
+      },
+      "label": "a",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 7,
+        "line": 3,
+      },
+      "label": "b",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 2,
+        "line": 4,
+      },
+      "label": "initial",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 10,
+        "line": 7,
+      },
+      "label": "x",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 16,
+        "line": 7,
+      },
+      "label": "rest",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 8,
+      },
+      "label": "sum",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "methodResult",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 21,
+      },
+      "label": "obj",
+      "type": "var",
+    },
+  },
+}

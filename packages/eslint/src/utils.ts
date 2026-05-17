@@ -114,7 +114,7 @@ export function analyze<TMessageIds extends string>(context: Readonly<RuleContex
 
   // Auto-detect hook code
   if (!code.trim().startsWith('<') && /export\s+(?:function|const|let|var)\s+use[A-Z]/.test(code)) {
-    const results = analyzeHook(code, 0);
+    const results = analyzeHook(code, 0, framework as 'vue' | 'react');
     const allNodes = new Set<TypedNode>();
     const allEdges = new Map<TypedNode, Set<{ node: TypedNode, type: RelationType }>>();
     const allUsed = new Set<string>();

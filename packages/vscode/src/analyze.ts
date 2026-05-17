@@ -31,7 +31,7 @@ export async function analyze(code: string, language: 'vue' | 'react') {
 
   // Auto-detect hook code: non-vue content with use* exports
   if (!code.trim().startsWith('<') && isHookCode(code)) {
-    const results = analyzeHook(code, 0);
+    const results = analyzeHook(code, 0, language);
     const first = results[0];
 
     if (!first) {

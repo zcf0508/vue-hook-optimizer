@@ -98,3 +98,22 @@ describe('hook fixtures', async () => {
     });
   }
 });
+
+describe('hook-react fixtures', async () => {
+  const tests = await fg('../../fixtures/hook-react/**/*');
+  for (const test of tests) {
+    const testName = `hook-react/${basename(test)}`;
+    it(testName, async () => {
+      const source = readFileSync(test, 'utf-8');
+      const results = analyzeHook(source, 0, 'react');
+      for (const result of results) {
+        const hookName = result.hookName || 'anonymous';
+        await expect(result.graph)
+          .toMatchFileSnapshot(`./output/${testName}.${hookName}.graph.txt`);
+
+        await expect(result.nodesUsedInReturn)
+          .toMatchFileSnapshot(`./output/${testName}.${hookName}.nodes.txt`);
+      }
+    });
+  }
+});

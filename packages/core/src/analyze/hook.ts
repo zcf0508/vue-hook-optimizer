@@ -24,6 +24,16 @@ const watchHooks = [
   'watchWithFilter',
 ];
 
+const reactEffects = [
+  'useEffect',
+  'useLayoutEffect',
+  'useInsertionEffect',
+  'useMemo',
+  'useCallback',
+];
+
+const allEffectHooks = [...watchHooks, 'watchEffect', ...reactEffects];
+
 interface HookAnalysisResult {
   graph: {
     nodes: Set<string>
@@ -38,6 +48,7 @@ function processHookFunction(
   functionPath: NodePath<t.FunctionDeclaration | t.ArrowFunctionExpression | t.FunctionExpression>,
   lineOffset = 0,
   externalHookName = '',
+  framework: 'vue' | 'react' = 'vue',
 ): HookAnalysisResult {
   const nodeCollection = new NodeCollection(lineOffset);
   const nodesUsedInReturn = new Set<string>();
@@ -362,7 +373,7 @@ function processHookFunction(
         if (path.node.id.type === 'Identifier') {
           const name = path.node.id.name;
           if (name && graph.nodes.has(name) && path.scope.getBinding(name)?.scope === functionScope) {
-            if (path.node.init.type === 'CallExpression' && path.node.init.callee.type === 'Identifier' && [...watchHooks, 'watchEffect'].includes(path.node.init.callee.name)) {
+            if (path.node.init.type === 'CallExpression' && path.node.init.callee.type === 'Identifier' && allEffectHooks.includes(path.node.init.callee.name)) {
               traverseHooks(path.node.init, path.scope);
             }
             traverse(path.node.init, {
@@ -535,6 +546,12 @@ function processHookFunction(
   // Third pass: collect return statement nodes (public API)
   traverse(bodyNode, {
     ReturnStatement(path) {
+      // Skip ReturnStatements inside nested functions
+      const fnParent = path.findParent(p => p.isFunction());
+      if (fnParent && fnParent.node !== functionNode) {
+        return;
+      }
+
       if (path.node.argument?.type === 'ObjectExpression') {
         const returnNode = path.node.argument;
         traverse(returnNode, {
@@ -542,9 +559,6 @@ function processHookFunction(
             if (path3.parent === returnNode) {
               if (path3.node.key.type === 'Identifier' && path3.node.value.type === 'Identifier') {
                 nodesUsedInReturn.add(path3.node.value.name);
-              }
-              else if (path3.node.key.type === 'Identifier' && path3.node.value.type === 'Identifier') {
-                nodesUsedInReturn.add(path3.node.key.name);
               }
             }
           },
@@ -555,6 +569,16 @@ function processHookFunction(
           },
         }, path.scope, path);
       }
+      else if (path.node.argument?.type === 'ArrayExpression') {
+        path.node.argument.elements.forEach((element) => {
+          if (element?.type === 'Identifier') {
+            nodesUsedInReturn.add(element.name);
+          }
+        });
+      }
+      else if (path.node.argument?.type === 'Identifier') {
+        nodesUsedInReturn.add(path.node.argument.name);
+      }
     },
   }, functionScope, functionPath);
 
@@ -564,6 +588,7 @@ function processHookFunction(
 export function analyzeHook(
   content: string,
   lineOffset = 0,
+  framework: 'vue' | 'react' = 'vue',
 ) {
   const ast = babelParse(content, { sourceType: 'module', plugins: [
     'typescript',
@@ -617,7 +642,7 @@ export function analyzeHook(
 
     const funcPath = walkCallExpressionChain(init, varPath, ['init']);
     if (funcPath) {
-      results.push(processHookFunction(funcPath, lineOffset, hookName));
+      results.push(processHookFunction(funcPath, lineOffset, hookName, framework));
     }
   }
 
@@ -626,14 +651,14 @@ export function analyzeHook(
       const declaration = path.node.declaration;
       if (declaration.type === 'FunctionDeclaration' && declaration.id?.name.startsWith('use')) {
         const funcPath = path.get('declaration') as NodePath<t.FunctionDeclaration>;
-        results.push(processHookFunction(funcPath, lineOffset));
+        results.push(processHookFunction(funcPath, lineOffset, '', framework));
       }
     },
     ExportNamedDeclaration(path) {
       const declaration = path.node.declaration;
       if (declaration?.type === 'FunctionDeclaration' && declaration.id?.name.startsWith('use')) {
         const funcPath = path.get('declaration') as NodePath<t.FunctionDeclaration>;
-        results.push(processHookFunction(funcPath, lineOffset));
+        results.push(processHookFunction(funcPath, lineOffset, '', framework));
       }
       else if (declaration?.type === 'VariableDeclaration') {
         declaration.declarations.forEach((decl) => {
@@ -652,7 +677,7 @@ export function analyzeHook(
     },
     FunctionDeclaration(path) {
       if (path.node.id?.name.startsWith('use') && path.parent.type === 'Program') {
-        results.push(processHookFunction(path, lineOffset));
+        results.push(processHookFunction(path, lineOffset, '', framework));
       }
     },
     VariableDeclaration(path) {

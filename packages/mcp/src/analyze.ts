@@ -84,7 +84,7 @@ function analyzeOne(
 
 export async function analyze(code: string, language: 'vue' | 'react'): Promise<AnalyzeResult> {
   if (!code.trim().startsWith('<') && isHookCode(code)) {
-    const results = analyzeHook(code, 0);
+    const results = analyzeHook(code, 0, language);
     const hooks: HookItem[] = results.map(result => ({
       name: result.hookName,
       ...analyzeOne(result.graph, result.nodesUsedInReturn),

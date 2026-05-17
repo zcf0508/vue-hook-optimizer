@@ -1,0 +1,22 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 8,
+        "line": 11,
+      },
+      "label": "count",
+      "type": "var",
+    } => Set {},
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 8,
+        "line": 11,
+      },
+      "label": "count",
+      "type": "var",
+    },
+  },
+}

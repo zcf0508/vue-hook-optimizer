@@ -1,0 +1,177 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 26,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 9,
+        "line": 3,
+      },
+      "label": "value",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 26,
+            "line": 2,
+          },
+          "label": "initialValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 16,
+        "line": 3,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "setValue",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 26,
+            "line": 2,
+          },
+          "label": "initialValue",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "toggle",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 16,
+            "line": 3,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "setValue",
+          "type": "var",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "setTrue",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 16,
+            "line": 3,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "setValue",
+          "type": "var",
+        },
+        "type": "call",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 13,
+      },
+      "label": "setFalse",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 16,
+            "line": 3,
+            "used": Set {
+              "Call Expression",
+            },
+          },
+          "label": "setValue",
+          "type": "var",
+        },
+        "type": "call",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 26,
+        "line": 2,
+      },
+      "label": "initialValue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 3,
+      },
+      "label": "value",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 16,
+        "line": 3,
+        "used": Set {
+          "Call Expression",
+        },
+      },
+      "label": "setValue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 5,
+      },
+      "label": "toggle",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 9,
+      },
+      "label": "setTrue",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 13,
+      },
+      "label": "setFalse",
+      "type": "var",
+    },
+  },
+}

@@ -1,0 +1,38 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 33,
+        "line": 2,
+      },
+      "label": "title",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "prevTitle",
+      "type": "var",
+    } => Set {},
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 33,
+        "line": 2,
+      },
+      "label": "title",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 3,
+      },
+      "label": "prevTitle",
+      "type": "var",
+    },
+  },
+}

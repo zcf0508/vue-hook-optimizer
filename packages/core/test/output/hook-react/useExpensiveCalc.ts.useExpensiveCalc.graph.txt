@@ -1,0 +1,121 @@
+{
+  "edges": Map {
+    {
+      "info": {
+        "column": 33,
+        "line": 2,
+      },
+      "label": "items",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 9,
+        "line": 3,
+      },
+      "label": "filter",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 17,
+        "line": 3,
+      },
+      "label": "setFilter",
+      "type": "var",
+    } => Set {},
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "sorted",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 33,
+            "line": 2,
+          },
+          "label": "items",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 8,
+      },
+      "label": "filtered",
+      "type": "var",
+    } => Set {
+      {
+        "node": {
+          "info": {
+            "column": 9,
+            "line": 3,
+          },
+          "label": "filter",
+          "type": "var",
+        },
+        "type": "get",
+      },
+      {
+        "node": {
+          "info": {
+            "column": 8,
+            "line": 4,
+          },
+          "label": "sorted",
+          "type": "var",
+        },
+        "type": "get",
+      },
+    },
+  },
+  "nodes": Set {
+    {
+      "info": {
+        "column": 33,
+        "line": 2,
+      },
+      "label": "items",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 9,
+        "line": 3,
+      },
+      "label": "filter",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 17,
+        "line": 3,
+      },
+      "label": "setFilter",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 4,
+      },
+      "label": "sorted",
+      "type": "var",
+    },
+    {
+      "info": {
+        "column": 8,
+        "line": 8,
+      },
+      "label": "filtered",
+      "type": "var",
+    },
+  },
+}
