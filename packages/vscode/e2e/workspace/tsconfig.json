@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "target": "es2017",
+    "jsx": "react",
     "module": "commonjs",
+    "strict": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "jsx": "react"
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",

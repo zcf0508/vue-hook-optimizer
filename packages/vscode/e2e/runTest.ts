@@ -1,6 +1,7 @@
 import * as cp from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import process from 'node:process';
 import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 
 function findSystemVSCode(): string | null {

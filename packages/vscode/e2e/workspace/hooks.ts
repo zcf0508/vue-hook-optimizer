@@ -1,34 +1,34 @@
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue';
 
 export function useCounter(initialValue = 0) {
-  const count = ref(initialValue)
-  const doubled = computed(() => count.value * 2)
+  const count = ref(initialValue);
+  const doubled = computed(() => count.value * 2);
 
   function increment() {
-    count.value++
+    count.value++;
   }
 
   function decrement() {
-    count.value--
+    count.value--;
   }
 
-  return { count, doubled, increment, decrement }
+  return { count, doubled, increment, decrement };
 }
 
 export function useToggle(initialValue = false) {
-  const state = ref(initialValue)
+  const state = ref(initialValue);
 
   function toggle() {
-    state.value = !state.value
+    state.value = !state.value;
   }
 
   function setTrue() {
-    state.value = true
+    state.value = true;
   }
 
   function setFalse() {
-    state.value = false
+    state.value = false;
   }
 
-  return { state, toggle, setTrue, setFalse }
+  return { state, toggle, setTrue, setFalse };
 }
