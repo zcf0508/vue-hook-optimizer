@@ -134,6 +134,8 @@
     "dev": "tsc ./script/index.ts & tsdown --env.NODE_ENV development",
     "nodemon": "nodemon",
     "vscode:prepublish": "pnpm build",
+    "pretest": "tsc -p ./e2e/tsconfig.json && pnpm build",
+    "test": "node ./e2e/out/runTest.js",
     "publish": "vsce publish --no-dependencies",
     "pack": "vsce package --no-dependencies",
     "typecheck": "tsc --noEmit",
@@ -142,11 +144,16 @@
   },
   "devDependencies": {
     "@types/lodash-es": "catalog:",
+    "@types/mocha": "catalog:",
     "@types/vscode": "^1.78.1",
+    "@vscode/test-electron": "catalog:",
     "@vscode/vsce": "catalog:",
+    "glob": "catalog:",
     "lodash-es": "catalog:",
+    "mocha": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
-    "vscode-ext-gen": "catalog:"
+    "vscode-ext-gen": "catalog:",
+    "vue-hook-optimizer": "workspace:*"
   }
 }

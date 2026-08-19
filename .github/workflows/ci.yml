@@ -76,3 +76,35 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
+
+  e2e:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+
+      - name: Setup
+        run: npm i -g pnpm@9
+
+      - name: Install
+        run: pnpm i --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Run E2E tests (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:vscode
+
+      - name: Run E2E tests (macOS / Windows)
+        if: runner.os != 'Linux'
+        run: npm run test:vscode

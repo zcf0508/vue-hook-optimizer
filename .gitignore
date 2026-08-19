@@ -29,6 +29,9 @@ node_modules
 packages/vscode/dist
 *.vsix
 
+.vscode-test
+packages/vscode/e2e/out
+
 !packages/vscode/script/*.min.js
 packages/vscode/script/*.js
 coverage

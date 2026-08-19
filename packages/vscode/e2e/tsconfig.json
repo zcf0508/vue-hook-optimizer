@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out",
+    "rootDir": ".",
+    "types": ["node", "mocha", "vscode"],
+    "module": "commonjs",
+    "moduleResolution": "node"
+  },
+  "include": ["runTest.ts", "suite/**/*.ts"]
+}
