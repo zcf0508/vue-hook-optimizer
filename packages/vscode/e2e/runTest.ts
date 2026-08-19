@@ -7,7 +7,9 @@ import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 function findSystemVSCode(): string | null {
   const candidates = [
     '/Applications/Visual Studio Code.app/Contents/MacOS/Electron',
+    '/Applications/Visual Studio Code.app/Contents/MacOS/Code',
     '/Applications/Visual Studio Code - Insiders.app/Contents/MacOS/Electron',
+    '/Applications/Visual Studio Code - Insiders.app/Contents/MacOS/Code',
   ];
 
   for (const candidate of candidates) {
@@ -19,10 +21,35 @@ function findSystemVSCode(): string | null {
   return null;
 }
 
+/**
+ * Some VS Code builds (especially downloaded test versions) use `Code` as the
+ * binary name instead of `Electron`. Try both.
+ */
+function resolveExecutablePath(basePath: string): string {
+  if (fs.existsSync(basePath)) {
+    return basePath;
+  }
+
+  // Try replacing 'Electron' with 'Code' in the path
+  const alt = basePath.replace(/\/Electron$/, '/Code');
+  if (fs.existsSync(alt)) {
+    return alt;
+  }
+
+  // If the path ends with 'Code', try 'Electron'
+  const alt2 = basePath.replace(/\/Code$/, '/Electron');
+  if (fs.existsSync(alt2)) {
+    return alt2;
+  }
+
+  return basePath;
+}
+
 async function main() {
-  const extensionDevelopmentPath = path.resolve(__dirname, '../');
+  // __dirname is e2e/out/ in compiled output
+  const extensionDevelopmentPath = path.resolve(__dirname, '../../');
   const extensionTestsPath = path.resolve(__dirname, './suite/index');
-  const workspaceFolder = path.resolve(__dirname, './workspace');
+  const workspaceFolder = path.resolve(__dirname, '../workspace');
 
   // Prefer system VS Code on macOS to avoid quarantine issues with downloaded builds
   // On other platforms, download the test version
@@ -37,7 +64,8 @@ async function main() {
     else {
       console.log('Downloading VS Code for testing...');
       vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
-      console.log('VS Code downloaded to:', vscodeExecutablePath);
+      vscodeExecutablePath = resolveExecutablePath(vscodeExecutablePath);
+      console.log('VS Code executable:', vscodeExecutablePath);
     }
   }
 
