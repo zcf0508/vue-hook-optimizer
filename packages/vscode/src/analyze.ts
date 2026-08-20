@@ -49,6 +49,7 @@ export async function analyze(code: string, language: 'vue' | 'react') {
       graph: first.graph,
       _allHooks: results.map(r => ({
         hookName: r.hookName,
+        vis: getVisData(r.graph, r.nodesUsedInReturn, undefined, 'return'),
         mermaid: getMermaidText(r.graph, r.nodesUsedInReturn),
         suggests: gen(r.graph, r.nodesUsedInReturn),
       })),

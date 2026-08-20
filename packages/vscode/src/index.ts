@@ -32,37 +32,79 @@ const visTemplate = template(`<html>
         html,body {
             width: 100vw;
             height: 100vh;
-            margin: none;
-            padding: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
         #mynetwork {
             width: 100%;
             height: 100%;
         }
+        .hook-tabs {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f8f9fa;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        .hook-tab {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: white;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+        .hook-tab:hover {
+            color: #374151;
+            background: #f3f4f6;
+        }
+        .hook-tab.active {
+            background: #f59e0b;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .hook-tab:first-child {
+            margin-left: 0;
+        }
     </style>
 </head>
 <body>
-<div class="h-full w-full relative">
-  <div id="SearchInputContainer" class="absolute right-[10px] top-[5px] z-50">
-    <input  
-      id="searchInput"
-      placeholder="search by node name"
-      class="
-        w-[200px]
-        px-4 py-2
-        border-[#ddd] border-[1px] border-solid rounded-md
-        bg-transparent
-        shadow
-        backdrop-blur
-      "
-    >
+<div class="app-container">
+  <div id="hookTabsContainer" class="hook-tabs" style="display:none;">
+  </div>
+  <div class="relative" style="width:100%;flex:1;min-height:0;">
+    <div id="SearchInputContainer" class="absolute right-[10px] top-[5px] z-50">
+      <input
+        id="searchInput"
+        placeholder="search by node name"
+        class="
+          w-[200px]
+          px-4 py-2
+          border-[#ddd] border-[1px] border-solid rounded-md
+          bg-transparent
+          shadow
+          backdrop-blur
+        "
+      >
     </div>
-  <div id="mynetwork"></div>
-  <div 
-    class="
-      absolute right-[10px] top-[50px] p-2
-      border border-solid border-[#eee]
-      shadow-light-500 
+    <div id="mynetwork"></div>
+    <div
+      class="
+        absolute right-[10px] top-[50px] p-2
+        border border-solid border-[#eee]
+        shadow-light-500 
       flex flex-col gap-2
       backdrop-blur
     "
@@ -113,9 +155,14 @@ const visTemplate = template(`<html>
   </div>
   </div>
 </div>
+</div>
 
 <script type="text/javascript">
-init(decodeURIComponent(atob(\`<%= data %>\`)), decodeURIComponent(atob(\`<%= config %>\`)));
+init(
+  decodeURIComponent(atob(\`<%= data %>\`)),
+  decodeURIComponent(atob(\`<%= config %>\`)),
+  decodeURIComponent(atob(\`<%= allHooks %>\`))
+);
 const inputEle = findSearchInput();
 if(inputEle) {
   inputEle.addEventListener('input', (e) => {
@@ -151,6 +198,9 @@ const outputChannel = window.createOutputChannel('Vue Hook Optimizer');
 
 let alerted = false;
 
+/** Last created webview panel, exposed for E2E testing */
+export const lastPanel: vscode.WebviewPanel | null = null;
+
 export function activate(context: vscode.ExtensionContext) {
   activateHighlighting(context);
 
@@ -176,6 +226,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     interface HookItem {
       hookName: string
+      vis: { nodes: any[], edges: any[] }
       mermaid: string
       suggests: Array<{ type: string, message: string }>
     }
@@ -200,6 +251,7 @@ export function activate(context: vscode.ExtensionContext) {
       libIndex: getWebviewUri(panel.webview, context.extensionPath, 'index.js'),
       data: btoa(encodeURIComponent(JSON.stringify(data.vis))),
       config: btoa(encodeURIComponent(JSON.stringify(config?.vis))),
+      allHooks: btoa(encodeURIComponent(JSON.stringify(allHooks || []))),
       legend_used: config?.legend.used,
       legend_normal: config?.legend.normal,
       legend_variant: config?.legend.variant,

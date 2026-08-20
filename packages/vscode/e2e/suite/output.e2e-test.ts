@@ -164,4 +164,75 @@ suite('Analyze Output', () => {
       assert.ok(vis.nodes && vis.nodes.length > 0, 'Vis data should have nodes');
     });
   });
+
+  suite('Multi-hook vis data (hooks.ts)', () => {
+    let hooksWithVis: any[];
+
+    suiteSetup(() => {
+      const { analyzeHook, getVisData } = require('vue-hook-optimizer');
+      const code = readWorkspaceFile('hooks.ts');
+      const results = analyzeHook(code, 0, 'vue');
+      hooksWithVis = results.map((r: any) => ({
+        hookName: r.hookName,
+        vis: getVisData(r.graph, r.nodesUsedInReturn, undefined, 'return'),
+        mermaid: null,
+        suggests: null,
+      }));
+    });
+
+    test('should have vis data for each hook', () => {
+      assert.ok(hooksWithVis.length >= 2, `Should have at least 2 hooks, got ${hooksWithVis.length}`);
+      for (const hook of hooksWithVis) {
+        assert.ok(hook.vis, `${hook.hookName} should have vis data`);
+        assert.ok(Array.isArray(hook.vis.nodes), `${hook.hookName} vis should have nodes array`);
+        assert.ok(Array.isArray(hook.vis.edges), `${hook.hookName} vis should have edges array`);
+        assert.ok(hook.vis.nodes.length > 0, `${hook.hookName} vis should have at least one node`);
+      }
+    });
+
+    test('useCounter vis should contain expected nodes', () => {
+      const counter = hooksWithVis.find((h: any) => h.hookName === 'useCounter');
+      assert.ok(counter, 'useCounter should exist');
+      const nodeIds = counter.vis.nodes.map((n: any) => n.id);
+      assert.ok(nodeIds.includes('count'), 'useCounter vis should have count node');
+      assert.ok(nodeIds.includes('doubled'), 'useCounter vis should have doubled node');
+      assert.ok(nodeIds.includes('increment'), 'useCounter vis should have increment node');
+      assert.ok(nodeIds.includes('decrement'), 'useCounter vis should have decrement node');
+    });
+
+    test('useToggle vis should contain expected nodes', () => {
+      const toggle = hooksWithVis.find((h: any) => h.hookName === 'useToggle');
+      assert.ok(toggle, 'useToggle should exist');
+      const nodeIds = toggle.vis.nodes.map((n: any) => n.id);
+      assert.ok(nodeIds.includes('state'), 'useToggle vis should have state node');
+      assert.ok(nodeIds.includes('toggle'), 'useToggle vis should have toggle node');
+      assert.ok(nodeIds.includes('setTrue'), 'useToggle vis should have setTrue node');
+      assert.ok(nodeIds.includes('setFalse'), 'useToggle vis should have setFalse node');
+    });
+
+    test('each hook vis should have edges', () => {
+      for (const hook of hooksWithVis) {
+        assert.ok(hook.vis.edges.length > 0, `${hook.hookName} should have edges`);
+      }
+    });
+
+    test('hooks should have different node sets', () => {
+      const counter = hooksWithVis.find((h: any) => h.hookName === 'useCounter');
+      const toggle = hooksWithVis.find((h: any) => h.hookName === 'useToggle');
+      assert.ok(counter && toggle, 'Both hooks should exist');
+
+      const counterIds = new Set(counter.vis.nodes.map((n: any) => n.id));
+      const toggleIds = new Set(toggle.vis.nodes.map((n: any) => n.id));
+
+      // Both hooks have an 'initialValue' param, but their other nodes should be distinct
+      assert.ok(counterIds.has('count'), 'useCounter should have its own count node');
+      assert.ok(!toggleIds.has('count'), 'useToggle should not have count node');
+      assert.ok(counterIds.has('increment'), 'useCounter should have increment');
+      assert.ok(!toggleIds.has('increment'), 'useToggle should not have increment');
+      assert.ok(toggleIds.has('state'), 'useToggle should have its own state node');
+      assert.ok(!counterIds.has('state'), 'useCounter should not have state node');
+      assert.ok(toggleIds.has('toggle'), 'useToggle should have toggle function');
+      assert.ok(!counterIds.has('toggle'), 'useCounter should not have toggle function');
+    });
+  });
 });

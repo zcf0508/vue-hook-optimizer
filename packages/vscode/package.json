@@ -35,7 +35,7 @@
     "commands": [
       {
         "command": "vho.action.analyze",
-        "title": "Analyze your `vue` file",
+        "title": "Analyze Vue/React/Hooks File",
         "icon": {
           "dark": "images/analyze-light.png",
           "light": "images/analyze.png"

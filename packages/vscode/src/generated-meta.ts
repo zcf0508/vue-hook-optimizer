@@ -4,7 +4,7 @@
 // Meta info
 export const publisher = "zcf0508"
 export const name = "vue-hook-optimizer-ext"
-export const version = "0.0.82"
+export const version = "0.0.85"
 export const displayName = "vue-hook-optimizer"
 export const description = undefined
 export const extensionId = `${publisher}.${name}`
@@ -21,7 +21,7 @@ export type CommandKey =
  */
 export const commands = {
   /**
-   * Analyze your `vue` file
+   * Analyze Vue/React/Hooks File
    * @value `vho.action.analyze`
    */
   vhoActionAnalyze: "vho.action.analyze",
