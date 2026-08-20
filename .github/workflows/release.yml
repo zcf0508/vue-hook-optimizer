@@ -19,7 +19,7 @@ jobs:
       - name: Set node
         uses: actions/setup-node@v5
         with:
-          node-version: lts/*
+          node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm i -g npm@latest
@@ -35,15 +35,24 @@ jobs:
         run: pnpm i --frozen-lockfile
 
       - name: Publish to NPM
-        run: pnpm publish --access public --no-git-checks
+        run: |
+          pnpm run build
+          TARBALL=$(pnpm pack --pack-destination "$RUNNER_TEMP" | tail -n 1)
+          npm publish "$TARBALL" --access public
         working-directory: ./packages/core
 
       - name: Publish eslint-plugin to NPM
-        run: pnpm publish --access public --no-git-checks
+        run: |
+          pnpm run build
+          TARBALL=$(pnpm pack --pack-destination "$RUNNER_TEMP" | tail -n 1)
+          npm publish "$TARBALL" --access public
         working-directory: ./packages/eslint
 
       - name: Publish mcp to NPM
-        run: pnpm publish --access public --no-git-checks
+        run: |
+          pnpm run build
+          TARBALL=$(pnpm pack --pack-destination "$RUNNER_TEMP" | tail -n 1)
+          npm publish "$TARBALL" --access public
         working-directory: ./packages/mcp
 
       - name: Publish to VSCE
