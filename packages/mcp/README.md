@@ -39,18 +39,13 @@ Add this to your `claude_desktop_config.json`:
 }
 ```
 
-## Using the Refactor Skills
+## Using the Refactor Skill
 
-- Files:
-  - `packages/mcp/refactor_prompt_zh.md` (Chinese Skill)
-  - `packages/mcp/refactor_prompt_en.md` (English Skill)
-- Both files already include valid Skill YAML frontmatter (`name`, `description`) and detailed instructions.
+- File: `packages/mcp/SKILL.md`
+- The file includes valid Skill YAML frontmatter (`name`, `description`, `when_to_use`) and a decision framework for refactoring.
 - Setup (choose one):
-  - Personal Skills: copy each file’s content to `~/.claude/skills/<skill-name>/SKILL.md`
-  - Project Skills: copy to `.claude/skills/<skill-name>/SKILL.md` within your project
-  - Example:
-    - `~/.claude/skills/vho-refactor-zh/SKILL.md` → content from `refactor_prompt_zh.md`
-    - `~/.claude/skills/vho-refactor-en/SKILL.md` → content from `refactor_prompt_en.md`
+  - Personal Skills: copy to `~/.claude/skills/vho-refactor/SKILL.md`
+  - Project Skills: copy to `.claude/skills/vho-refactor/SKILL.md` within your project
 - Workflow:
   - Ensure the `vue-hook-optimizer` MCP server is connected (as above)
   - Invoke the Skill; it will instruct the agent to call the MCP tool `analyze`:
@@ -60,8 +55,9 @@ Add this to your `claude_desktop_config.json`:
     - Output:
       - `mermaid` diagram (dependency graph)
       - Optimization suggestions (articulation points, isolated groups, chain calls, cycles)
-  - Follow the Skill’s decision framework to refactor
-  - Re-run `analyze` after changes to validate (structure/design/quality/business checks)
+      - Variable communities
+  - Follow the Skill's decision framework to refactor
+  - Re-run `analyze` after changes to validate
 
 ## Add MCP to Claude Code (CLI)
 
