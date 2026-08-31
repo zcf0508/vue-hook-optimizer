@@ -1,91 +1,198 @@
 ---
 name: vho-refactor
-description: "Refactor Vue/React components using VHO dependency analysis. Call the vue-hook-optimizer MCP analyze tool to get dependency graphs, communities, and suggestions, then follow the decision framework to refactor. Use when: refactor, optimize hooks, composable, split component, dependency graph, analyze component, Vue/React component too large."
-when_to_use: "refactor, optimize hooks, composable, vue component too large, split component, dependency graph, analyze component"
-dispatch_intent: "Component refactoring driven by VHO dependency analysis"
+description: |
+  Refactor Vue/React components using VHO dependency analysis and create adaptable composables/hooks. Call the vue-hook-optimizer MCP `analyze` tool to get dependency graphs, variable communities, and optimization suggestions, then follow the decision framework to refactor. Use when: refactor, optimize hooks, composable, split component, dependency graph, analyze component, Vue/React component too large, create adaptable composable.
+license: MIT
+metadata:
+  author: zcf0508
+  version: 0.0.86
+  repository: github.com/zcf0508/vue-hook-optimizer
+compatibility: Requires a Vue 2/3 or React project, and the vue-hook-optimizer MCP server connected
 ---
 
-# VHO Component Refactoring
+# Goal
 
-Use the VHO MCP `analyze` tool to get dependency graphs, then follow the decision framework below.
+Use VHO MCP `analyze` to reveal coupling, then refactor components into well-structured composables/hooks with adaptable inputs.
 
-## Workflow
+# Instructions
 
-1. **Call `analyze`** on the target file (`absolutePath`, `framework` = `vue` | `react`)
-2. **Review output**: dependency graph, suggestions, variable communities
-3. **Decide**: follow the decision framework below
-4. **Refactor**: apply changes incrementally
-5. **Re-analyze** to verify improvement
-6. **Type check**: run project's `typecheck` or `tsc --noEmit` / `vue-tsc --noEmit`
+1. **Analyze** — call `analyze` with `absolutePath` and `framework` (`vue` | `react`). Review mermaid graph, suggestions, and variable communities.
+2. **Decide** — follow the decision framework below.
+3. **Extract** — apply extraction criteria and adaptable API design.
+4. **Refactor incrementally** — pure functions → state management → side effects → validate.
+5. **Verify** — type-check (`vue-tsc --noEmit` / `tsc --noEmit`) and re-analyze to confirm improvement.
 
-## Decision Framework
+# Decision Framework
 
 Follow in order:
 
-1. If **nodes < 10** AND no cycles AND no articulation points → **STOP**, no refactoring needed
-2. If **circular dependencies** exist → break cycles first (Priority: Very High)
-3. If **articulation points** exist → extract related logic (Priority: Very High)
-4. If **large community (>8 members)** → extract as independent Composable (Priority: High)
-5. If **multiple isolated node groups** → extract by functional domain (Priority: High)
-6. If **long chain dependencies (>4 layers)** → layered refactoring (Priority: Medium)
-7. **Type check** → re-analyze to validate
+1. **Nodes < 10** AND no cycles AND no articulation points → **STOP**
+2. **Circular dependencies** → break cycles first (Very High)
+3. **Articulation points** → extract related logic (Very High)
+4. **Large community (>8)** → extract as Composable/Hook (High)
+5. **Multiple isolated groups** → extract by domain (High)
+6. **Long chains (>4 layers)** → layered refactoring (Medium)
+7. **Type check** → re-analyze
 
-## Key Concepts
+# Extraction Criteria
 
-| Term | Meaning | Action |
-|------|---------|--------|
-| **Articulation Points** | Nodes that split the graph when removed | Core refactoring targets |
-| **Variable Communities** | Tightly coupled variables (Label Propagation) | Extract together as Composable |
-| **Isolated Node Groups** | Interconnected nodes separated from main logic | Extraction candidates |
-| **Dependency Depth** | Chain length; >4 layers | Mixed responsibilities |
+**Extract as Composable/Hook** if ANY: 3+ reactive states, lifecycle management, complex side effects, or reusable.
 
-## Extraction Criteria
+**Merge** if ANY: shared state >50%, always used together, or split needs ≥3 params.
 
-**Extract as Composable** if ANY of these:
-- 3+ related reactive states
-- Complete lifecycle management (mount/unmount)
-- Complex side effect handling
-- Reused or potentially reusable
+**Keep inline** if <3 members and no articulation points.
 
-**Merge Composables** if ANY of these:
-- Shared state ratio >50%
-- Always used together, never called separately
-- Split requires passing ≥3 parameters between them
+# Adaptable API Design
 
-## State Ownership
+## Vue composables
 
-| State Type | Where It Belongs | Examples |
-|------------|------------------|----------|
-| Internal lifecycle states | Inside Composable | `loading`, `error`, `page`, `cache` |
-| User input / config | Pass as parameters | `userInput`, `options`, `externalData` |
-| Global context | Retrieve internally | `useRoute()`, `useStore()` |
+Use `MaybeRef` / `MaybeRefOrGetter` so callers can pass plain values, refs, getters, or computed refs.
 
-## Lifecycle Ownership
+| Use case | Type | Resolve with |
+|----------|------|--------------|
+| Read-only | `MaybeRefOrGetter<T>` | `toRef()` in watchers, `toValue()` for snapshots |
+| Writable | `MaybeRef<T>` | `toRef()` |
+| DOM target | `MaybeRefOrGetter<T>` | `toRef()` or `toValue()` |
+| Callback | Plain function | **Do not** use `MaybeRefOrGetter` |
 
-| Lifecycle | → Composable | → Component |
-|-----------|--------------|-------------|
-| `onMounted` | Data fetching, polling | DOM ops, chart init |
-| `onUnmounted` | Timer/request cleanup | Event unbinding |
-| `watch` | Business state changes | UI state changes |
-| `computed` | Business calculations | Style calculations |
+```ts
+export type MaybeRef<T = any> = T | Ref<T> | ShallowRef<T> | WritableComputedRef<T>;
+export type MaybeRefOrGetter<T = any> = MaybeRef<T> | ComputedRef<T> | (() => T);
+```
 
-## Implementation Steps
+**Rules**: normalize inside reactive effects, not at call time.
 
-1. **Extract Pure Functions** → side-effect-free utilities
-2. **Extract State Management** → related states + operations as Composable
-3. **Integrate Side Effects** → lifecycle and async operations
-4. **Validate** → re-run `analyze`, check node count decreased, articulation points eliminated
+## React hooks
 
-## Naming
+Use `RefObject` / `MutableRefObject` / getters. Do **not** force Vue concepts.
 
-- By entity: `useUser`, `useOrder`, `useProduct`
+| Use case | Type | How to handle |
+|----------|------|---------------|
+| Read-only | `T \| RefObject<T> \| (() => T)` | `useLatest` + read current value inside effect |
+| Writable | `MutableRefObject<T>` | Mutate `.current` directly |
+| DOM target | `RefObject<Element> \| Element \| null` | Normalize to `Element \| null` |
+| Callback | Plain function | `useLatest` if used inside `useEffect` |
+
+```ts
+type MaybeRef<T> = T | React.RefObject<T> | (() => T)
+type MutableRef<T> = React.MutableRefObject<T>
+
+function useLatest<T>(value: T) {
+  const ref = useRef(value)
+  useEffect(() => { ref.current = value })
+  return ref
+}
+
+function resolveValue<T>(input: MaybeRef<T>): T {
+  if (typeof input === 'function') return (input as () => T)()
+  if (input && typeof input === 'object' && 'current' in input) return input.current
+  return input
+}
+```
+
+**Rules**: avoid stale closures with `useLatest`; keep getters out of dependency arrays unless stable.
+
+# Examples
+
+## Vue: read-only adaptable composable
+
+```ts
+import { watch, toRef } from 'vue'
+import type { MaybeRefOrGetter } from 'vue'
+
+export function useDocumentTitle(title: MaybeRefOrGetter<string>) {
+  watch(toRef(title), (t) => { document.title = t }, { immediate: true })
+}
+```
+
+## Vue: writable adaptable composable
+
+```ts
+import { toRef } from 'vue'
+import type { MaybeRef } from 'vue'
+
+export function useCounter(count: MaybeRef<number>) {
+  const countRef = toRef(count)
+  function add() { countRef.value++ }
+  return { count: countRef, add }
+}
+```
+
+## Vue: extract data fetching
+
+**Before** (inline): `userId`, `user`, `loading`, `error`, `fetchUser`, `onMounted`, `watch` all in component.
+
+**After** (`composables/useUser.ts`):
+
+```ts
+export function useUser(userId: MaybeRefOrGetter<string>) {
+  const userIdRef = toRef(userId)
+  const user = ref(null)
+  const loading = ref(false)
+  const error = ref(null)
+
+  async function fetchUser(id: string) { /* ... */ }
+
+  onMounted(() => fetchUser(userIdRef.value))
+  watch(userIdRef, fetchUser)
+
+  return { user, loading, error, refresh: () => fetchUser(userIdRef.value) }
+}
+```
+
+## React: read-only adaptable hook
+
+```ts
+export function useDocumentTitle(title: MaybeRef<string>) {
+  const titleRef = useLatest(title)
+  useEffect(() => { document.title = resolveValue(titleRef.current) }, [title])
+}
+```
+
+## React: writable adaptable hook
+
+```ts
+export function useCounter(count: number | MutableRef<number>) {
+  const isRef = count && typeof count === 'object' && 'current' in count
+  const internalRef = useRef(typeof count === 'number' ? count : count.current)
+  const countRef = (isRef ? count : internalRef) as MutableRef<number>
+
+  useEffect(() => {
+    if (typeof count === 'number') countRef.current = count
+  }, [count])
+
+  const add = useCallback(() => { countRef.current += 1 }, [countRef])
+  return { count: countRef, add }
+}
+```
+
+## React: break circular dependency
+
+**Before**: `items → total → discount → items` cycle via two `useEffect`s.
+
+**After** (`hooks/useOrderPricing.ts`):
+
+```ts
+export function useOrderPricing(items: Item[]) {
+  const [baseDiscount, setBaseDiscount] = useState(0)
+  const total = useMemo(() => calculateTotal(items, baseDiscount), [items, baseDiscount])
+  const discount = useMemo(() => calculateDiscount(total), [total])
+  return { total, discount, setBaseDiscount }
+}
+```
+
+# Naming
+
+- By entity: `useUser`, `useOrder`
 - By function: `useDataFetching`, `useFormValidation`
 - By process: `useCheckout`, `useAuthentication`
 
-## Rules
+# Constraints
 
-- **Never break functionality** — all original features must remain intact
-- **Avoid over-extraction** — communities with <3 members usually stay inline
-- **Don't refactor for refactoring's sake** — <10 nodes with no issues → skip
-- **Preserve readability** — clarity over brevity
-- **Respect existing patterns** — follow project's established conventions
+- Never break functionality
+- Avoid over-extraction (<3 members usually stay inline)
+- Don't refactor for refactoring's sake (<10 nodes with no issues → skip)
+- Preserve readability; respect existing patterns
+- Always type-check and re-analyze after changes
+- Vue: never wrap callbacks in `MaybeRefOrGetter`
+- React: avoid stale closures; keep hooks idiomatic (no forced Vue concepts)
