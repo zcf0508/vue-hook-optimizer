@@ -74,19 +74,19 @@ Use `RefObject` / `MutableRefObject` / getters. Do **not** force Vue concepts.
 | Callback | Plain function | `useLatest` if used inside `useEffect` |
 
 ```ts
-type MaybeRef<T> = T | React.RefObject<T> | (() => T)
-type MutableRef<T> = React.MutableRefObject<T>
+type MaybeRef<T> = T | React.RefObject<T> | (() => T);
+type MutableRef<T> = React.MutableRefObject<T>;
 
 function useLatest<T>(value: T) {
-  const ref = useRef(value)
-  useEffect(() => { ref.current = value })
-  return ref
+  const ref = useRef(value);
+  useEffect(() => { ref.current = value; });
+  return ref;
 }
 
 function resolveValue<T>(input: MaybeRef<T>): T {
-  if (typeof input === 'function') return (input as () => T)()
-  if (input && typeof input === 'object' && 'current' in input) return input.current
-  return input
+  if (typeof input === 'function') { return (input as () => T)(); }
+  if (input && typeof input === 'object' && 'current' in input) { return input.current; }
+  return input;
 }
 ```
 
@@ -97,24 +97,24 @@ function resolveValue<T>(input: MaybeRef<T>): T {
 ## Vue: read-only adaptable composable
 
 ```ts
-import { watch, toRef } from 'vue'
-import type { MaybeRefOrGetter } from 'vue'
+import type { MaybeRefOrGetter } from 'vue';
+import { toRef, watch } from 'vue';
 
 export function useDocumentTitle(title: MaybeRefOrGetter<string>) {
-  watch(toRef(title), (t) => { document.title = t }, { immediate: true })
+  watch(toRef(title), (t) => { document.title = t; }, { immediate: true });
 }
 ```
 
 ## Vue: writable adaptable composable
 
 ```ts
-import { toRef } from 'vue'
-import type { MaybeRef } from 'vue'
+import type { MaybeRef } from 'vue';
+import { toRef } from 'vue';
 
 export function useCounter(count: MaybeRef<number>) {
-  const countRef = toRef(count)
-  function add() { countRef.value++ }
-  return { count: countRef, add }
+  const countRef = toRef(count);
+  function add() { countRef.value++; }
+  return { count: countRef, add };
 }
 ```
 
@@ -126,17 +126,17 @@ export function useCounter(count: MaybeRef<number>) {
 
 ```ts
 export function useUser(userId: MaybeRefOrGetter<string>) {
-  const userIdRef = toRef(userId)
-  const user = ref(null)
-  const loading = ref(false)
-  const error = ref(null)
+  const userIdRef = toRef(userId);
+  const user = ref(null);
+  const loading = ref(false);
+  const error = ref(null);
 
   async function fetchUser(id: string) { /* ... */ }
 
-  onMounted(() => fetchUser(userIdRef.value))
-  watch(userIdRef, fetchUser)
+  onMounted(() => fetchUser(userIdRef.value));
+  watch(userIdRef, fetchUser);
 
-  return { user, loading, error, refresh: () => fetchUser(userIdRef.value) }
+  return { user, loading, error, refresh: () => fetchUser(userIdRef.value) };
 }
 ```
 
@@ -144,8 +144,8 @@ export function useUser(userId: MaybeRefOrGetter<string>) {
 
 ```ts
 export function useDocumentTitle(title: MaybeRef<string>) {
-  const titleRef = useLatest(title)
-  useEffect(() => { document.title = resolveValue(titleRef.current) }, [title])
+  const titleRef = useLatest(title);
+  useEffect(() => { document.title = resolveValue(titleRef.current); }, [title]);
 }
 ```
 
@@ -153,16 +153,20 @@ export function useDocumentTitle(title: MaybeRef<string>) {
 
 ```ts
 export function useCounter(count: number | MutableRef<number>) {
-  const isRef = count && typeof count === 'object' && 'current' in count
-  const internalRef = useRef(typeof count === 'number' ? count : count.current)
-  const countRef = (isRef ? count : internalRef) as MutableRef<number>
+  const isRef = count && typeof count === 'object' && 'current' in count;
+  const internalRef = useRef(typeof count === 'number'
+    ? count
+    : count.current);
+  const countRef = (isRef
+    ? count
+    : internalRef) as MutableRef<number>;
 
   useEffect(() => {
-    if (typeof count === 'number') countRef.current = count
-  }, [count])
+    if (typeof count === 'number') { countRef.current = count; }
+  }, [count]);
 
-  const add = useCallback(() => { countRef.current += 1 }, [countRef])
-  return { count: countRef, add }
+  const add = useCallback(() => { countRef.current += 1; }, [countRef]);
+  return { count: countRef, add };
 }
 ```
 
@@ -174,10 +178,10 @@ export function useCounter(count: number | MutableRef<number>) {
 
 ```ts
 export function useOrderPricing(items: Item[]) {
-  const [baseDiscount, setBaseDiscount] = useState(0)
-  const total = useMemo(() => calculateTotal(items, baseDiscount), [items, baseDiscount])
-  const discount = useMemo(() => calculateDiscount(total), [total])
-  return { total, discount, setBaseDiscount }
+  const [baseDiscount, setBaseDiscount] = useState(0);
+  const total = useMemo(() => calculateTotal(items, baseDiscount), [items, baseDiscount]);
+  const discount = useMemo(() => calculateDiscount(total), [total]);
+  return { total, discount, setBaseDiscount };
 }
 ```
 
